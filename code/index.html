@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--MARK_HEADER_BEGIN-->
+  <title>YUMSION 个人站点</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+<!--MARK_HEADER_END-->
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+  <!-- Brand -->
+  <a class="navbar-brand" href="../index.html">YUMSION SOFTWARE</a>
+ 
+  <!-- Toggler/collapsibe Button -->
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+ 
+  <!-- Navbar links -->
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="#">c</a>
+      </li>
+    </ul>
+  </div> 
+</nav>
+
+<br>
+<!--MARK_BODY-HEADER_BEGIN-->
+<div>
+body header
+</div>
+<!--MARK_BODY-HEADER_END-->
+
+<div class="container">
+</div>
+<div class="col-12 justify-content-center">
+<div class="table-responsive">
+<table class="table table-hover table-bordered table-triped">
+<thead>
+<tr>
+<th><p>名称</p><p>Platform</p></th>
+<th><p></p><p>Software Name</p></th>
+<th><p>分类</p><p>Classify</p></th>
+<th><p>描述</p><p>Descriptions</p></th>
+</tr>
+
+</thead>
+<tbody>
+<tr>
+<td> http-file-server </td>
+<td> <a href="https://gitee.com/forestrabbit/http-file-server" target="_blank">http-file-server</a> </td>
+<td> http file server</td>
+<td> <p>http 方式提供文件的下载，根据MIME格式提供对应的application格式，方便浏览器进行处理</p></td>
+</tr>
+
+<tr>
+<td> generate_passward </td>
+<td> <a href="./c/generate_password.c" target="_blank">generate_password.c</a> </td>
+<td> c source code </td>
+<td> <p>使用deepseek生成的代码,用于生成符合安全策略的密码.略微修改了命令行参数</p></td>
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+<!--MARK_FOOTER_BEGIN-->
+<p id="badsoup">有人一笑就很好看，你是一看就挺好笑。</p>
+<script>
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', 'https://www.7ed.net/soup/api');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      var data = JSON.parse(xhr.responseText);
+      var badsoup = document.getElementById('badsoup');
+      badsoup.innerText = data.badsoup;
+    }
+  }
+  xhr.send();
+</script>
+<div class="container">
+  <h3>个人站点
+<small>
+THIS IS A PERSIONAL WEBSITE
+</small>
+</h3>
+</div>
+<div class="col-12 justify-content-center">
+<span>
+yumsion@gmail.com
+</span>
+</div>
+
+<!--MARK_FOOTER_END-->
+</body>
+</html>
