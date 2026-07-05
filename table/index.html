@@ -3,23 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <link rel="stylesheet" href="../css/table_css.css">
     <title>YUMSION Table Index</title>
     <style>
-        * {
+        /* ===== 重置和基础样式（限定在 .index-page 内） ===== */
+        .index-page * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        body {
+        
+        .index-page {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             background: #f8fafc;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             padding: 20px;
+            padding-top: 80px;
         }
-        .card {
+
+        /* ===== 卡片容器 ===== */
+        .index-page .card {
             max-width: 1200px;
             width: 100%;
             background: white;
@@ -28,7 +34,9 @@
             padding: 24px 20px 32px;
             transition: padding 0.2s;
         }
-        h1 {
+
+        /* ===== 标题 ===== */
+        .index-page h1 {
             font-size: 2rem;
             font-weight: 600;
             letter-spacing: -0.01em;
@@ -41,7 +49,7 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-        h1 small {
+        .index-page h1 small {
             font-size: 1rem;
             font-weight: 400;
             color: #4a5b6e;
@@ -51,7 +59,9 @@
             border-radius: 40px;
             letter-spacing: 0.3px;
         }
-        .filter-bar {
+
+        /* ===== 筛选栏 ===== */
+        .index-page .filter-bar {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
@@ -63,14 +73,14 @@
             margin: 20px 0 24px 0;
             transition: all 0.2s;
         }
-        .filter-group {
+        .index-page .filter-group {
             flex: 1 1 180px;
             min-width: 140px;
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
-        .filter-group label {
+        .index-page .filter-group label {
             font-size: 0.8rem;
             font-weight: 500;
             text-transform: uppercase;
@@ -78,8 +88,8 @@
             color: #2c3e50;
             opacity: 0.8;
         }
-        .filter-group select,
-        .filter-group input {
+        .index-page .filter-group select,
+        .index-page .filter-group input {
             background: white;
             border: 1px solid #d0d9e6;
             border-radius: 14px;
@@ -92,20 +102,20 @@
             appearance: auto;
             box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
-        .filter-group select:focus,
-        .filter-group input:focus {
+        .index-page .filter-group select:focus,
+        .index-page .filter-group input:focus {
             outline: none;
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
-        .filter-group select {
+        .index-page .filter-group select {
             cursor: pointer;
         }
-        .filter-group input::placeholder {
+        .index-page .filter-group input::placeholder {
             color: #9aa9bb;
             font-weight: 350;
         }
-        .filter-actions {
+        .index-page .filter-actions {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -113,7 +123,7 @@
             margin-left: auto;
             padding-top: 6px;
         }
-        .btn-reset {
+        .index-page .btn-reset {
             background: white;
             border: 1px solid #d0d9e6;
             padding: 10px 22px;
@@ -126,16 +136,16 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.02);
             white-space: nowrap;
         }
-        .btn-reset:hover {
+        .index-page .btn-reset:hover {
             background: #f1f5f9;
             border-color: #b0bed0;
         }
-        .btn-reset:active {
+        .index-page .btn-reset:active {
             background: #e2e8f0;
         }
 
-        /* 表格容器 — 移动端自适应 */
-        .table-wrap {
+        /* ===== 表格容器 ===== */
+        .index-page .table-wrap {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             margin: 8px 0 8px 0;
@@ -144,13 +154,13 @@
             background: white;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
-        table {
+        .index-page table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
-            min-width: 400px; 
+            min-width: 400px;
         }
-        th {
+        .index-page th {
             background: #f8fafc;
             color: #1f2a3f;
             font-weight: 600;
@@ -160,44 +170,44 @@
             letter-spacing: 0.3px;
             white-space: nowrap;
         }
-        td {
+        .index-page td {
             padding: 14px 14px;
             border-bottom: 1px solid #eef2f7;
             vertical-align: middle;
             word-break: break-word;
         }
-        tr:last-child td {
+        .index-page tr:last-child td {
             border-bottom: none;
         }
-        tr:hover td {
-            background-color: #fafcff;
+        .index-page tr:hover td {
+            background-color: #c0c0c0;
         }
-        .col-category {
+        .index-page .col-category {
             font-weight: 500;
             color: #0b2a44;
         }
-        .col-project {
+        .index-page .col-project {
             color: #1e3a5f;
         }
-        .col-link a {
+        .index-page .col-link a {
             color: #2563eb;
             text-decoration: none;
             font-weight: 500;
             border-bottom: 1px dotted rgba(37, 99, 235, 0.3);
             word-break: break-all;
         }
-        .col-link a:hover {
+        .index-page .col-link a:hover {
             color: #1d4ed8;
             border-bottom-color: #1d4ed8;
         }
-        .empty-row td {
+        .index-page .empty-row td {
             text-align: center;
             color: #6b7b8f;
             padding: 36px 14px;
             font-style: italic;
             background: #fafcff;
         }
-        .badge-count {
+        .index-page .badge-count {
             background: #eef2f7;
             padding: 2px 12px;
             border-radius: 30px;
@@ -206,125 +216,297 @@
             color: #2c3e50;
             margin-left: 6px;
         }
+        .index-page .table-footer-info {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #5f7287;
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
 
-        /* 手机优化 */
+        /* ===== 覆盖导入的 table_css.css 中的冲突样式 ===== */
+        /* 重置导航栏样式，使用 index-page 内的导航样式 */
+        .index-page .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .index-page .top-nav.hidden-nav {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        .index-page .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+        .index-page .nav-brand {
+            flex-shrink: 0;
+        }
+        .index-page .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+        .index-page .nav-logo:hover {
+            color: #5b7cfa;
+        }
+        .index-page .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+        .index-page .nav-menu li {
+            margin: 0;
+        }
+        .index-page .nav-link {
+            display: block;
+            padding: 8px 18px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .index-page .nav-link:hover {
+            background: #f1f4fa;
+            color: #1e293b;
+        }
+        .index-page .nav-link.active {
+            background: #5b7cfa;
+            color: #ffffff;
+        }
+        .index-page .nav-link.active:hover {
+            background: #4a6ae0;
+        }
+        .index-page .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .index-page .nav-toggle:hover {
+            background: #f1f4fa;
+        }
+        .index-page .hamburger {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background: #1e293b;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        .index-page .nav-toggle.active .hamburger:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        .index-page .nav-toggle.active .hamburger:nth-child(2) {
+            opacity: 0;
+        }
+        .index-page .nav-toggle.active .hamburger:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* ===== 手机响应式 ===== */
         @media (max-width: 640px) {
-            .card {
+            .index-page .card {
                 padding: 16px 12px 24px;
                 border-radius: 20px;
             }
-            h1 {
+            .index-page h1 {
                 font-size: 1.6rem;
                 padding-bottom: 8px;
             }
-            h1 small {
+            .index-page h1 small {
                 font-size: 0.75rem;
                 padding: 2px 12px;
                 margin-left: 0;
                 width: auto;
             }
-            .filter-bar {
+            .index-page .filter-bar {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 14px;
                 padding: 16px;
                 border-radius: 16px;
             }
-            .filter-group {
+            .index-page .filter-group {
                 flex: 1 1 auto;
                 min-width: 0;
             }
-            .filter-actions {
+            .index-page .filter-actions {
                 margin-left: 0;
                 justify-content: flex-end;
                 padding-top: 4px;
             }
-            .btn-reset {
+            .index-page .btn-reset {
                 padding: 8px 18px;
                 font-size: 0.85rem;
                 width: 100%;
                 text-align: center;
             }
-            table {
+            .index-page table {
                 font-size: 0.85rem;
                 min-width: 340px;
             }
-            th, td {
+            .index-page th,
+            .index-page td {
                 padding: 12px 10px;
+            }
+            /* 导航栏移动端 */
+            .index-page .nav-toggle {
+                display: flex;
+            }
+            .index-page .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: white;
+                padding: 12px 0;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                gap: 4px;
+            }
+            .index-page .nav-menu.open {
+                display: flex;
+            }
+            .index-page .nav-container {
+                position: relative;
+            }
+            .index-page .nav-menu li {
+                width: 100%;
+            }
+            .index-page .nav-link {
+                padding: 10px 20px;
+                border-radius: 0;
             }
         }
         @media (max-width: 420px) {
-            table {
+            .index-page table {
                 font-size: 0.8rem;
                 min-width: 280px;
             }
-            th, td {
+            .index-page th,
+            .index-page td {
                 padding: 10px 8px;
             }
         }
     </style>
 </head>
-<body>
-<div class="card">
-    <h1>
-        <span>📋 YUMSION table index</span>
-        <small>感谢deepseek生成，让我的小拙手也能做出网页</small>
-    </h1>
+<body class="index-page">
+    <!-- ===== 导航栏 ===== -->
+    <nav id="topNav" class="top-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="nav-logo">🏠 主页</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">首页</a></li>
+                <li><a href="index.html" class="nav-link active">表格</a></li>
+                <li><a href="#about" class="nav-link">关于</a></li>
+                <li><a href="#contact" class="nav-link">联系</a></li>
+            </ul>
+        </div>
+    </nav>
 
-    <!-- 筛选栏：下拉 + 输入过滤（仅分类/项目） -->
-    <div class="filter-bar">
-        <div class="filter-group">
-            <label for="categoryFilter">分类</label>
-            <select id="categoryFilter">
-                <option value="all">全部分类</option>
-                <!-- 由 js 动态填充 -->
-            </select>
+    <div class="card">
+        <h1>
+            <span>📋 YUMSION table index</span>
+            <small>感谢deepseek生成，让我的小拙手也能做出网页</small>
+        </h1>
+
+        <!-- 筛选栏：下拉 + 输入过滤（仅分类/项目） -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="categoryFilter">分类</label>
+                <select id="categoryFilter">
+                    <option value="all">全部分类</option>
+                    <!-- 由 js 动态填充 -->
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="projectFilter">项目</label>
+                <select id="projectFilter">
+                    <option value="all">全部项目</option>
+                    <!-- 由 js 动态填充 -->
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="keywordInput">🔍 输入筛选（分类/项目）</label>
+                <input type="text" id="keywordInput" placeholder="输入关键词…" autocomplete="off">
+            </div>
+            <div class="filter-actions">
+                <button class="btn-reset" id="resetFilters">重置</button>
+            </div>
         </div>
-        <div class="filter-group">
-            <label for="projectFilter">项目</label>
-            <select id="projectFilter">
-                <option value="all">全部项目</option>
-                <!-- 由 js 动态填充 -->
-            </select>
+
+        <!-- 表格 -->
+        <div class="table-wrap">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>分类</th>
+                        <th>项目</th>
+                        <th>链接地址</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 由 JavaScript 动态渲染 -->
+                </tbody>
+            </table>
         </div>
-        <div class="filter-group">
-            <label for="keywordInput">🔍 输入筛选（分类/项目）</label>
-            <input type="text" id="keywordInput" placeholder="输入关键词…" autocomplete="off">
-        </div>
-        <div class="filter-actions">
-            <button class="btn-reset" id="resetFilters">重置</button>
+        <div class="table-footer-info">
+            <span>📊 共 <span id="rowCount">0</span> 条</span>
+            <span>· 下拉菜单自动从表格列提取</span>
         </div>
     </div>
 
-    <!-- 表格 -->
-    <div class="table-wrap">
-        <table id="dataTable">
-            <thead>
-                <tr>
-                    <th>分类</th>
-                    <th>项目</th>
-                    <th>链接地址</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- 由 JavaScript 动态渲染 -->
-            </tbody>
-        </table>
-    </div>
-    <div style="margin-top: 8px; font-size: 0.8rem; color: #5f7287; display: flex; justify-content: flex-end; gap: 6px; flex-wrap: wrap;">
-        <span>📊 共 <span id="rowCount">0</span> 条</span>
-        <span>· 下拉菜单自动从表格列提取</span>
-    </div>
-</div>
-
-<script>
+    <script>
     (function() {
+        'use strict';
+
         // ---- 原始表格数据 (仅包含分类、项目、链接) ----
-        // 注意：链接地址列不参与下拉菜单生成，也不参与关键词搜索 (仅搜索分类和项目)
         const tableData = [
-            { category: 'widnows', project: '系统相关', link: 'https://vuejs.org/' },
-            { category: 'linux', project: 'vim', link: 'https://www.yumsion.com/table/table98.html' },
-            { category: '知识', project: '900', link: 'https://www.yumsion.com/table/table98.html' },
+            { category: 'windows', project: '系统相关', link: 'https://vuejs.org/' },
+            { category: 'linux', project: 'vim', link: 'table98.html' },
         ];
 
         // DOM 引用
@@ -335,7 +517,7 @@
         const resetBtn = document.getElementById('resetFilters');
         const rowCountSpan = document.getElementById('rowCount');
 
-        // ---- 工具：从数据中提取唯一值 (分类 / 项目) ----
+        // ---- 工具：从数据中提取唯一值 ----
         function getUniqueValues(data, key) {
             const set = new Set();
             data.forEach(item => {
@@ -348,7 +530,6 @@
 
         // ---- 填充下拉菜单 ----
         function populateSelect(selectElement, values, allLabel) {
-            // 保留第一个 "全部" 选项
             selectElement.innerHTML = '';
             const allOption = document.createElement('option');
             allOption.value = 'all';
@@ -363,7 +544,7 @@
             });
         }
 
-        // ---- 初始化下拉菜单 (从 tableData 提取) ----
+        // ---- 初始化下拉菜单 ----
         function initFilters() {
             const categories = getUniqueValues(tableData, 'category');
             const projects = getUniqueValues(tableData, 'project');
@@ -371,7 +552,7 @@
             populateSelect(projectSelect, projects, '全部项目');
         }
 
-        // ---- 渲染表格 (基于过滤后的数据) ----
+        // ---- 渲染表格 ----
         function renderTable(data) {
             if (!data || data.length === 0) {
                 tbody.innerHTML = `<tr class="empty-row"><td colspan="3">没有匹配的记录</td></tr>`;
@@ -393,7 +574,7 @@
             rowCountSpan.textContent = data.length;
         }
 
-        // 简单防 XSS
+        // ---- 防 XSS ----
         function escapeHtml(text) {
             if (!text) return '';
             const map = {
@@ -406,22 +587,19 @@
             return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
 
-        // ---- 核心过滤 (仅对 分类 和 项目 列进行筛选，链接列不参与搜索) ----
+        // ---- 核心过滤 ----
         function filterData() {
-            const categoryVal = categorySelect.value;   // 'all' 或 具体分类
-            const projectVal = projectSelect.value;     // 'all' 或 具体项目
+            const categoryVal = categorySelect.value;
+            const projectVal = projectSelect.value;
             const keyword = keywordInput.value.trim().toLowerCase();
 
             const filtered = tableData.filter(item => {
-                // 1. 分类筛选
                 if (categoryVal !== 'all' && item.category !== categoryVal) {
                     return false;
                 }
-                // 2. 项目筛选
                 if (projectVal !== 'all' && item.project !== projectVal) {
                     return false;
                 }
-                // 3. 关键词输入筛选 (仅匹配 分类 和 项目，不匹配链接)
                 if (keyword !== '') {
                     const inCategory = item.category.toLowerCase().includes(keyword);
                     const inProject = item.project.toLowerCase().includes(keyword);
@@ -443,6 +621,25 @@
             filterData();
         }
 
+        // ---- 导航栏切换（移动端） ----
+        function initNavToggle() {
+            const toggle = document.getElementById('navToggle');
+            const menu = document.getElementById('navMenu');
+            if (toggle && menu) {
+                toggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    menu.classList.toggle('open');
+                });
+                // 点击菜单项后关闭菜单
+                menu.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function() {
+                        toggle.classList.remove('active');
+                        menu.classList.remove('open');
+                    });
+                });
+            }
+        }
+
         // ---- 绑定事件 ----
         categorySelect.addEventListener('change', filterData);
         projectSelect.addEventListener('change', filterData);
@@ -450,12 +647,12 @@
         resetBtn.addEventListener('click', resetFilters);
 
         // ---- 初始化 ----
-        initFilters();          // 从 tableData 动态生成下拉选项
-        renderTable(tableData); // 显示全部数据
-        rowCountSpan.textContent = tableData.length;
+        initFilters();
+        renderTable(tableData);
+        initNavToggle();
 
-        console.log('✅ Table Index 已启动 · 下拉菜单由表格列自动生成');
+        //console.log('✅ Table Index 已启动 · 下拉菜单由表格列自动生成');
     })();
-</script>
+    </script>
 </body>
 </html>
