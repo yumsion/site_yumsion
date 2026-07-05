@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>YUMSION‘s TABLE</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="table_css.css">
+</head>
+<body>
+  <div class="table-container">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+        <tr><td>vim的ctrl+a为自增</td><td>快捷键</td></tr>
+        <tr><td>Neovim 内置 LSP 配置</td><td>编辑器</td></tr>
+        <tr><td>ctrl+shift+p 打开命令面板</td><td>快捷键</td></tr>
+        <tr><td>CSS  flex 布局详解</td><td>前端</td></tr>
+        <tr><td>Python 列表推导式</td><td>编程</td></tr>
+        <tr><td>Git  rebase 合并提交</td><td>版本控制</td></tr>
+        <tr><td>VSCode 快捷键 ctrl+` 打开终端</td><td>快捷键</td></tr>
+        <tr><td>JavaScript 闭包应用</td><td>前端</td></tr>
+        <tr><td>Linux  chmod 权限设置</td><td>运维</td></tr>
+        <tr><td>Docker 容器日志查看</td><td>运维</td></tr>
+        <tr><td>React  useState 钩子</td><td>前端</td></tr>
+        <tr><td>vim 跳转至文件末尾 G</td><td>快捷键</td></tr>
+        <tr><td>SQL 联表查询 JOIN</td><td>数据库</td></tr>
+        <tr><td>Python 虚拟环境 venv</td><td>编程</td></tr>
+        <tr><td>Nginx 反向代理配置</td><td>运维</td></tr>
+        <tr><td>Figma 组件变体</td><td>设计</td></tr>
+        <tr><td>Vue  v-for 列表渲染</td><td>前端</td></tr>
+        <tr><td>Git  stash 暂存更改</td><td>版本控制</td></tr>
+        <tr><td>Mac 截图快捷键 cmd+shift+4</td><td>快捷键</td></tr>
+        <tr><td>CSS  grid 网格布局</td><td>前端</td></tr>
+        <!-- 额外静态行，展示更多内容 -->
+        <tr><td>vim 的 ctrl+d 向下翻页</td><td>快捷键</td></tr>
+        <tr><td>TypeScript 泛型使用</td><td>编程</td></tr>
+        <tr><td>Postman 环境变量设置</td><td>测试</td></tr>
+      </tbody>
+    </table>
+    <div class="table-footer">YUMSION 2026-07-05 14:30:24</div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="table_js.js"></script>
+</body>
+</html>

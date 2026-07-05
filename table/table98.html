@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>YUMSION‘s TABLE</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="table_css.css">
+</head>
+<body>
+  <div class="table-container">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 98 vim</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+        <tr><td><details><summary>hex输入</summary>
+&#92;x31 &#92;X31 #直接hex表示法</br>
+Ctrl+v x/u/U #编辑模式下，进入hex输入模式,ASCII/Unicode/Unicode</br>
+#更多参照: :help i_CTRL-V_digit
+	</details></td><td>vim hex</td></tr>
+        <tr><td><details><summary>vim 快速跳转</summary>
+fx / Fx / tx / Tx #快速跳转到指定的键盘字符的位置</br>
+gg #跳到首行 / 3G #跳到第3行 / G #跳到尾行</br>
+mx / &#x27;x #本行标记为x / 跳到行标为x的行上</br>
+0 / $ #调到行首 / 跳到行尾</br>
+e / w&#9;#调到单词尾 / 调到下一单词头部</br>
+]] #跳转到下个{
+[+Ctrl+d #快速跳转到#define位置</br>
+[+Ctrl+i #跳转到定义，函数，define位置</br>
+gD #goto define</br>
+[+Ctrl+f #跳转到字符的文件名并打开</br>
+Ctrl+i #光标位置向后一次所处跳转</br>
+Ctrl+o #光标位置向前一次所处跳转</br>
+Ctrl+^ #两个文件之间跳转</br>
+Ctrl+f/d #下翻</br>
+Ctrl+b/u #上翻</br>
+Ctrl+e #向上滚动一行</br>
+Ctrl+y #向下滚动一行</br>
+H/M/L #光标跳转到顶部/中间/底部</br>
+zt/zz/zb #光标所在行变成定顶行/中间行/底行</br>
+gf #跳转到这个文件，好像不需要指定path，使用Ctrl+^返回。</br>
+tab跳转
+gt #跳转到下一个tab中
+gj/gk/g0/g$ #行内（wrap行）跳光标跳转
+
+
+	</details></td><td>vim 快速跳转</td></tr>
+        <!-- 分割线 -->
+        <tr><td><details><summary>vim 书签mark</summary>
+mx #本行标记为x</br>
+&#x27;x #跳到行标为x的行上【行】</br>
+`x #跳到行标为x的位置【原光标位置】</br>
+a-z 【单文件mark】
+A-Z 【跨文件mark】
+. #最近编辑的位置
+0-9 #最近使用的文件
+^ #最近插入的位置
+' #上一次跳转前的位置
+" #上一次退出文件时的位置
+[ #上一次修改的开始处
+] #上一次修改的结尾处
+
+	</details></td><td>vim 快速跳转</td></tr>
+        <!-- 分割线 -->
+        <tr><td><details><summary>vim 查找搜索和替换</summary>
+/&#x5c;%u3000 #使用unicode搜索全角空格 或（/[&#x5c;uFF00-&#x5c;uFFEF&#x5c;u3000-&#x5c;u303F&#x5c;uFF01-&#x5c;uFF5E] 搜索所有全角字符）
+&#x5c;cabc #忽略大小写搜索abc
+:%s/&#92;([a-c]&#92;)/&#x5c;1-/g #%　文全局替换 / ()　引用替换需要跳脱 / &#92;1　引用替换 / g　行全局</br>
+* / # #快速查找光标所在处单词</br>
+:let n=0 | g/index_&#92;zs&#92;d&#92;+/s//&#92;=n/|let n+=1 #使用变量，全局替换，逐步执行</br>
+:let n=0 | g/opIndex/s#&#92;=printf("abc %X",n)/ |let n+=1 #substitude竟然支持printf</br>
+:s/&#92;n&#92;n/&#92;r/g #vi的行处理有些不一致的地方查找使用n，替换使用r否则替换会变成&#92;x00</br>
+:let @a=0 | s/#/&#92;=&#39;abc_&#39;.(@a+setreg(&#39;a&#39;,@a+1))/g #命令模式行内substitute换序列序号</br>
+:&#x27;&#x3c;,&#x27;&#x3e;s/&#x5c;%V2/b/g #仅替换选区内，而非全行或全段
+:g/ABC/d #删除含有匹配字符的行
+	</details></td><td>vim 查找和替换</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 复制和粘贴操作</summary>
+gv #重新选取上次的选区
+yy / 3yy / p #复制本行 / 从本行开始复制3行 / 粘贴复制内容到本行之下</br>
+
+	</details></td><td>vim 内容编辑</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 删除操作</summary>
+dd #删除本行</br>
+dw #删除本单词</br>
+d0 / d$ #删除到行首 / 删除到行尾</br>
+d50 / 50dd #光标行开始删除50行</br>
+dG #删除到尾行</br>
+dfx #删除到下一个字母x和之后的&#92;s字符</br>
+:v/partten/d #删除没有匹配字符partten的行</br>
+</details></td><td>vim 内容编辑</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 自动补全补齐和输入</summary>
+set wildmode=list:full
+Ctrl+n / Ctrl+p #自动补全【单词】的数据列表的上下选择</br>
+Ctrl+x Ctrl+l #自动补全【行】的数据列表的上下选择</br>
+Ctrl+x Ctrl+f #自动补全【文件名】）</br>
+更多的内容参照：help ins-completion</br>
+Ctrl+r Ctrl+w #命令模式下，输入当前光标所在整个word
+Ctrl+d #命令行下补全,补齐命令或列举文件
+Ctrl+i #编辑模式下添加一个tab</br>
+Ctrl+a #数字递增<br>
+Ctrl+x #数字递减<br>
+</details></td><td>vim 内容编辑</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 大小写转换</summary>
+~ #改变当前行字母的大小写</br>
+g~~ #可视模式下选择的所有字母转换成大写</br>
+U #可视模式下选择的所有字母转换成小写</br>
+u #将当前行的所有字母都转换成小写</br>
+guu #将当前行的所有字母都转换成大写</br>
+gUU #将当前单词转换成小写</br>
+guw （gue） #将当前单词转换成大写</br>
+gUw （gUe） #从光标所在位置到行首</br>
+gU0 #从光标所在位置到行尾</br>
+gU$ #从光标所在位置到文章最后一个字符，都转换成大写</br>
+gUG #从光标所在位置到文章第一个字符，都转换成小写</br>
+gU1G #将整篇文章都转换成小写</br>
+ggguG #将整篇文章都转换成大写（gg 文章开始，gu/gU 切换大小写，G文章结尾）</br>
+gggUG #将光标下的小（大）写字母转换成大（小）写
+	</details></td><td>vim 内容编辑</td></tr>
+        <!-- 分割线 -->
+        <tr><td><details><summary>vim 正则表达式</summary>
+&#92;&lt; / &#92;&gt; #单词左边界 / 单词右边界</br>
+.&#92;{-&#92;} #非贪婪匹配，类似perl的.*?</br>
+&#92;+ #这个正则表达式的：*的匹配无须跳脱，但是+需要跳脱</br>
+</details></td><td>vim 正则表达式</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 剪切板或寄存器操作</summary>
+:reg #查看内部剪切板内容</br>
+"+y #将选中内容复制到系统寄存器</br>
+Ctrl+r w #输入模式下，Ctrl+r表示调用寄存器内容，输入w寄存器中的内容</br>
+#上条可以变更更加精确先*或#，然后进行sub，调用/寄存器(Last search pattern register)</br>
+:set clipboard=unnamed #将"unnamed寄存器映射到系统剪切板
+Ctrl+r = 3*4 或 Ctrl+r =printf("%x",3) #编辑模式下，使用=号寄存器直接输入3*4的结果
+
+
+</details></td><td>vim 剪切板或寄存器操作</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 读取外部命令结果</summary>
+:read ! for((i01=0;i01&lt;10;i++)) ; do printf "<b>&#;%d</b>" i01 ; done #引用外部命令时，<b>%</b>是关键字</br>
+:!Ctrl+r Ctrl+l #执行光标所在行</br>
+v选中，:!bash，执行并插入结果,执行选中的代码</br>
+:!/bin/bash % #使用bash运行该文件，%表示该文件</br>
+:&#39;<,&#39;> !/bin/bash #将目前内容输送到bash中运行，返回运行结果到输送区域</br>
+:&#39;<,&#39;> w !/bin/bash</br>#将选中文本输送到bash中运行，保留原始内容</br>
+
+	</details></td><td>vim 扩展配置</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim c语言</summary>
+path=.,/usr/include,,./include #设置path方便快速查询define位置</br>
+	</details></td><td>vim 扩展配置</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim ctags</summary>
+ctags -R /folder0 #生成ctags内容</br>
+set tags=/home/tags #设置tags路径</br>
+Ctrl+t #退回到搜寻tags之前的位置</br>
+Ctrl+] #搜寻选中字词的tags</br>
+gCtrl-] #在当前单词下执行tag jump命令
+tselect #tag select菜单模式进行tag选择
+
+	</details></td><td>vim 扩展配置</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim plugin</summary>
+<a href="https://www.vim.org/scripts/" target="_blank">https://www.vim.org/scripts/</a> #vim 脚本 plugin 官方VIM脚本下载位置
+:filetype plugin indent on #启用新脚本的indent ，如vim plugin 格式化html，需要重新加载打开文件（:edit）,否则不生效
+	</details></td><td>vim 扩展配置</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 宏</summary>
+qcq #录制宏，宏内容存到寄存器c，q结束录制</br>
+"cp #寄存器c中的内容粘贴到光标后</br>
+@c #从寄存器中调用宏，宏内容位于寄存器c中</br>
+::&#x27;&lt;,:&#x27;&gt;normal @q #选中的行执行宏
+
+	</details></td><td>vim 宏</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 分屏</summary>
+Ctrl+w v #水平复制分屏</br>
+Ctrl+w s #垂直复制分屏</br>
+Ctrl+w o #关闭其它分屏</br>
+Ctrl+w c #关闭当前分屏</br>
+Ctrl+w jklh #分屏焦点移动</br>
+Ctrl+w &gt;&lt;+- #分屏大小控制</br>
+	</details></td><td>vim 分屏</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 鼠标</summary>
+:set mouse=hn #vim的鼠标信号控制，弄不好就会导致粘贴等位置出错。模式可以叠加
+n  #普通模式
+v  #可视模式
+i  #插入模式
+c  #命令行模式
+a  #以上所有的模式
+r  #跳过
+h 在帮助文件里，以上所有的模式
+留空表示不使用鼠标卡控制
+	</details></td><td>vim 鼠标</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 撤销和重做</summary>
+u #撤销操作
+Ctrl+r #取消撤销
+. #重复最后一次操作
+:normal .#每行都执行上次的动作
+	</details></td><td>vim 撤销和重做</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 自动输入行号</summary>
+:s/BIT_MASK_&#92;zs&#92;d*&#92;ze/&#92;=line(".") - line("&#92;&lt;") + 1</br>
+&#92;zs          指明匹配由此开始 (:help /&#92;zs )<br>
+&#92;d*          查找任意位数的数字 (:help /&#92;d )<br>
+&#92;ze          指明匹配到此为止 (:help /&#92;ze )<br>
+&#92;=           指明后面是一个表达式 (:help :s&#92;= )<br>
+line(".")    当前光标所在行的行号 (:help line() )<br>
+line("&#92;&lt;")   我们所选区域中第一行的行号 (:help line() ) 
+	</details></td><td>vim 显示</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 折叠</summary>
+:set foldmethod=syntax/manual #折叠方式设定</br>
+:set foldenable（zi）#启用折叠</br>
+zv #查看此行</br>
+zm #折叠</br>
+zM #所有都折叠</br>
+zr #打开本折叠</br>
+zR #打开所有折叠</br>
+zc #折叠当前行</br>
+zo #打开当前折叠</br>
+zd #删除折叠</br>
+zD #删除所有折叠</br>
+5zF #折叠光标开始的5行
+zf70j #折叠光标开始的70行
+zf 使用Shift+v行选后，折叠选中的多行
+:set foldmethod=manual #启用手动折叠
+
+	</details></td><td>vim 显示</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 显示</summary>
+:s/&lt;ctrl+v x&gt;00//g #将不可见字符^@(0x00)全部删除(此外还有u,U等长unicode格式)</br>
+:help digraph-table #显示不可见字符列表</br>
+set invlist #显示不可见字符</br>
+set listchars=eol:$ #设置list不好用的原因是本项没有设置好</br>
+set matchpairs+={:} #括号配对</br>
+set showbreak= #wrap后可能会产生箭头，箭头可以更改或者取消，避免复制时产生额外字符</br>
+iconv -f gbk -t UTF-8 -o a.txt b.txt #使用制定的编码打开文件无效前，可以进行强制转换</br>
+:e ++enc=gbk #强制使用gbk编码和字符集打开文件</br>
+:syntax on #colorscheme xxx 无效的解决方法</br>
+printf "\x1b[?1000h" #bash 执行，侏儒终端问题,vim鼠标滚轮导致的胡乱粘贴</br>
+printf "\x1b[?1000l" #bash 执行，侏儒终端问题,vim鼠标滚轮导致的胡乱粘贴</br>
+终端中执行：stty erase ^? #按backspace键显示^?的问题</br>
+set visualbell #关闭振动</br>
+
+	</details></td><td>vim 显示</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 文件查询和操作</summary>
+Ctrl+g #显示当前文件名和光标所在位置</br>
+set wrap/nowrap #换行/不自动换行显示</br>
+set noautoindent #禁止自动缩进</br>
+set paste #禁止粘贴文本时自动缩进
+:e #重新载入文件</br>
+:E #打开资源管理器</br>
+vim a b c #同时打开3个文件
+Ctrl+6 #下一个文件 </br>
+:bn #下一个文件 </br>
+:bp #上一个文件 </br>
+	</details></td><td>vim 文件操作</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 文件编码</summary>
+:set fileformat? #查询文本编码风格</br>
+:set encoding=utf-8 #设置文件打开时的编码方式</br>
+:set fileformat=unix #将文本格式转换成unix格式，自动更改&#92;r&#92;n为&#92;n</br>
+:set fileencoding=utf-8 #文件保存方式</br>
+:set fileencodings=ucs-bom,utf-8,cp936 #文件编码自动筛选次序</br>
+:set termencoding=utf-8 #cat 显示正常，vim 乱码的故障
+vim -b abc.hex #使用-b参数打开二进制文件，否则自解码匹配可能造成后期文件返回不一致
+:%!xxd -p #反转成ascii hex表达形式
+:%!xxd -r -p #反转成hex
+
+	</details></td><td>vim 文件操作</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim session和viminfo</summary>
+set viminfo=.... #viminfo 要保存的内容,具体参照help viminfo-!等
+set viminfo=%,&lt;800,#10,/50,:100,h,f0,n~/.vim/cache/.viminfo
+wviminfo file01.viminfo #保存viminfo到文件
+rviminfo file01.viminfo #读取viminfo
+mksession mysession / source my.session
+	</details></td><td>vim 文件操作</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 参数</summary>
+vim --noplugin -R -n #不使用插件，只读模式，无swap文件</br>
+vim -R -c "set nowrap" filename #使用特定配置打开文件</br>
+vim -M file01 #分页模式加载大文件
+	</details></td><td>vim 命令行</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 模式</summary>
+:set insertmode</br>#开始进入沉浸式vim的insert mode,该模式下，很多快捷键都失效了。
+#Ctrl+l #可以输入一次:set noinsertmode 退出该模式
+	</details></td><td>vim 模式</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim vimrc</summary>
+set nowarpscan</br>
+set matchpairs=</br>
+set mouse=</br>
+set paste</br>
+function! GetVimsessionFilename()</br>
+if expand(&#x27;%:p&#x27;) != &#x27;&#x27;</br>
+&#x22; 使用当前文件的相同目录，添加 .viminfo 后缀</br>
+return expand(&#x27;%:p&#x27;) . &#x27;.session&#x27;</br>
+else</br>
+&#x22; 如果没有文件名，使用默认位置</br>
+return </br>
+endif</br>endfunction</br></br>function! AutoLoadVimsession()</br>
+let vimsession_file = GetVimsessionFilename()</br>
+if !empty(vimsession_file)</br>&#x09;if filereadable(vimsession_file)</br>&#x09;&#x09;execute &#x27;source &#x27; . fnameescape(vimsession_file)</br>&#x09;endif</br>
+endif</br>endfunction</br></br>: function AuMksession()</br>:    if v:this_session != &#x22;&#x22;</br>:        exe &#x22;mksession! &#x22; .  v:this_session</br>:    endif</br>: endfunction</br>&#x22;:echo s:SessionLoadOwn</br>: au VimLeavePre * call AuMksession()</br></br>&#x22; 自动保存和加载 viminfo 配置（带存在性检查）</br>function! GetViminfoFilename()</br>
+if expand(&#x27;%:p&#x27;) != &#x27;&#x27;</br>
+&#x22; 使用当前文件的相同目录，添加 .viminfo 后缀</br>
+return expand(&#x27;%:p&#x27;) . &#x27;.viminfo&#x27;</br>
+else</br>
+&#x22; 如果没有文件名，使用默认位置</br>
+return expand(&#x27;~/.vim/default.viminfo&#x27;)</br>
+endif</br>endfunction</br></br>function! AutoSaveViminfo()</br>
+let viminfo_file = GetViminfoFilename()</br>
+</br>
+&#x22; 检查 viminfo 文件是否存在</br>
+if filereadable(viminfo_file)</br>
+&#x22; 使用 ! 强制覆盖已存在的文件</br>
+execute &#x27;wviminfo! &#x27; . fnameescape(viminfo_file)</br>
+&#x22; echo &#x27;Viminfo auto-saved: &#x27; . viminfo_file</br>
+else</br>
+&#x22; 可选：静默不保存，或者显示提示</br>
+&#x22; echo &#x27;Viminfo file not found, skip saving: &#x27; . viminfo_file</br>
+endif</br>endfunction</br></br>function! AutoLoadViminfo()</br>
+let viminfo_file = GetViminfoFilename()</br>
+if filereadable(viminfo_file)</br>
+&#x22; 使用 ! 强制覆盖当前寄存器</br>
+execute &#x27;rviminfo! &#x27; . fnameescape(viminfo_file)</br>
+&#x22; echo &#x27;Viminfo auto-loaded: &#x27; . viminfo_file</br>
+endif</br>endfunction</br></br>&#x22; 自动保存和加载的触发器</br>autocmd BufReadPost * call AutoLoadViminfo()</br>autocmd BufWritePost,FocusLost * call AutoSaveViminfo()</br>autocmd VimEnter * nested call AutoLoadVimsession()</br>autocmd VimLeave * call AutoSaveViminfo()</br></br>用括号自动高亮匹配，很恶心
+	</details></td><td>vim 初始化</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details><summary>vim 数学函数</summary>
+浮点数计算函数只有在vim编译时支持了+float时才有效。
+sin() : sine正弦函数</br>
+cos() : cosine余弦函数</br>
+tan() : tangent正切函数</br>
+asin() : arc sine反正弦函数</br>
+acos() : arc cosine反余弦函数</br>
+atan() : arc tangent反正切函数</br>
+atan2({X坐标},{Y坐标}) : arc tangent反正切函数</br>
+sinh() : hyperbolic sine 双曲正弦函数</br>
+cosh() : hyperbolic cosine双曲余弦函数</br>
+tanh() : hyperbolic tangent双曲正切函数</br>
+#这些函数基本上都是对应的C函数的封装。
+#可以参看man sinh.
+abs(): 绝对值</br>
+fmod(): 浮点余数</br>
+exp(): e的乘方</br>
+log(): 自然对数</br>
+log10(): 以10为底的对数</br>
+pow(): 阶乘</br>
+sqrt(): 平方根，如果求负数的平方根，返回NaN.</br>
+isnan(): 判断是否为NaN。比如isnan(0.0/0.0)为真。</br>
+float2nr() : 将浮点数转成整数。</br>
+round() : round off, 四舍五入</br>
+ceil(): round up, 上舍入</br>
+floor(): round down，下舍入</br>
+trunc(): 简单截断小数点后面的数</br>
+
+	</details></td><td>vim 内置函数</td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="table_js.js"></script>
+</body>
+</html>

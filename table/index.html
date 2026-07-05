@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>YUMSION Table Index</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15), 0 4px 18px rgba(0,0,0,0.05);
+            padding: 24px 20px 32px;
+            transition: padding 0.2s;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: #0b1e33;
+            margin: 0 0 8px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e9edf4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        h1 small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #4a5b6e;
+            margin-left: auto;
+            background: #f1f4f9;
+            padding: 4px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+        }
+        .filter-bar {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 16px 20px;
+            background: #f1f5f9;
+            padding: 18px 20px;
+            border-radius: 20px;
+            margin: 20px 0 24px 0;
+            transition: all 0.2s;
+        }
+        .filter-group {
+            flex: 1 1 180px;
+            min-width: 140px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .filter-group label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #2c3e50;
+            opacity: 0.8;
+        }
+        .filter-group select,
+        .filter-group input {
+            background: white;
+            border: 1px solid #d0d9e6;
+            border-radius: 14px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            font-weight: 450;
+            color: #0a1a2b;
+            width: 100%;
+            transition: 0.15s;
+            appearance: auto;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .filter-group select {
+            cursor: pointer;
+        }
+        .filter-group input::placeholder {
+            color: #9aa9bb;
+            font-weight: 350;
+        }
+        .filter-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 0 1 auto;
+            margin-left: auto;
+            padding-top: 6px;
+        }
+        .btn-reset {
+            background: white;
+            border: 1px solid #d0d9e6;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1f2a3f;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            white-space: nowrap;
+        }
+        .btn-reset:hover {
+            background: #f1f5f9;
+            border-color: #b0bed0;
+        }
+        .btn-reset:active {
+            background: #e2e8f0;
+        }
+
+        /* 表格容器 — 移动端自适应 */
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 8px 0 8px 0;
+            border-radius: 18px;
+            border: 1px solid #e9edf4;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            min-width: 400px; 
+        }
+        th {
+            background: #f8fafc;
+            color: #1f2a3f;
+            font-weight: 600;
+            padding: 16px 14px;
+            text-align: left;
+            border-bottom: 2px solid #dce2ec;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        td {
+            padding: 14px 14px;
+            border-bottom: 1px solid #eef2f7;
+            vertical-align: middle;
+            word-break: break-word;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover td {
+            background-color: #fafcff;
+        }
+        .col-category {
+            font-weight: 500;
+            color: #0b2a44;
+        }
+        .col-project {
+            color: #1e3a5f;
+        }
+        .col-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted rgba(37, 99, 235, 0.3);
+            word-break: break-all;
+        }
+        .col-link a:hover {
+            color: #1d4ed8;
+            border-bottom-color: #1d4ed8;
+        }
+        .empty-row td {
+            text-align: center;
+            color: #6b7b8f;
+            padding: 36px 14px;
+            font-style: italic;
+            background: #fafcff;
+        }
+        .badge-count {
+            background: #eef2f7;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-left: 6px;
+        }
+
+        /* 手机优化 */
+        @media (max-width: 640px) {
+            .card {
+                padding: 16px 12px 24px;
+                border-radius: 20px;
+            }
+            h1 {
+                font-size: 1.6rem;
+                padding-bottom: 8px;
+            }
+            h1 small {
+                font-size: 0.75rem;
+                padding: 2px 12px;
+                margin-left: 0;
+                width: auto;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+                padding: 16px;
+                border-radius: 16px;
+            }
+            .filter-group {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+            .filter-actions {
+                margin-left: 0;
+                justify-content: flex-end;
+                padding-top: 4px;
+            }
+            .btn-reset {
+                padding: 8px 18px;
+                font-size: 0.85rem;
+                width: 100%;
+                text-align: center;
+            }
+            table {
+                font-size: 0.85rem;
+                min-width: 340px;
+            }
+            th, td {
+                padding: 12px 10px;
+            }
+        }
+        @media (max-width: 420px) {
+            table {
+                font-size: 0.8rem;
+                min-width: 280px;
+            }
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>
+        <span>📋 YUMSION table index</span>
+        <small>感谢deepseek生成，让我的小拙手也能做出网页</small>
+    </h1>
+
+    <!-- 筛选栏：下拉 + 输入过滤（仅分类/项目） -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label for="categoryFilter">分类</label>
+            <select id="categoryFilter">
+                <option value="all">全部分类</option>
+                <!-- 由 js 动态填充 -->
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="projectFilter">项目</label>
+            <select id="projectFilter">
+                <option value="all">全部项目</option>
+                <!-- 由 js 动态填充 -->
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="keywordInput">🔍 输入筛选（分类/项目）</label>
+            <input type="text" id="keywordInput" placeholder="输入关键词…" autocomplete="off">
+        </div>
+        <div class="filter-actions">
+            <button class="btn-reset" id="resetFilters">重置</button>
+        </div>
+    </div>
+
+    <!-- 表格 -->
+    <div class="table-wrap">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>分类</th>
+                    <th>项目</th>
+                    <th>链接地址</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- 由 JavaScript 动态渲染 -->
+            </tbody>
+        </table>
+    </div>
+    <div style="margin-top: 8px; font-size: 0.8rem; color: #5f7287; display: flex; justify-content: flex-end; gap: 6px; flex-wrap: wrap;">
+        <span>📊 共 <span id="rowCount">0</span> 条</span>
+        <span>· 下拉菜单自动从表格列提取</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---- 原始表格数据 (仅包含分类、项目、链接) ----
+        // 注意：链接地址列不参与下拉菜单生成，也不参与关键词搜索 (仅搜索分类和项目)
+        const tableData = [
+            { category: 'widnows', project: '系统相关', link: 'https://vuejs.org/' },
+            { category: 'linux', project: 'vim', link: 'https://www.yumsion.com/table/table98.html' },
+            { category: '知识', project: '900', link: 'https://www.yumsion.com/table/table98.html' },
+        ];
+
+        // DOM 引用
+        const tbody = document.getElementById('tableBody');
+        const categorySelect = document.getElementById('categoryFilter');
+        const projectSelect = document.getElementById('projectFilter');
+        const keywordInput = document.getElementById('keywordInput');
+        const resetBtn = document.getElementById('resetFilters');
+        const rowCountSpan = document.getElementById('rowCount');
+
+        // ---- 工具：从数据中提取唯一值 (分类 / 项目) ----
+        function getUniqueValues(data, key) {
+            const set = new Set();
+            data.forEach(item => {
+                if (item[key] && typeof item[key] === 'string') {
+                    set.add(item[key]);
+                }
+            });
+            return Array.from(set).sort();
+        }
+
+        // ---- 填充下拉菜单 ----
+        function populateSelect(selectElement, values, allLabel) {
+            // 保留第一个 "全部" 选项
+            selectElement.innerHTML = '';
+            const allOption = document.createElement('option');
+            allOption.value = 'all';
+            allOption.textContent = allLabel;
+            selectElement.appendChild(allOption);
+
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                selectElement.appendChild(opt);
+            });
+        }
+
+        // ---- 初始化下拉菜单 (从 tableData 提取) ----
+        function initFilters() {
+            const categories = getUniqueValues(tableData, 'category');
+            const projects = getUniqueValues(tableData, 'project');
+            populateSelect(categorySelect, categories, '全部分类');
+            populateSelect(projectSelect, projects, '全部项目');
+        }
+
+        // ---- 渲染表格 (基于过滤后的数据) ----
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="3">没有匹配的记录</td></tr>`;
+                rowCountSpan.textContent = '0';
+                return;
+            }
+            let html = '';
+            data.forEach(item => {
+                const category = escapeHtml(item.category);
+                const project = escapeHtml(item.project);
+                const link = escapeHtml(item.link);
+                html += `<tr>
+                    <td class="col-category">${category}</td>
+                    <td class="col-project">${project}</td>
+                    <td class="col-link"><a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+            rowCountSpan.textContent = data.length;
+        }
+
+        // 简单防 XSS
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // ---- 核心过滤 (仅对 分类 和 项目 列进行筛选，链接列不参与搜索) ----
+        function filterData() {
+            const categoryVal = categorySelect.value;   // 'all' 或 具体分类
+            const projectVal = projectSelect.value;     // 'all' 或 具体项目
+            const keyword = keywordInput.value.trim().toLowerCase();
+
+            const filtered = tableData.filter(item => {
+                // 1. 分类筛选
+                if (categoryVal !== 'all' && item.category !== categoryVal) {
+                    return false;
+                }
+                // 2. 项目筛选
+                if (projectVal !== 'all' && item.project !== projectVal) {
+                    return false;
+                }
+                // 3. 关键词输入筛选 (仅匹配 分类 和 项目，不匹配链接)
+                if (keyword !== '') {
+                    const inCategory = item.category.toLowerCase().includes(keyword);
+                    const inProject = item.project.toLowerCase().includes(keyword);
+                    if (!inCategory && !inProject) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            renderTable(filtered);
+        }
+
+        // ---- 重置 ----
+        function resetFilters() {
+            categorySelect.value = 'all';
+            projectSelect.value = 'all';
+            keywordInput.value = '';
+            filterData();
+        }
+
+        // ---- 绑定事件 ----
+        categorySelect.addEventListener('change', filterData);
+        projectSelect.addEventListener('change', filterData);
+        keywordInput.addEventListener('input', filterData);
+        resetBtn.addEventListener('click', resetFilters);
+
+        // ---- 初始化 ----
+        initFilters();          // 从 tableData 动态生成下拉选项
+        renderTable(tableData); // 显示全部数据
+        rowCountSpan.textContent = tableData.length;
+
+        console.log('✅ Table Index 已启动 · 下拉菜单由表格列自动生成');
+    })();
+</script>
+</body>
+</html>
