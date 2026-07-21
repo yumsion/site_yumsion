@@ -382,6 +382,11 @@ execute 'rviminfo! ' . fnameescape(viminfo_file)</br>
 endif</br>endfunction</br></br>" 自动保存和加载的触发器</br>autocmd BufReadPost * call AutoLoadViminfo()</br>autocmd BufWritePost,FocusLost * call AutoSaveViminfo()</br>autocmd VimEnter * nested call AutoLoadVimsession()</br>autocmd VimLeave * call AutoSaveViminfo()</br></br>用括号自动高亮匹配，很恶心
     </details></td><td>vim 初始化</td></tr>
         <!-- 分割线 -->
+    <tr><td><details><summary>vimrc 加载和诊断</summary>
+:scriptnames #查看所有加载的配置文件及顺序
+:verbose set shiftwidth? #查询"某个配置是谁加上的"
+    </details></td><td>vim 初始化</td></tr>
+        <!-- 分割线 -->
     <tr><td><details><summary>vim 数学函数</summary>
 浮点数计算函数只有在vim编译时支持了+float时才有效。
 sin() : sine正弦函数</br>
