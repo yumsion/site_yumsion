@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 626 知识 软件设计和开发</h1>
+      <h1>table 138 软件 git</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,17 +59,32 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details><summary></summary>
-<p><strong>☐ 软件的数据安全是否符合安全管理核心：“三员”分工原则</strong></p>
-<p><strong>系统管理员</strong>：负责系统运行维护。<br> 具体包括软硬件安装、日常维护、数据备份与恢复，以及普通用户账号的增删等操作。<br> <em>管运维，但管不了权限审批。</em></p><p><strong>安全管理员</strong>：负责安全策略管理。<br> 核心职责包括权限审批（决定谁能看什么）、数据分类分级、安全策略配置（如加密规则），以及组织安全培训和应急响应。<br> <em>管权限，但管不了审计。</em></p><p><strong>审计管理员</strong>：负责监督检查。<br> 独立记录和分析系统管理员和安全管理员的所有操作日志，监督其是否存在违规行为。<br> <em>管审计，但不做具体运维和授权。</em></p><p><strong>重要原则：</strong><br> 一些法规明确要求“三员”必须由不同人员担任，且不得相互兼任。</p>
-    </details></td><td>软件设计 数据安全</td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary>代码规范与审查</summary>
+    <tr><td><details><summary>git diff 对比内容变动</summary>
 <table>
-<tr><th>名称</th><th>描述</th></tr>
-<tr><td><a href="table803.html" target=_blank>c语言代码规范</a></td><td></td></tr>
+<tr><th>CMD</th><th>DESCR</th></tr>
+<tr><td>git diff</td><td>比较工作区和暂存区</td></tr>
+<tr><td>git diff --cached</td><td>比较暂存区和仓库</td></tr>
+<tr><td>git diff --staged</td><td>比较暂存区和仓</td></tr>
+<tr><td>git diff HEAD</td><td>比较工作区和仓库</td></tr>
+<tr><td>git diff 120304c..3748d7e</td><td>比较2次提交</td></tr>
+<tr><td>git diff main origin/main</td><td>比较2个分支</td></tr>
+<tr><td>git diff main origin/main -- file01</td><td>仅比较指定文件的差异</td></tr>
+<tr><td></td><td></td></tr>
 </table>
-    </details></td><td>软件开发 代码规范</td></tr>
+    </details></td><td>git diff</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>git reset #堆栈式删除提交</summary>
+<table>
+<tr><th>CMD</th><th>DESCR</th></tr>
+<tr><td>git reset --mixed HEAD~1</td><td>默认选项，删除最后一次提交，不同步工作区（保留工作区的内容）</td></tr>
+<tr><td>git reset --soft HEAD~1</td><td>删除最后一次提交，不同步暂存区（保留暂存区的内容）</td></tr>
+<tr><td>git reset --hard HEAD~1</td><td>删除最后一次提交，同步工作区和暂存区（删除工作区和暂存区的内容）</td></tr>
+<tr><td></td><td></td></tr>
+</table>
+    </details></td><td>git diff</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>git pull = git fetch + git merge</summary>
+    </details></td><td>git pull</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>
