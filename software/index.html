@@ -171,8 +171,22 @@
 <tr>
 <td> linux </td>
 <td> <a href="https://github.com/databasus/databasus" target="_blank">databusus</a> </td>
-<td> 数据库备份和验证 <span class="badge">?</span></td>
-<td> 数据库备份和自动验证工具</td>
+<td> 数据库备份和验证 <span class="badge">9</span></td>
+<td> 数据库备份和自动验证工具</br>
+<table><tr><td>项目</td><td>验证结果（version：v3.44.0 x64）</td></tr>
+<tr><td>支持压缩传输</td><td>【是】12.23GB数据库传输使用流量3.04GB</td></tr>
+<tr><td>支持MYSQL增量备份</td><td>【否】不支持MYSQL增量备份</td></tr>
+<tr><td>外部存储支持</td><td>【是】支持非常好</td></tr>
+<tr><td>本地加密数据存储</td><td>【是】外置的SMB方式的存储是加密的</td></tr>
+<tr><td>本地存储压缩</td><td>【是】12.23GB数据库，实际占用存储大概270MB</td></tr>
+<tr><td>定时任务</td><td>【是】支持较好</td></tr>
+<tr><td>结果推送</td><td>【是】支持备份成功和失败的推送，支持webhook推送，可以进行实时信息的推送处理</td></tr>
+<tr><td>自动备份恢复验证</td><td>【是】有选项，未测试</td></tr>
+<table><tr><td>事项</td><td>内容（version：v3.44.0 x64）</td></tr>
+<tr><td>时区问题</td><td>cron定时使用的时区是UTC,需要进行确认，否则导致备份时间有问题。其他定时是本地zone的时间定时。</td></tr>
+<tr><td>MYSQL数据库备份扩大化</td><td>MYSQL备份会备份该备份账户所有可访问的数据库，需要手动配置只读账户权限，限制可访问的数据库。</td></tr>
+<tr><td>DNS管理</td><td>如果进行严格的网络管控，需要到docker里面配置hosts文件的指向</td></tr>
+</table></td>
 </tr>
 <tr>
 <td> linux </td>

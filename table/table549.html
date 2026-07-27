@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>YUMSION‘s TABLE</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 588 产品 大华产品</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td style="white-space:pre-warp;"><details><summary>H3C无线漫游优化相关</summary>
+1. 开启 802.11r 快速漫游 (FT)
+802.11r（Fast BSS Transition）在 H3C 上被称为 FT。开启它能让通过 802.1X认证的终端在 AP 间漫游时，跳过重新进行 RADIUS 握手的步骤。
+注意： 配置 ft enable 之前，必须先通过 undo service-template enable 临时禁用该服务模板。
+<AC> system-view
+[AC] wlan service-template employee # 进入你的飞连服务模板
+[AC-wlan-st-employee] undo service-template enable # 临时禁用服务模板以允许修改
+[AC-wlan-st-employee] security-ie rsn # 确保安全协议为 RSN（WPA2/WPA3）
+[AC-wlan-st-employee] ft enable # 开启 802.11r 快速漫游
+[AC-wlan-st-employee] service-template enable # 重新启用服务模板
+
+2. 配置弱信号强制踢下线（客户端主动漫游）
+当终端信号低于阈值（如 RSSI 值为 20，约 −75dBm∼−80dBm）时，让 AP 主动断开该终端，逼迫其快速漫游。
+在 H3C 中，该功能通常在 AP 组的射频视图 或 具体 AP 的射频接口 下配置。
+[AC] wlan ap-group default # 进入 AP 组（或指定 AP 组）
+[AC-wlan-ap-group-default] ap-model WA6320 # 进入对应的 AP 型号视图
+[AC-wlan-ap-group-default-ap-model-WA6320] radio 1 # 进入 5GHz 射频（通常为 Radio 1 或 2）
+# 开启弱信号踢下线功能（低于 RSSI 20 强制踢除，取值范围 1-30，建议 18~22 之间）
+[AC-wlan-ap-group-default-ap-model-WA6320-radio-1] option client-reject enable rssi 20
+# (可选) 开启 AP 忽略弱信号报文功能，减少边缘弱信号垃圾报文对 AP 性能的消耗
+[AC-wlan-ap-group-default-ap-model-WA6320-radio-1] option signal-ignore enable rssi 15
+
+3. 开启 802.11k 和 802.11v（辅助漫游）
+在服务模板中开启 11k 和 11v，帮助终端更聪明地感知周围 AP 的负载和信号强度，提前准备漫游策略。
+[AC] wlan service-template employee
+[AC-wlan-st-employee] undo service-template enable
+
+[AC-wlan-st-employee] 11k enable # 开启 802.11k 邻居报文通告
+#或
+[AC-wlan-st-employee] bss transition-management enable #（开启802.11v）
+
+[AC-wlan-st-employee] 11v bss-transition enable # 开启 802.11v BSS 过渡管理
+#或
+[AC-wlan-st-employee] sacp anti-sticky enable rssi [rssi值] interval [秒数]
+#开启后，AP会收集周边AP的信息，并“建议”终端漫游到更合适的AP，整个过程对用户更平滑,rssi 75 表示当终端信号低于-75dBm左右时触发；
+#interval 10 表示AC每10秒检查一次。如果效果不明显，可以将 rssi 值调高到 30 或 35（数值越高，触发越灵敏）。
+#或
+option client reject enable rssi 25
+#或group视图下
+
+
+[AC-wlan-st-employee] service-template enable
+
+二、有线交换机侧配置：加速终端 MAC 迁移
+当终端从 AP 1 快速切换到 AP 2 时，终端的物理接入端口在交换机上发生了漂移。如果交换机不能在毫秒级感知这个漂移，下行流量依然会发往旧 AP 导致短暂断网。
+在 连接 AP 的接入交换机（以及核心/汇聚交换机） 上配置：
+
+1. 开启 MAC 地址迁移快速更新 ARP
+当交换机发现某个 MAC 地址从端口 A 漂移到了端口 B 时，立刻触发底层硬件的 MAC 表更新并发送 ARP 探测，避免流量黑洞。
+<Switch> system-view
+# 开启 MAC 地址迁移通知
+[Switch] mac-address notification mac-move
+# 开启因 MAC 迁移导致的 ARP 快速更新（极重要！缩短漫游后断流时间）
+[Switch] mac-address mac-move fast-update enable
+2. 优化交换机端口的生成树（Edge Port）
+连接 AP 的交换机端口必须配置为边缘端口。否则，当终端切换 AP 导致物理链路变动时，普通生成树计算会导致端口有 15∼30 秒的收敛等待时间。
+[Switch] interface GigabitEthernet 1/0/1 # 进入连接 AP 的交换机物理端口
+[Switch-GigabitEthernet1/0/1] stp edged-port # 配置为边缘端口，免去生成树收敛时间
+    </details></td><td>H3C 无线漫游配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary>H3C无线信号管理</summary>
+配置信号强度
+配置信道
+    </details></td><td>H3C 无线信号相关</td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-24 17:56:40</div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>
