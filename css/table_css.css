@@ -320,25 +320,6 @@ tbody tr:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-/* details 内容背景保持透明，继承行背景 */
-tbody tr td details {
-  background: transparent;
-}
-
-tbody tr td details summary {
-  cursor: pointer;
-  font-weight: 500;
-  color: #1e293b;
-  transition: color 0.2s;
-}
-
-tbody tr td details summary:hover {
-  color: #5b7cfa;
-}
-
-tbody tr td details {
-  background: transparent;
-}
 
 tbody td {
   padding: 14px 18px;
@@ -410,122 +391,15 @@ tbody tr td:last-child {
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
-.category-tag[data-category="编辑器"] {
-  background: #e3f2fd;
-  color: #1565c0;
-}
-.category-tag[data-category="编辑器"]:hover {
-  background: #2196f3;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-}
-
-.category-tag[data-category="前端"] {
-  background: #fff3e0;
-  color: #e65100;
-}
-.category-tag[data-category="前端"]:hover {
-  background: #ff9800;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-}
-
-.category-tag[data-category="编程"] {
-  background: #fce4ec;
-  color: #c62828;
-}
-.category-tag[data-category="编程"]:hover {
-  background: #f44336;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
-}
-
-.category-tag[data-category="版本控制"] {
-  background: #f3e5f5;
-  color: #6a1b9a;
-}
-.category-tag[data-category="版本控制"]:hover {
-  background: #9c27b0;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
-}
-
-.category-tag[data-category="运维"] {
-  background: #e0f7fa;
-  color: #00695c;
-}
-.category-tag[data-category="运维"]:hover {
-  background: #009688;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3);
-}
-
-.category-tag[data-category="数据库"] {
-  background: #e8eaf6;
-  color: #283593;
-}
-.category-tag[data-category="数据库"]:hover {
-  background: #3f51b5;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
-}
-
-.category-tag[data-category="设计"] {
-  background: #fce4ec;
-  color: #880e4f;
-}
-.category-tag[data-category="设计"]:hover {
-  background: #e91e63;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
-}
-
-.category-tag[data-category="测试"] {
-  background: #e8f5e9;
-  color: #1b5e20;
-}
-.category-tag[data-category="测试"]:hover {
-  background: #8bc34a;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
-}
 
 /* vim 相关分类 */
 .category-tag[data-category="vim hex"],
-.category-tag[data-category="vim 快速跳转"],
-.category-tag[data-category="vim 查找和替换"],
-.category-tag[data-category="vim 内容编辑"],
-.category-tag[data-category="vim 正则表达式"],
-.category-tag[data-category="vim 剪切板或寄存器操作"],
-.category-tag[data-category="vim 扩展配置"],
-.category-tag[data-category="vim 宏"],
-.category-tag[data-category="vim 分屏"],
-.category-tag[data-category="vim 鼠标"],
-.category-tag[data-category="vim 撤销和重做"],
-.category-tag[data-category="vim 显示"],
-.category-tag[data-category="vim 文件操作"],
-.category-tag[data-category="vim 命令行"],
-.category-tag[data-category="vim 模式"],
 .category-tag[data-category="vim 初始化"],
 .category-tag[data-category="vim 内置函数"] {
   background: #e8eaf6;
   color: #283593;
 }
 .category-tag[data-category="vim hex"]:hover,
-.category-tag[data-category="vim 快速跳转"]:hover,
-.category-tag[data-category="vim 查找和替换"]:hover,
-.category-tag[data-category="vim 内容编辑"]:hover,
-.category-tag[data-category="vim 正则表达式"]:hover,
-.category-tag[data-category="vim 剪切板或寄存器操作"]:hover,
-.category-tag[data-category="vim 扩展配置"]:hover,
-.category-tag[data-category="vim 宏"]:hover,
-.category-tag[data-category="vim 分屏"]:hover,
-.category-tag[data-category="vim 鼠标"]:hover,
-.category-tag[data-category="vim 撤销和重做"]:hover,
-.category-tag[data-category="vim 显示"]:hover,
-.category-tag[data-category="vim 文件操作"]:hover,
-.category-tag[data-category="vim 命令行"]:hover,
-.category-tag[data-category="vim 模式"]:hover,
 .category-tag[data-category="vim 初始化"]:hover,
 .category-tag[data-category="vim 内置函数"]:hover {
   background: #3f51b5;
@@ -535,7 +409,7 @@ tbody tr td:last-child {
 
 /* 内容列占更多空间 */
 tbody td:first-child {
-  width: 70%;
+  width: 10%;
 }
 
 /* ===== 隐藏行（筛选） ===== */

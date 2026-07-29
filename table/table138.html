@@ -60,31 +60,26 @@
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
     <tr><td><details><summary>git diff 对比内容变动</summary>
-<table>
-<tr><th>CMD</th><th>DESCR</th></tr>
-<tr><td>git diff</td><td>比较工作区和暂存区</td></tr>
-<tr><td>git diff --cached</td><td>比较暂存区和仓库</td></tr>
-<tr><td>git diff --staged</td><td>比较暂存区和仓</td></tr>
-<tr><td>git diff HEAD</td><td>比较工作区和仓库</td></tr>
-<tr><td>git diff 120304c..3748d7e</td><td>比较2次提交</td></tr>
-<tr><td>git diff main origin/main</td><td>比较2个分支</td></tr>
-<tr><td>git diff main origin/main -- file01</td><td>仅比较指定文件的差异</td></tr>
-<tr><td></td><td></td></tr>
-</table>
+    <ol>
+<li>git diff	#比较工作区和暂存区</li>
+<li>git diff --cached	#比较暂存区和仓库</li>
+<li>git diff --staged	#比较暂存区和仓</li>
+<li>git diff HEAD	#比较工作区和仓库</li>
+<li>git diff 120304c..3748d7e	#比较2次提交</li>
+<li>git diff main origin/main	#比较2个分支</li>
+<li>git diff main origin/main -- file01	#仅比较指定文件的差异</li>
+    </ol>
     </details></td><td>git diff</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>git reset #堆栈式删除提交</summary>
-<table>
-<tr><th>CMD</th><th>DESCR</th></tr>
-<tr><td>git reset --mixed HEAD~1</td><td>默认选项，删除最后一次提交，不同步工作区（保留工作区的内容）</td></tr>
-<tr><td>git reset --soft HEAD~1</td><td>删除最后一次提交，不同步暂存区（保留暂存区的内容）</td></tr>
-<tr><td>git reset --hard HEAD~1</td><td>删除最后一次提交，同步工作区和暂存区（删除工作区和暂存区的内容）</td></tr>
-<tr><td></td><td></td></tr>
-</table>
-    </details></td><td>git diff</td></tr>
+    <ol>
+<li>git reset --mixed HEAD~1	#默认选项，删除最后一次提交，不同步工作区（保留工作区的内容）</li>
+<li>git reset --soft HEAD~1	#删除最后一次提交，不同步暂存区（保留暂存区的内容）</li>
+<li>git reset --hard HEAD~1	#删除最后一次提交，同步工作区和暂存区（删除工作区和暂存区的内容）</li>
+    </ol>
+    </details></td><td>git reset</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>git pull = git fetch + git merge</summary>
-    </details></td><td>git pull</td></tr>
+    <tr><td>git pull = git fetch + git merge</td><td>git pull</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>

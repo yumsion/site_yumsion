@@ -226,115 +226,6 @@
             flex-wrap: wrap;
         }
 
-        /* ===== 覆盖导入的 table_css.css 中的冲突样式 ===== */
-        /* 重置导航栏样式，使用 index-page 内的导航样式 */
-        .index-page .top-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        .index-page .top-nav.hidden-nav {
-            transform: translateY(-100%);
-            opacity: 0;
-        }
-        .index-page .nav-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-        }
-        .index-page .nav-brand {
-            flex-shrink: 0;
-        }
-        .index-page .nav-logo {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1e293b;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: color 0.2s;
-        }
-        .index-page .nav-logo:hover {
-            color: #5b7cfa;
-        }
-        .index-page .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 8px;
-            margin: 0;
-            padding: 0;
-            align-items: center;
-        }
-        .index-page .nav-menu li {
-            margin: 0;
-        }
-        .index-page .nav-link {
-            display: block;
-            padding: 8px 18px;
-            color: #475569;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            border-radius: 40px;
-            transition: all 0.25s ease;
-            position: relative;
-        }
-        .index-page .nav-link:hover {
-            background: #f1f4fa;
-            color: #1e293b;
-        }
-        .index-page .nav-link.active {
-            background: #5b7cfa;
-            color: #ffffff;
-        }
-        .index-page .nav-link.active:hover {
-            background: #4a6ae0;
-        }
-        .index-page .nav-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            transition: background 0.2s;
-        }
-        .index-page .nav-toggle:hover {
-            background: #f1f4fa;
-        }
-        .index-page .hamburger {
-            display: block;
-            width: 26px;
-            height: 3px;
-            background: #1e293b;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-            transform-origin: center;
-        }
-        .index-page .nav-toggle.active .hamburger:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-        .index-page .nav-toggle.active .hamburger:nth-child(2) {
-            opacity: 0;
-        }
-        .index-page .nav-toggle.active .hamburger:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
 
         /* ===== 手机响应式 ===== */
         @media (max-width: 640px) {
@@ -380,7 +271,7 @@
             }
             .index-page th,
             .index-page td {
-                padding: 12px 10px;
+                padding: 1px 1px;
             }
             /* 导航栏移动端 */
             .index-page .nav-toggle {
