@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t291</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 291 软件 mysql_mariadb</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>mysql初始时的配置验证</summary>
+SHOW VARIABLES LIKE &#x27;innodb_redo_log_capacity&#x27;; #SET GLOBAL innodb_redo_log_capacity = 4294967296;  -- 4GB
+    </details></td><td>mysql init</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-wrap;"><details><summary>进行快速的数据导入(导入前分片，避免太多导入导致失败) 【关闭外键和事务】</summary>
+<b>执行数据导入命令</b>
+(
+  echo "SET FOREIGN_KEY_CHECKS=0;"
+  echo "SET UNIQUE_CHECKS=0;"
+  echo "SET AUTOCOMMIT=0;"
+  echo "SET sql_log_bin=0;"
+  cat /path/to/huge_backup.sql
+  echo "COMMIT;"
+  echo "SET FOREIGN_KEY_CHECKS=1;"
+  echo "SET UNIQUE_CHECKS=1;"
+) | mysql --defaults-file=/tmp/.my.cnf --host=1.1.1.2 --port=3306 --user=root --max-allowed-packet=1G database01
+
+#【注意】sql_log_bin 是一个会话级别的系统变量，不要在主库上执行此操作，否则恢复的数据变更不会被同步到任何从库，会导致主从数据不一致。
+
+<b>原理说明：</b>
+FOREIGN_KEY_CHECKS=0：暂停外键约束检查。
+UNIQUE_CHECKS=0：暂停唯一索引检查（导入完成后再统一构建）。
+AUTOCOMMIT=0：关闭自动提交，避免每行 INSERT 产生一次磁盘写日志。
+sql_log_bin=0：关闭 Binlog 日志记录（不写入二进制日志，大幅减少磁盘 I/O）。
+
+<b>临时调整 MySQL 服务端参数（全局提速）</b>
+-- 关闭每笔事务实时刷盘（从 1 改为 2，I/O 性能提升极明显）
+SET GLOBAL innodb_flush_log_at_trx_commit = 2;
+-- 放大单次数据包限制，防止超大 INSERT 报 Packet error
+SET GLOBAL max_allowed_packet = 1073741824; -- 1GB
+
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

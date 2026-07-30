@@ -409,7 +409,8 @@ tbody tr td:last-child {
 
 /* 内容列占更多空间 */
 tbody td:first-child {
-  width: 10%;
+  min-width: 10%;
+  max-width: 90%;
 }
 
 /* ===== 隐藏行（筛选） ===== */
