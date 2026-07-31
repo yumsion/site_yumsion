@@ -90,7 +90,74 @@ SET GLOBAL innodb_flush_log_at_trx_commit = 2;
 -- 放大单次数据包限制，防止超大 INSERT 报 Packet error
 SET GLOBAL max_allowed_packet = 1073741824; -- 1GB
 
-    </details></td><td></td></tr>
+    </details></td><td>mysql restore</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>mysql install and init</summary>
+<b>#初始化并创建数据库</b>
+mysqld --no-defaults --initialize-insecure --user=yum --datadir=/mnt/mysql_data --log-error=/mnt/mysql_log/error.log
+<b>#报错与处理</b>
+#报错:mysqld: Can&#x27;t create directory &#x27;/mnt/mysql_data/&#x27; (OS errno 13 - Permission denied)
+#Ubuntu 默认会预装 AppArmor，但可能缺少 apparmor-utils 工具包（包含 aa-disable、aa-status 等命令）
+<b>#安装apparmor管理工具</b>
+apt install -y apparmor-utils
+<b>#配置apparmor权限</b>
+查看AppArmor状态（确认mysql规则是否启用）
+aa-status | grep mysql
+/usr/sbin/mysqld
+#临时关闭mysql的AppArmor规则（重启后失效，适合调试）
+aa-disable /etc/apparmor.d/usr.sbin.mysqld
+或
+apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+或
+给 AppArmor 授权 /mnt 目录
+# 编辑MySQL的AppArmor规则文件
+sudo vim /etc/apparmor.d/usr.sbin.mysqld
+
+# 找到以下默认数据目录规则段：
+# /var/lib/mysql/ r,
+# /var/lib/mysql/** rwk,
+
+# 在其下方添加你的自定义目录权限（关键）：
+/mnt/mysql_data/ r,
+/mnt/mysql_data/** rwk,
+/mnt/mysql_log/ r,
+/mnt/mysql_log/** rwk,
+
+# 保存后重新加载AppArmor规则
+apparmor_parser -r /etc/apparmor.d/usr.sbin.mysqld
+
+
+<b>#重新初始化</b>
+mysqld --no-defaults --initialize-insecure --user=yum --datadir=/mnt/mysql_data --log-error=/mnt/mysql_log/error.log
+注意:
+--user=yum 的具体作用：指定 mysqld 进程在 Linux 系统中以 yum 用户的身份运行（进程所属用户是 yum），所有 MySQL 数据文件（/mnt/mysql_data 下的文件）的所有者也会是 yum 用户。
+数据库的内部管理员用户依然是root
+
+<b>#运行</b>
+#直接运行
+mysqld --no-defaults --user=yum --datadir=/mnt/mysql_data --log-error=/mnt/mysql_log/error.log --socket=/mnt/mysql_data/mysql.sock
+或 看实时输出
+mysqld --no-defaults --user=yum --datadir=/mnt/mysql_data --log-error=/mnt/mysql_log/error.log --socket=/mnt/mysql_data/mysql.sock --console
+
+<b>#登录</b>
+mysql -u root --socket=/mnt/mysql_data/mysql.sock
+<b>#配置登录区域和密码</b>
+alter user &#x27;root&#x27;@&#x27;localhost&#x27; identified by "password01";
+或
+-- 给 root@127.0.0.1 设置密码（和 localhost 保持一致）
+ALTER USER &#x27;root&#x27;@&#x27;127.0.0.1&#x27; IDENTIFIED BY &#x27;password01&#x27;;
+
+-- （可选）如果需要远程连接，还可以设置 root@%（所有IP）
+-- ALTER USER &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;password01&#x27;;
+
+-- 刷新权限使修改生效
+FLUSH PRIVILEGES;
+    </details></td><td>mysql init</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>数据库管理命令-开启和重启</summary>
+SHUTDOWN #关闭数据库【注意：可能导致关闭后无法启动】
+RESTART #重新启动数据库【注意：可能导致无法重启，未测试】
+    </details></td><td>mysql sql</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>
