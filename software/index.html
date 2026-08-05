@@ -185,6 +185,7 @@
 <table><tr><td>事项</td><td>内容（version：v3.44.0 x64）</td></tr>
 <tr><td>时区问题</td><td>cron定时使用的时区是UTC,需要进行确认，否则导致备份时间有问题。其他定时是本地zone的时间定时。</td></tr>
 <tr><td>MYSQL数据库备份扩大化</td><td>MYSQL备份会备份该备份账户所有可访问的数据库，需要手动配置只读账户权限，限制可访问的数据库。</td></tr>
+<tr><td>MYSQL数据库备份恢复失败问题</td><td>MYSQL备份恢复可能会失败，尤其是数据库大小大于100GB,配置各种参数还是会失败，显示“mysql failed: signal: killed – stderr: ”，建议手动恢复。</td></tr>
 <tr><td>DNS管理</td><td>如果进行严格的网络管控，需要到docker里面配置hosts文件的指向</td></tr>
 </table></td>
 </tr>

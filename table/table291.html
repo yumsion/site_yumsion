@@ -60,7 +60,17 @@
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
     <tr><td><details><summary>mysql初始时的配置验证</summary>
-SHOW VARIABLES LIKE &#x27;innodb_redo_log_capacity&#x27;; #SET GLOBAL innodb_redo_log_capacity = 4294967296;  -- 4GB
+-- 配置redo log空间为4G，避免过小导致避免频繁触发脏页刷盘（Checkpoints）从而释放 Redo Log 空间。</br>
+SET GLOBAL innodb_redo_log_capacity = 4294967296;</br>
+</br>
+-- 将网络读取超时从 30秒 提升到 1小时（防止 NAS/数据流卡顿断连）</br>
+SET GLOBAL net_read_timeout = 3600;</br>
+</br>
+-- 将网络写入超时提升到 1小时</br>
+SET GLOBAL net_write_timeout = 3600;</br>
+</br>
+-- 将单包接收上限从 64MB 调大到 1GB（防止大单条 INSERT 撑爆）</br>
+SET GLOBAL max_allowed_packet = 1073741824;</br>
     </details></td><td>mysql init</td></tr>
         <!-- 分割线 -->
     <tr><td style="white-space:pre-wrap;"><details><summary>进行快速的数据导入(导入前分片，避免太多导入导致失败) 【关闭外键和事务】</summary>
@@ -90,6 +100,10 @@ SET GLOBAL innodb_flush_log_at_trx_commit = 2;
 -- 放大单次数据包限制，防止超大 INSERT 报 Packet error
 SET GLOBAL max_allowed_packet = 1073741824; -- 1GB
 
+    </details></td><td>mysql restore</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>mysql_import.sh #大文件sql数据导入，逐步导入，避免过多数据导入失败。需要SESSION ADMIN权限来关闭bin log，以加快导入速度。</summary>
+#!/bin/bash</br></br>set -o pipefail</br>export LC_TIME=POSIX</br></br># 参数配置</br>MYSQL_BIN_FILE=&#x27;/usr/bin/mysql&#x27;</br>MYSQL_CNF=&#x22;/etc/my.cnf&#x22;</br>MYSQL_HOST=&#x22;1.1.1.2&#x22;</br>MYSQL_PORT=&#x22;3306&#x22;</br>MYSQL_USER=&#x22;user01&#x22;</br>MYSQL_PASSWORD=&#x22;password01&#x22;</br>TARGET_DB=&#x22;db01&#x22;</br>SQL_FILE=&#x22;sql01.sql&#x22;</br>BATCH_SIZE=10000</br></br># 检查 SQL 文件是否存在</br>if [ ! -f &#x22;$SQL_FILE&#x22; ]; then</br>    echo &#x22;[ERROR] 错误: 文件 $SQL_FILE 不存在！&#x22;</br>    exit 1</br>fi</br></br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 存在。&#x22;</br></br>exec {FD_SQL}&#x3c;&#x22;$SQL_FILE&#x22;</br>[[ $? -ne 0 ]] &#x26;&#x26; echo &#x22;[ERROR] $SQL_FILE FAILED, exit...&#x22; &#x26;&#x26; exit 1</br></br>echo &#x22;[INFO] SQL_FILE 文件已打开，准备开始读取。&#x22;</br>TOTAL_COUNTER=0</br></br>while true</br>do</br>echo &#x22;$(date) TOTAL_COUNTER : $TOTAL_COUNTER&#x22; &#x3e;&#x26;2</br></br>#以下内容会输送到MYSQL中，不要再STDOUT中输出非必要内容</br>(</br>    # 1. 连接初期设置（关闭约束与日志以提高写入性能）</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=0;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=0;&#x22;</br>    echo &#x22;SET AUTOCOMMIT=0;&#x22;</br>    echo &#x22;SET sql_log_bin=0;&#x22;</br>    echo &#x22;BEGIN;&#x22;</br></br>    # 2. 使用 read 逐行读取 SQL 并按批次 COMMIT/BEGIN</br>    count=0</br>    while IFS= read -u &#x22;$FD_SQL&#x22; -r line || [ -n &#x22;$line&#x22; ]; do</br></br>&#x09;if [ $count -eq 0 ]; then</br>&#x09;&#x09;echo &#x22;BEGIN;&#x22;</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>&#x09;&#x09;echo &#x22;[INFO] 第一行$line&#x22; &#x3e;&#x26;2</br>        elif [ $count -ge $BATCH_SIZE ]; then</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>&#x09;&#x09;echo &#x22;[INFO] 最后一行$line&#x22; &#x3e;&#x26;2</br>&#x09;&#x09;break;</br>&#x09;else</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>        fi</br>        ((count++))</br>    done</br></br>    # 3. 循环结束后提交剩余未提交的数据并恢复设置</br>    echo &#x22;COMMIT;&#x22;</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=1;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=1;&#x22;</br></br>) | mysql --defaults-file=&#x22;$MYSQL_CNF&#x22; &#x5c;</br>        --host=&#x22;$MYSQL_HOST&#x22; &#x5c;</br>        --port=&#x22;$MYSQL_PORT&#x22; &#x5c;</br>        --user=&#x22;$MYSQL_USER&#x22; &#x5c;</br>&#x09;--password=&#x22;password01&#x22; &#x5c;</br>        --max-allowed-packet=1G &#x5c;</br>        --line-numbers &#x5c;</br>        --skip-ssl &#x5c;</br>        --unbuffered &#x5c;</br>        &#x22;$TARGET_DB&#x22;</br></br># 获取管道中 mysql 命令的返回状态码</br>if [[ ${PIPESTATUS[1]} -eq 0 ]]; then</br>    echo &#x22;数据导入成功完成！&#x22;</br>else</br>    echo &#x22;导入过程中发生错误，请检查日志！&#x22;</br>    break;</br>fi</br>sleep 1 || break</br>((TOTAL_COUNTER++))</br>done</br></br>exec {FD_SQL}&#x3e;&#x26;-</br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 已经关闭($?)。&#x22;</br>
     </details></td><td>mysql restore</td></tr>
         <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary>mysql install and init</summary>
@@ -149,6 +163,12 @@ ALTER USER &#x27;root&#x27;@&#x27;127.0.0.1&#x27; IDENTIFIED BY &#x27;password01
 
 -- （可选）如果需要远程连接，还可以设置 root@%（所有IP）
 -- ALTER USER &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;password01&#x27;;
+
+-- 数据库授权管理
+-- GRANT ALL ON ekp20220510.* TO &#x27;root&#x27;@&#x27;127.0.0.1&#x27;;</br>
+
+-- 全局/系统级动态权限 SESSION_VARIABLES_ADMIN (SET sql_log_bin=0;)
+-- GRANT SESSION_VARIABLES_ADMIN ON *.* TO &#x27;root&#x27;@&#x27;127.0.0.1&#x27;;
 
 -- 刷新权限使修改生效
 FLUSH PRIVILEGES;

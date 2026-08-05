@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>T154</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 154 软件 nftables</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>配置一个端口的MSS修改策略</summary>
+nft add table ip table_ip</br>
+nft add chain ip table_ip chain01 { type <b>filter</b> hook <b>output</b> priority 0&#x5c;; }</br>
+#仅当MSS大于指定值时才修改，避免出现数值问题。
+nft insert rule ip table_ip chain01 &#x27;oif &#x22;GRETB&#x22; tcp sport 10443 tcp flags &#x26; (syn | rst) == syn tcp option maxseg size &#x3e; 1436 tcp option maxseg size set 1436&#x27;</br>
+    </details></td><td>nftable mss</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nftable tcp 连接状态</summary>
+#放通ESTABLISHED, RELATED状态数据
+nft add rule ip table_ip chain01 iif &#x22;enp70s0&#x22; ct state { established, related } accept #符合TCP状态的</br>
+nft add rule table ip table01 chain01 iif "tun0" ct state != { established, related } drop #不符合状态的</br>
+nft flush table ip table01 chain01 tcp dport 10000-10005 accept #端口号范围</br>
+    </details></td><td>nft tcp相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details>nftable创建表，链，策略<summary></summary>
+nft flush ruleset #清空所有nftables内容</br>
+nft flush table ip table_ip #清空指定的表</br>
+nft flush chain ip table_ip chain01 #清空指定的chain</br>
+nft add chain ip table_ip chain02 { type nat hook prerouting priority 0 &#x5c;; } #新添chain</br>
+nft add rule inet table01 chain01 index 3 tcp dport 8081 accept #指定位置添加条目</br>
+nft add rule ip table_ip chain01 accept comment COMMENT01 #添加描述，如有空格，注意使用引号处理</br>
+    </details></td><td>nftable init</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nftable set/map</summary>
+nft add element ip table_ip set02 { 162 } #添加set的element</br>
+    </details></td><td>nftable set/map</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>SNAT</summary>
+nft add rule ip table01 chain01 snat to oif map {eth0 : 192.168.1.1,enp70s0 :10.1.1.1 }</br>
+nft add rule ip table_ip chain_postrouting snat ip saddr map { 192.168.1.1 : 1.1.1.1, 192.168.2.2 : 2.2.2.2, 192.168.3.3 : 3.3.3.3 }</br>
+nft add rule ip table_ip ip saddr 10.0.0.0/24 oif &#x22;eth0&#x22; snat to 192.168.1.103</br>
+nft replace rule ip table_ip chain01 handle 4 ip saddr 10.0.0.0/24 oif &#x22;wlan0&#x22; snat to 192.168.1.103</br>
+nft add rule ip table_ip chain_postrouting masquerade</br>
+nft add rule ip table_ip chain01 ether saddr 00:80:e1:00:00:01 masquerade</br>
+nft add rule ip table_ip chain02 ip saddr 10.0.0.0/24 oif wlp4s0 masquerade</br>
+    </details></td><td>nftable SNAT</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>DNAT</summary>
+nft add rule ip table_ip chain_prerouting dnat ip to 10.0.0.2</br>
+nft add rule ip table_ip chain_prerouting dnat ip6 to feed::c0fe</br>
+nft add rule ip table_ip chain01_output tcp dport 853 redirect to 10053</br>
+nft add rule ip table_ip chain01_prerouting tcp dport 22 redirect to 2222</br>
+nft add rule ip table_ip chain_prerouting iif eth0 tcp dport { 80, 443 } dnat 192.168.1.120</br>
+nft add rule ip table_ip chain_prerouting dnat tcp dport map { 1000 : 1.1.1.1, 2000 : 2.2.2.2, 3000 : 3.3.3.3} : tcp dport map { 1000 : 1234, 2000 : 2345, 3000 : 3456 }</br>
+    </details></td><td>nftable DNAT</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-08-03 17:45:07 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>
