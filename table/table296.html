@@ -78,8 +78,20 @@ nstat -az | grep -E "TcpExtIPReversePathFilter|TcpExtTCPLoss|TcpExtTCPTimeWaitOv
 
     </details></td><td>linux 系统配置</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details><summary>新机器安装</summary>
+<details><summary>locale #报错检查，应当没有任何错误，且需要的file是存在的</summary>
+<b>错误表现：</b>locale: Cannot set LC_* to default locale: No such file or directory</br>
+<b>处理方式：</b>localedef -i en_US -f UTF-8 en_US.UTF-8</br>
+<b>localedef的作用：</b></br>
+localedef 是 Linux 系统中用于编译和生成 locale 数据的命令，定义编译器。</br>
+-i	--inputfile，指定输入的语言环境定义文件</br>
+-f	--charmap，指定字符映射文件（字符编码）</br>
+最后一个参数	要生成的 locale 名称</br>
+从 /usr/share/i18n/locales/en_US 读取 locale 定义</br>
+从 /usr/share/i18n/charmaps/UTF-8.gz 读取 UTF-8 字符编码映射。</br>
+将上述信息编译成二进制格式，生成locale文件并注册到系统</br>
+</details>
+    </details></td><td>linux 软件安装</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>

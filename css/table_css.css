@@ -1,4 +1,21 @@
 /* ===== 全局重置 & 字体 ===== */
+/* 基础摘要样式：蓝色字体 */
+details details summary {
+  color: blue;
+  cursor: pointer;
+}
+details details {
+padding-left: 2rem;
+}
+details details summary {
+  margin-left: -2rem; /* 将摘要拉回原位 */
+}
+
+/* 可选：让 summary 和内容更清晰 */
+details {
+  margin-bottom: 0.5rem;
+}
+
 * {
   margin: 0;
   padding: 0;

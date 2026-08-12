@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>YUMSION‘s TABLE</title>
+  <title>t98</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -278,20 +278,30 @@ zf 使用Shift+v行选后，折叠选中的多行
 
     </details></td><td>vim 显示</td></tr>
         <!-- 分割线 -->
+
     <tr><td><details><summary>vim 显示</summary>
-:s/&lt;ctrl+v x&gt;00//g #将不可见字符^@(0x00)全部删除(此外还有u,U等长unicode格式)</br>
-:help digraph-table #显示不可见字符列表</br>
-set invlist #显示不可见字符</br>
-set listchars=eol:$ #设置list不好用的原因是本项没有设置好</br>
-set matchpairs+={:} #括号配对</br>
-set showbreak= #wrap后可能会产生箭头，箭头可以更改或者取消，避免复制时产生额外字符</br>
-iconv -f gbk -t UTF-8 -o a.txt b.txt #使用制定的编码打开文件无效前，可以进行强制转换</br>
-:e ++enc=gbk #强制使用gbk编码和字符集打开文件</br>
-:syntax on #colorscheme xxx 无效的解决方法</br>
-printf "\x1b[?1000h" #bash 执行，侏儒终端问题,vim鼠标滚轮导致的胡乱粘贴</br>
-printf "\x1b[?1000l" #bash 执行，侏儒终端问题,vim鼠标滚轮导致的胡乱粘贴</br>
-终端中执行：stty erase ^? #按backspace键显示^?的问题</br>
-set visualbell #关闭振动</br>
+<b>:s/&lt;ctrl+v x&gt;00//g</b> #将不可见字符^@(0x00)全部删除(此外还有u,U等长unicode格式)</br>
+<b>:help digraph-table</b> #显示不可见字符列表</br>
+<b>set invlist</b> #显示不可见字符</br>
+<b>set listchars=eol:$</b> #设置list不好用的原因是本项没有设置好</br>
+<b>set matchpairs+={:}</b> #括号配对</br>
+<b>set showbreak=</b> #wrap后可能会产生箭头，箭头可以更改或者取消，避免复制时产生额外字符</br>
+<b>iconv -f gbk -t UTF-8 -o a.txt b.txt</b> #使用制定的编码打开文件无效前，可以进行强制转换</br>
+<b>:e ++enc=gbk</b> #强制使用gbk编码和字符集打开文件,其他参数如utf-8</br>
+<b>:syntax on</b> #colorscheme xxx 无效的解决方法</br>
+<b>printf "\x1b[?1000h"</b> #bash 执行，侏儒终端问题,vim鼠标滚轮导致的胡乱粘贴</br>
+<b>printf "\x1b[?1000l"</b> #bash 执行，侏儒终端问题,vim鼠标滚轮导致的胡乱粘贴</br>
+<b>stty erase ^?</b> #终端中执行，避免按backspace键显示^?的问题</br>
+<b>set visualbell</b> #关闭振动</br>
+
+<details><summary>locale 文件缺失导致乱码 （多见于ubuntu系统） </summary>
+<b>故障表现</b></br>
+locale</br>
+locale: Cannot set LC_CTYPE to default locale: No such file or directory</br>
+locale: Cannot set LC_MESSAGES to default locale: No such file or directory</br>
+locale: Cannot set LC_ALL to default locale: No such file or directory</br>
+处理方式参照<a href="table296.html" target="_blank">table296.html</a> 新机器安装</br>
+</details>
 
     </details></td><td>vim 显示</td></tr>
         <!-- 分割线 -->
@@ -314,11 +324,10 @@ Ctrl+6 #下一个文件 </br>
 :set fileformat=unix #将文本格式转换成unix格式，自动更改\r\n为\n</br>
 :set fileencoding=utf-8 #文件保存方式</br>
 :set fileencodings=ucs-bom,utf-8,cp936 #文件编码自动筛选次序</br>
-:set termencoding=utf-8 #cat 显示正常，vim 乱码的故障
-vim -b abc.hex #使用-b参数打开二进制文件，否则自解码匹配可能造成后期文件返回不一致
-:%!xxd -p #反转成ascii hex表达形式
-:%!xxd -r -p #反转成hex
-
+:set termencoding=utf-8 #cat 显示正常，vim 乱码的故障</br>
+vim -b abc.hex #使用-b参数打开二进制文件，否则自解码匹配可能造成后期文件返回不一致</br>
+:%!xxd -p #反转成ascii hex表达形式</br>
+:%!xxd -r -p #反转成hex</br>
     </details></td><td>vim 文件操作</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>vim session和viminfo</summary>
