@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t218</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 218 bash snmp</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>snmp OID</summary>
+<b>IF-MIB::ifSpeed</b> #最大1G端口协商速率</br>
+<b>IF-MIB::ifOperStatus</b> #端口是否开放</br>
+<b>IF-MIB::ifName</b> #</br>
+<b>IF-MIB::ifAlias</b> #端口描述，如交换机的description命令对端口的描述</br>
+<b>ENTITY-MIB::entPhysicalDescr</b> #端口物理描述名称</br>
+<b>1.3.6.1.2.1.3.1.1.2.3466</b> #获取Mac地址</br>
+<b>1.3.6.1.2.1.3.1.1.3</b> #IP地址</br>
+<b>1.3.6.1.2.1.31.1.1.1.18</b> #端口描述名称IFALIAS</br>
+<b>IF-MIB::ifHighSpeed</b> #返回端口协商模式，Gauge32: 1000 【注意：】关闭的端口不为0</br>
+<b>IF-MIB::ifInDiscards.3</b> #端口弃包</br>
+<b>IP-MIB::ipAdEntAddr</b> #接口IP地址，没有找到index对应的选项</br>
+<b>IF-MIB::ifDescr</b> #端口名称</br>
+<b>IF-MIB::ifHCInOctets</b> #端口速率计数器64bit</br>
+<b>IF-MIB::ifInOctets</b> #端口速率计数器32bit</br>
+<b>IF-MIB::ifInErrors</b> #端口错误包计数器</br>
+<b>IF-MIB::ifPhysAddress</b> #获取端口的MAC地址</br>
+<b>IF-MIB::ifInUcastPkts</b> #单播包统计</br>
+<b>IF-MIB::ifInNUcastPkts</b> #非单播包统计</br>
+<b>IF-MIB::ifInMulticastPkts</b> #组播统计</br>
+<b>IF-MIB::ifInBroadcastPkts</b> #组播包统计</br>
+<b>IF-MIB::ifInDiscards</b> #丢弃包统计</br>
+<b>IF-MIB::ifInErrors</b> #错误包统计</br>
+<b>IF-MIB::ifInUnknownProtos</b> #未识别协议统计</br>
+<b>IF-MIB::ifOutQLen</b> #不知道是什么</br>
+<b>IF-MIB::ifSpecific</b> #SNMPv2-SMI::zeroDotZero</br>
+<b>IP-MIB::ipNetToMediaPhysAddress</b> #端口号+ARP表 IP-MIB::ipNetToMediaPhysAddress.636.172.23.0.4 = STRING: 30:00:42:2d:e1:12</br>
+</br>
+<b>TCP-MIB::tcpPassiveOpens</b> #主动外发连接数</br>
+<b>IF-MIB::ifType</b> #网卡类型 ethernetCsmacd(6) other(1) softwareLoopback(24)  l3ipvlan(136)</br>
+<b>IF-MIB::ifMtu</b> #MTU</br>
+<b>IF-MIB::ifSpeed</b> #【注意：端口关闭该值不为0】Gauge32: 100000000 百兆模式 Gauge32: 1000000000 千兆模式</br>
+<b>IF-MIB::ifAdminStatus</b> #管理员对端口的关闭</br>
+<b>IF-MIB::ifOperStatus</b> #端口目前协商状态</br>
+<b>IF-MIB::ifLastChange</b> #端口上次状态切换计时器</br>
+</br>
+</br>
+RADIUS相关</br>
+RADIUS-AUTH-CLIENT-MIB::radiusAuthClientInvalidServerAddresses.<b>0</b> = Counter32: 0</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientIdentifier.0</b> = STRING: H3C</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthServerAddress.1</b> = IpAddress: 172.16.1.4 #认证服务IP</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientServerPortNumber.1</b> = INTEGER: 2812 #认证端口</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientRoundTripTime.1</b> = Timeticks: (104) 0:00:01.04</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientAccessRequests.1</b> = Counter32: 2852429</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientAccessRetransmissions.1</b> = Counter32: 51</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientAccessAccepts.1</b> = Counter32: 276114</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientAccessRejects.1</b> = Counter32: 381050</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientAccessChallenges.1</b> = Counter32: 2195019</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientMalformedAccessResponses.1</b> = Counter32: 0</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientBadAuthenticators.1</b> = Counter32: 0</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientPendingRequests.1</b> = Gauge32: 228</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientTimeouts.1</b> = Counter32: 69</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientUnknownTypes.1</b> = Counter32: 0</br>
+<b>RADIUS-AUTH-CLIENT-MIB::radiusAuthClientPacketsDropped.1</b> = Counter32: 0</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientInvalidServerAddresses.0</b> = Counter32: 0</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientIdentifier.0</b> = STRING: H3C</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccServerAddress.1</b> = IpAddress: 172.16.1.4 #计费服务器IP</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientServerPortNumber.1</b> = INTEGER: 2813</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientRoundTripTime.1</b> = Timeticks: (0) 0:00:00.00</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientRequests.1</b> = Counter32: 1065109</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientRetransmissions.1</b> = Counter32: 52</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientResponses.1</b> = Counter32: 1063371</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientMalformedResponses.1</b> = Counter32: 0</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientBadAuthenticators.1</b> = Counter32: 0</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientPendingRequests.1</b> = Gauge32: 1717</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientTimeouts.1</b> = Counter32: 74</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientUnknownTypes.1</b> = Counter32: 0</br>
+<b>RADIUS-ACC-CLIENT-MIB::radiusAccClientPacketsDropped.1</b> = Counter32: 0</br>
+
+
+
+    </details></td><td>snmp OID</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>systemd snmptrapd</summary>
+[Unit]</br>
+Description=Simple Network Management Protocol (SNMP) Trap Daemon.</br>
+After=network.target</br>
+[Service]</br>
+Type=forking</br>
+User=root</br>
+Group=zabbix</br>
+ExecStart=/usr/sbin/snmptrapd -c /home/snmp/etc/snmptrapd.conf -C -m ALL -u snmp -M /home/snmp/MIB -Lf /home/snmp/snmptrapd.log -n</br>
+#PIDFile=/home/snmp/snmptrapd.pid</br>
+</br>
+[Install]</br>
+WantedBy=multi-user.target</br>
+</br>
+</br>
+</br>
+snmptrapd -C -c snmptrapd.conf -f -d -Lo #不使用默认配置 前台运行 debug模式 输出到stdout</br>
+</br>
+snmptrapd -C -c snmptrapd.conf -m ALL -M /usr/share/snmp/mibs -M /home/snmp/mibs/H3C_New_Style_Private_MIB -M /home/snmp/mibs/H3C_Public_MIB -f -d -Lo</br>
+#ALL前面没有+号</br>
+</br>
+snmptrapd -C -c snmptrapd.conf -m ALL -M /usr/share/snmp/mibs:/a/MIB:/b/MIB -f -d -Lo</br>
+#ALL前面没+号，-M只能出现一次，多填写无效，多个文件夹用冒号进行连接</br>
+</br>
+【介绍】</br>
+-C #表示不使用net-snmp默认路径下的配置文件</br>
+-f #Do not fork() from the calling shell，不进入后台运行</br>
+-d #开启debug模式，用于判断程序是否收到包，因为收到不一定会解析出来，如果不加，log没有任何显示</br>
+-m +ALL #加载所有模块</br>
+-Lo3 #log to stdout level 3</br>
+</br>
+    </details></td><td>snmptrapd sh</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>snmptrapd.conf</summary>
+vim snmptrapd.conf</br>
+#man snmptrad.conf</br>
+snmpTrapdAddr upd:162</br>
+127.0.0.1:161 #listen on UDP port 161, but only on the loopback interface.</br>
+udp6:10161 #listen on port 10161 on all IPv6 interfaces.</br>
+#配置认证信息</br>
+authCommunity log,execute,net in_community01 [SOURCE [OID | -v VIEW ]]</br>
+</br>
+#SNMPTRAPD V3</br>
+createUser snmpuser3 SHA256 authpass_sha256 DES privpass_des</br>
+authUser log snmpuser3</br>
+</br>
+#v3 中的 createUser -e ENGIN-ID影响到trap和trap information</br>
+createUser -e 123456789abcdef012 snmpuser3 ... #snmptrapd.conf中配置v3 trap user</br>
+snmptrap -e 123456789abcdef012 snmpuser3 ... #该用户可以这样发送v3 trap，使用trap information不会被解析</br>
+createUser snmpuser3 ... #snmptrapd.conf中配置v3 trap information，v3 trap不会被解析</br>
+snmptrap -Ci snmpuser3 ... #该用户可以这样发送v3 trap information，使用trap不会被解析</br>
+</br>
+</br>
+#Log</br>
+#perl callback function 0x55dc6f8052f8 returns 1#这个是正常的，perl的1表示正常返回。</br>
+#log level</br>
+0 or ! for LOG_EMERG,</br>
+1 or a for LOG_ALERT,</br>
+2 or c for LOG_CRIT,</br>
+3 or e for LOG_ERR,</br>
+4 or w for LOG_WARNING,</br>
+5 or n for LOG_NOTICE,</br>
+6 or i for LOG_INFO, and</br>
+7 or d for LOG_DEBUG.</br>
+</br>
+</br>
+    </details></td><td>snmptrapd snmptrapd.conf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>snmptranslate</summary>
+snmptranslate -T d HUAWEI-CPU-MIB::hwAvgDuty1min #MIB详细的OID列举表，暂时没有找到和时的MIB2OID翻译方法，目前只能使用这种。</br></br>
+snmptranslate 1.3.6.1.2.1.2.2.1.13.3 #OID转换成解释 #IF-MIB::ifInDiscards.3</br>
+snmptranslate -T p 1.3.6.1.2.1.2.2.1 #translate option tree</br>
+</br>
+</br>
+    </details></td><td>snmptranslate</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>snmpwalk</summary>
+snmpwalk -v 2c -c community01_read 192.168.99.94 HUAWEI-CPU-MIB::hwAvgDuty1min</br></br>
+snmpwalk -v 2c -c private 172.16.10.251 1.3.6.1.4.1.38107</br></br>
+</br>
+#SNMPWALK V3</br>
+snmpwalk -v 3 -l authPriv -n ContextName01 -u $USERNAME -a MD5 -A "auth12345678" -x DES -X "priv12345678" 172.16.50.4 '1.3.6.1.4.1.2699'</br>
+SNMP Version 1 or 2c specific</br>
+-c COMMUNITY set the community string</br>
+SNMP Version 3 specific</br>
+-a PROTOCOL set authentication protocol (MD5|SHA|SHA-224|SHA-256|SHA-384|SHA-512)</br>
+-A PASSPHRASE set authentication protocol pass phrase</br>
+-e ENGINE-ID set security engine ID (e.g. 800000020109840301)</br>
+-E ENGINE-ID set context engine ID (e.g. 800000020109840301)</br>
+-l LEVEL set security level (noAuthNoPriv|authNoPriv|authPriv)</br>
+-n CONTEXT set context name (e.g. bridge1)</br>
+-u USER-NAME set security name (e.g. bert)</br>
+-x PROTOCOL set privacy protocol (DES|AES)</br>
+-X PASSPHRASE set privacy protocol pass phrase</br>
+-Z BOOTS,TIME set destination engine boots/time</br>
+    </details></td><td>snmpwalk</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>snmptrap</summary>
+#SNMPTRAP V3</br>
+snmptrap -Ci -v 3 -a SHA -A auth_sha_password -x AES -X priv_aes_password -l authPriv -u snmptestuser 127.0.0.1 '' 1.3.6.1.4.1.33095.0.1000 1.3.6.1.4.1.33095.0.1000 s "This is my first snmp v3 trap."</br>
+-Ci #it sends an INFORM-PDU</br>
+</br>
+</br>
+#SNMPTRAP V2</br>
+snmptrap -v2c -c public 127.0.0.1 '' 1.3.6.1.4.1.33095.0.1000 1.3.6.1.4.1.33095.0.1000 s "This is my first snmp trap."</br>
+</br>
+#SNMPTRAP V1</br>
+snmptrap -v 1 -c community01 10.0.0.12 1.3.6.1.4.1.33095 1.1.1.1 2 3 1000 1.3.6.1.4.1.33095.1 s 'test ok1'</br>
+10.0.0.12 : Snmptrapd server ip address</br>
+1.3.6.1.4.1.33095 : Enterprise-OID</br>
+1.1.1.1 : Snmp agent IP(可被冒充)</br>
+2 : V1 Trap Generic</br>
+3 : V1 Trap Specific</br>
+1000 : Timestamp</br>
+1.3.6.1.4.1.33095.1 : OID</br>
+s : Trap type (string)</br>
+test ok1 : Trap value</br>
+</br>
+</br>
+</br>
+</br>
+公共日志参数</br>
+-L[efos]日志输出到指定的位置</br>
+-Le #Log messages to the standard error stream.</br>
+-Lo #Log messages to the standard output stream.</br>
+-Ls FACILITY</br>
+-Lf FILE #Log messages to the specified file.</br>
+</br>
+[OID TYPE VALUE] 部分可以重复多次，以包含多个变量绑定（varbinds）。</br>
+每个 varbind 包含一个 OID、一个类型和一个值。</br>
+类型标识符包括：</br>
+i 或 INTEGER：整数</br>
+s 或 STRING：字符串</br>
+u 或 UNSIGNED：无符号整数</br>
+c 或 COUNTER32：32位计数器</br>
+x 或 HEX STRING：十六进制字符串</br>
+d 或 DECIMAL STRING：十进制字符串</br>
+n 或 NULLOBJ：空对象</br>
+o 或 OBJID：对象标识符</br>
+t 或 TIMETICKS：时间戳</br>
+a 或 IPADDRESS：IP地址</br>
+b 或 BITS：位字段</br>
+</br>
+    </details></td><td>snmptrap</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>snmpd.conf</summary>
+createUser [-e ENGINEID] username (MD5|SHA|SHA-512|SHA-384|SHA-256|SHA-224) authpass_gt7[DES|AES] [privpass_gt7]</br>
+createUser snmpuser3 SHA256 authpass_sha256 DES privpass_des</br>
+authUser log snmpuser3</br>
+</br>
+    </details></td><td>snmpd snmpd.conf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>snmp install</summary>
+vim /etc/snmp/snmp.conf #THIS FILE WILL BE READ AS DEFAULT SNMP CLIENT CONF</br>
+defVersion 2c</br>
+mibdirs /usr/share/snmp/mibs:/usr/share/snmp/mibs/hh3c #MIBS MAYBE NOT RECURSE DIR</br>
+mibs ALL #LOAD ALL MIBS , LIKE PARAMETER -m +ALL</br>
+</br>
+</br>
+vim /home/snmp/snmptrapd.conf</br>
+snmpTrapdAddr 0.0.0.0:162</br>
+doNotRetainNotificationLogs yes</br>
+doNotLogTraps yes</br>
+doNotFork yes</br>
+pidFile /dev/shm/snmptrapd.pid</br>
+authCommunity log,execute community01</br>
+authCommunity execute community01_trap</br>
+#format1 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q) Uptime: %#T\n%v\n</br>
+#format2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q) Uptime: %#T\n%v\n</br>
+format print1 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q) Uptime: %#T\n%v\n</br>
+format print2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b]:\n%v\n</br>
+format syslog1 %a: %W Trap (%q) Uptime: %#T%#v\n</br>
+format syslog2 %B [%b]: Trap %#v\n</br>
+format execute %H:%M:%S %Y/%m/%d</br>
+ignoreAuthFailure no</br>
+#traphandle default /usr/bin/perl /home/snmp/zabbix_trap_receiver.pl #this line run with error ,Undefined subroutine &NetSNMP::TrapReceiver::register called at /home/snmp/zabbix_trap_receiver.pl line 112.</br>
+#traphandle default /usr/bin/perl /usr/bin/traptoemail -s mysmtp.somewhere.com -f admin@somewhere.com me@somewhere.com</br>
+#/usr/bin/perl do "/home/snmp/zabbix_trap_receiver.pl"</br>
+perl do "/home/snmp/zabbix_trap_receiver.pl" #THIS FILE IS from usr share zabbix</br>
+    </details></td><td>snmp install</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t573</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 573 产品 proxmox</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>PVE 硬件支持</summary>
+<details style="white-space:pre-wrap;"><summary>USB2RJ45 ASIX Electronics Corp. AX88179 Gigabit Ethernet #PVE8.2.2 支持性不好</summary>
+Settings for enxf8e43be27dc0:
+        Supported ports: [  ]
+        Supported link modes:   Not reported
+        Supported pause frame use: No
+        Supports auto-negotiation: No
+        Supported FEC modes: Not reported
+        Advertised link modes:  Not reported
+        Advertised pause frame use: No
+        Advertised auto-negotiation: No
+        Advertised FEC modes: Not reported
+        Speed: Unknown!
+        Duplex: Half
+        Auto-negotiation: off
+        Port: Twisted Pair
+        PHYAD: 0
+        Transceiver: internal
+        MDI-X: Unknown
+        Current message level: 0x00000007 (7)
+                               drv probe link
+        Link detected: yes
+</details>
+<details style="white-space:pre-wrap;"><summary>万兆光纤网卡 CX312B Mellanox Technologies MT27520 Family [ConnectX-3 Pro] #PVE8.2.2 支持</summary>
+Settings for enp43s0:
+        Supported ports: [ FIBRE ]
+        Supported link modes:   1000baseX/Full
+                                10000baseCR/Full
+                                10000baseSR/Full
+        Supported pause frame use: Symmetric Receive-only
+        Supports auto-negotiation: No
+        Supported FEC modes: Not reported
+        Advertised link modes:  1000baseX/Full
+                                10000baseCR/Full
+                                10000baseSR/Full
+        Advertised pause frame use: Symmetric
+        Advertised auto-negotiation: No
+        Advertised FEC modes: Not reported
+        Speed: 10000Mb/s
+        Duplex: Full
+        Auto-negotiation: off
+        Port: FIBRE
+        PHYAD: 0
+        Transceiver: internal
+        Supports Wake-on: d
+        Wake-on: d
+        Current message level: 0x00000014 (20)
+                               link ifdown
+        Link detected: no
+
+</details>
+
+    </details></td><td>PVE 硬件支持</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE init</summary>
+#ISO下载
+https://mirrors.tuna.tsinghua.edu.cn/proxmox/iso/ #ISO 下载连接
+
+
+#更换国内源
+<details><summary>download.proxmox.com 慢的处理</summary>
+download.proxmox.com 慢的处理
+CT Templates
+如果你需要加速 proxmox 网页端下载 CT Templates，可以替换 CT Templates 的源。
+具体方法：将 /usr/share/perl5/PVE/APLInfo.pm 文件中默认的源地址 http://download.proxmox.com
+替换为
+https://mirrors.tuna.tsinghua.edu.cn/proxmox
+可以使用如下命令修改：
+cp /usr/share/perl5/PVE/APLInfo.pm /usr/share/perl5/PVE/APLInfo.pm_back
+sed -i 's|http://download.proxmox.com|https://mirrors.tuna.tsinghua.edu.cn/proxmox|g' /usr/share/perl5/PVE/APLInfo.pm
+可以使用如下命令修改：
+针对 /usr/share/perl5/PVE/APLInfo.pm 文件的修改，重启后生效。
+</details>
+更换软件源（三个节点都需要配置）
+由于自带的软件源速度较慢，此处选择科大源：http://mirrors.ustc.edu.cn
+涉及的软件源有三个，分别为debain、pve、ceph，需要分别修改下列文件。
+名称 source文件路径
+debain /etc/apt/sources.list
+pve /etc/apt/sources.list.d/pve-no-subscription.list
+ceph /etc/apt/sources.list.d/ceph.list
+
+vi /etc/apt/sources.list
+deb http://mirrors.ustc.edu.cn/debian/ buster main contrib non-free
+# deb-src http://mirrors.ustc.edu.cn/debian/ buster main contrib non-free
+deb http://mirrors.ustc.edu.cn/debian/ buster-updates main contrib non-free
+# deb-src http://mirrors.ustc.edu.cn/debian/ buster-updates main contrib non-free
+deb http://mirrors.ustc.edu.cn/debian-security/ buster/updates main contrib non-free
+# deb-src http://mirrors.ustc.edu.cn/debian-security/ buster/updates main contrib non-free
+
+vi /etc/apt/sources.list.d/pve-no-subscription.list
+deb http://mirrors.ustc.edu.cn/proxmox/debian/pve buster pve-no-subscription
+
+vi /etc/apt/sources.list.d/ceph.list
+deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-octopus buster main
+
+apt update
+apt upgrade #根据情况是否使用这个
+
+
+
+#安装基础软件
+apt-install update
+apt install apt-transport-https ca-certificates #Debian Buster 以上版本默认支持 HTTPS 源。如果遇到无法拉取 HTTPS 源的情况，请先使用 HTTP 源并安装
+apt-get install vim screen openvswitch-switch
+#调整ovs网络，trunks要配置到网口，如果配置信息有误，则不会实施到设备上。
+#trunks=31,192 vlan_mode=native-untagged #OVS的trunk口配置
+
+
+vim /etc/chrony/chrony.conf #配置NTP服务器后systemctl restart chrony #避免宿主机时间出问题,导致内部虚拟机出现时间精度问题
+
+<b>#相关链接</b>
+https://mirrors.tuna.tsinghua.edu.cn/help/proxmox/ #清华大学源镜像
+https://pve.proxmox.com/wiki/Windows_VirtIO_Drivers #virtio 驱动下载
+https://pve.proxmox.com/wiki/PCI_Passthrough #proxmoxVE PCI_Passthrough
+
+<b>#proxmoxVE IOMMU</b>
+dmesg | grep -e DMAR -e IOMMU #查看是否支持IOMMU，DMAR: IOMMU enabled
+vim /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt" #intel CPU启动IOMMU（AMD CPU：amd_iommu=on），启动PT模式
+update-grub
+
+vim /etc/modules #pt模式需要添加支持
+vfio
+vfio_iommu_type1
+vfio_pci
+vfio_virqfd
+#注意次序和全部存在
+update-initramfs -u -k all #更改任何相关模块后，您需要刷新 initramfs
+update-grub
+
+#调整默认配置
+grub中关闭能源节省 table85 # #防止网口出现自动省电
+ethtool -K eno1 tso off gso off #禁用 tcp 分段卸载和通用分段卸载
+
+
+<details><summary>proxmox - Change Node IP</summary>
+from 192.168.10.1 to 172.16.200.1
+vim /etc/pve/corosync.conf
+ring0_addr: 192.168.10.1 | ring0_addr: 172.16.200.1
+config_version: 5 | config_version: 6
+
+#adjusting the node IP and increasing the config_version within the totem configuration.
+#This modification triggers the new configuration’s propagation to all other cluster nodes
+
+vim /etc/network/eno1
+vim /etc/hosts
+
+systemctl restart corosync.service && systemctl restart pve-cluster.service
+
+</details>
+
+
+    </details></td><td>PVE init</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE 文件系统</summary>
+/var/lib/vz/template/iso #local ISO image的实际存储未知
+/mnt/pve/WDC160G #disks --- Directory 默认的挂载位置
+/etc/pve/qemu-server/102.conf #虚拟机配置文件
+/etc/pve/qemu-server/102.conf #Notes区域位于配置文件中的顶部，使用#进行表示，多行则表示回车的描述
+/mnt/pve/WDC160G/dump/ #虚拟机的backup存放目录
+/var/cache/apt/archives/partial/ #pveceph install的临时文件夹
+/var/lib/vz/dump/ #虚拟机的backup存放目录 local
+
+<details><summary>pvecm 相关配置文件</summary>
+/etc/pve/corosync.conf #PVE集群配置节点
+/etc/pve/corosync.conf #PVE集群节点的ssh key
+/etc/pve/.members #该文件无法修改
+</details>
+
+
+    </details></td><td>PVE 文件系统</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE qm 虚拟机管理命令</summary>
+qm stop 100 #关闭VM 100
+qm set 100 --tags myfirstag;mysecondtag #设置虚拟机tag
+qm importdisk 101 /var/lib/vz/template/iso/op.img local #导入一个磁盘
+qm set --onboot=no 100 #关闭VM 100的开机启动
+
+
+    </details></td><td>PVE qm</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE pvecm</summary>
+pvecm create cluster01 #创建一个集群，集群管理线路与业务线路要隔离，否则造成集群通讯障碍
+pvecm status #查看cluster状态
+pvecm add 192.168.1.2 #join到cluster，实际是通过ssh进行通讯的
+pvecm add 192.168.1.4 -link0 192.168.1.30 #内置冗余链接
+pvecm nodes #查询节点状态
+pvecm delnode pc4 #删除一个节点
+
+
+pvecm create pvecm01 #创建集群
+pvecm status #查看集群信息
+ssh root@192.168.31.23 #登录需要加入cluster的主机，该主机内部不能有任何虚拟机
+pvecm add 192.168.31.22 #加入31.22的集群
+
+
+PVE删除集群示例
+pve1，pve2，pve3组集群，需要将pve2删除
+一.前置准备
+1.确保pve2的虚拟机已经全部迁移到其他节点
+2.确保pve2的数据已经备份过，可以全部删除
+二.pve2节点自我删除
+systemctl stop pve-cluster.service
+systemctl stop corosync.service
+pmxcfs -l #强制设置为本地模式
+cd /etc/pve/
+rm corosync.conf
+rm -rf /etc/corosync/
+rm -rf /etc/corosync/*
+killall pmxcfs
+systemctl start pve-cluster.service
+三.去另外两个节点删除 pve2
+pvecm delnode pve2
+四.刷新浏览器
+
+集群加入报IP的错误的处理
+pvecm add 的IP故障
+local node address: cannot use IP '192.168.100.2', not found on local node
+PVE集群修改/etc/hosts,修改192.168.100.2为正确的值
+
+
+    </details></td><td>PVE pvecm</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE ceph</summary>
+
+pveceph install --repository no-subscription #安装pveceph组件，用于集群
+ceph osd pool ls #查看ceph 的pool 。ceph osd pool ls detail显示详细信息
+ceph osd pool delete CephPool01 CephPool01 --yes-i-really-really-mean-it #重复一次pool的名字
+ceph osd pool rename {current-pool-name} {new-pool-name} #重命名Ceph的pool
+ceph -s #查看集群状态
+ceph helth #查看ceph健康
+ceph osd tree #查看集群osd状态
+ceph osd df #查看osd 的空间使用信息
+
+
+
+<details><summary>Ceph osd 删除一块硬盘</summary>
+ceph device ls #查看osd硬盘
+ceph osd out osd.0 #将osd.0剔除集群
+systemctl stop ceph-osd@0.service #停止服务
+systemctl disable ceph-osd@0.service #停用服务
+ceph osd crush remove osd.0 #删除 CRUSH 图的对应 OSD 条目，它就不再接收数据了
+ceph auth del osd.0 #删除 OSD 认证密钥
+ceph osd rm osd.0 #删除osd.0
+ceph osd tree #查看目前状态
+</details>
+
+获取crushmap并编辑
+Edit CRUSH MAP
+#获取原始crushmap内容并保存（二进制，无法直接读取）
+ceph osd getcrushmap -o COMPILED_CRUSHMAP_FILENAME
+
+#Decompiling the CRUSH map
+crushtool -d COMPILED_CRUSHMAP_FILENAME -o DECOMPILED_CRUSHMAP_FILENAME
+
+#Compiling the CRUSH map
+crushtool -c DECOMPILED_CRUSHMAP_FILENAME -o COMPILED_CRUSHMAP_FILENAME
+
+#Setting a CRUSH map
+ceph osd setcrushmap -i COMPILED_CRUSHMAP_FILENAME
+
+<details><summary>ceph osd crush device class</summary>
+Device class
+ceph osd crush set-device-class CLASS OSD_ID [OSD_ID..]
+[ceph: root@host01 /]# ceph osd crush set-device-class hdd osd.0 osd.1
+[ceph: root@host01 /]# ceph osd crush set-device-class ssd osd.2 osd.3
+[ceph: root@host01 /]# ceph osd crush set-device-class bucket-index osd.4
+
+#Ceph might assign a class to a device automatically. However, class names are simply arbitrary strings.
+#There is no requirement to adhere to hdd, ssd or nvme.
+#In the foregoing example, a device class named bucket-index might indicate an SSD device
+#that a Ceph Object Gateway pool uses exclusively bucket index workloads.
+#To change a device class that was already set, use ceph osd crush rm-device-class first.
+ceph osd crush rm-device-class CLASS OSD_ID [OSD_ID..]
+[ceph: root@host01 /]# ceph osd crush rm-device-class hdd osd.0 osd.1
+[ceph: root@host01 /]# ceph osd crush rm-device-class ssd osd.2 osd.3
+[ceph: root@host01 /]# ceph osd crush rm-device-class bucket-index osd.4
+
+#Renaming a device class
+ceph osd crush class rename OLD_NAME NEW_NAME
+[ceph: root@host01 /]# ceph osd crush class rename hdd sas15k
+
+#Listing a device class
+ceph osd crush class ls
+[
+"hdd",
+"ssd",
+"bucket-index"
+]
+
+#Listing OSDs of a device class
+ceph osd crush class ls-osd CLASS
+[ceph: root@host01 /]# ceph osd crush class ls-osd hdd
+
+#Listing CRUSH Rules by Class
+ceph osd crush rule ls-by-class CLASS
+[ceph: root@host01 /]# ceph osd crush rule ls-by-class hdd
+</details>
+
+    </details></td><td>PVE ceph</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE 故障</summary>
+<details><summary>lvm加载故障：pve/data_tmeta is active</summary>
+activating LV 'pve/data' failed: Activation of logical volume pve/data is prohibited while logical volume pve/data_tmeta is active.
+#该故障可能是硬盘空间总量小于分配的虚拟机硬盘使用量之和导致的。
+#使用该方法可临时使用，重启后还会出现该问题。
+lvchange -an pve/data_tdata
+lvchange -an pve/data_tmeta
+lvchange -ay pve/data #该过程耗时，请等待
+</details>
+<details><summary>"proxmox-ve" and "pve-manager" are "not fully installed" After Upgrade from 6.4 to 7.1故障</summary>
+rm /var/lib/pve-manager/pve-replication-state.json
+</details>
+<details><summary>Error initializing cluster client: ObjectNotFound(RADOS object not found (error calling conf_read_file))</summary>
+#集群节点IP地址变更导致的集群通讯问题，pvecm status可查看cluster
+</details>
+    </details></td><td>PVE 故障</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE 其他命令</summary>
+pveversion -v #查看目前的PVE的版本信息
+    </details></td><td>PVE 其他命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

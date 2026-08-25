@@ -73,39 +73,6 @@ SET GLOBAL net_write_timeout = 3600;</br>
 SET GLOBAL max_allowed_packet = 1073741824;</br>
     </details></td><td>mysql init</td></tr>
         <!-- 分割线 -->
-    <tr><td style="white-space:pre-wrap;"><details><summary>进行快速的数据导入(导入前分片，避免太多导入导致失败) 【关闭外键和事务】</summary>
-<b>执行数据导入命令</b>
-(
-  echo "SET FOREIGN_KEY_CHECKS=0;"
-  echo "SET UNIQUE_CHECKS=0;"
-  echo "SET AUTOCOMMIT=0;"
-  echo "SET sql_log_bin=0;"
-  cat /path/to/huge_backup.sql
-  echo "COMMIT;"
-  echo "SET FOREIGN_KEY_CHECKS=1;"
-  echo "SET UNIQUE_CHECKS=1;"
-) | mysql --defaults-file=/tmp/.my.cnf --host=1.1.1.2 --port=3306 --user=root --max-allowed-packet=1G database01
-
-#【注意】sql_log_bin 是一个会话级别的系统变量，不要在主库上执行此操作，否则恢复的数据变更不会被同步到任何从库，会导致主从数据不一致。
-
-<b>原理说明：</b>
-FOREIGN_KEY_CHECKS=0：暂停外键约束检查。
-UNIQUE_CHECKS=0：暂停唯一索引检查（导入完成后再统一构建）。
-AUTOCOMMIT=0：关闭自动提交，避免每行 INSERT 产生一次磁盘写日志。
-sql_log_bin=0：关闭 Binlog 日志记录（不写入二进制日志，大幅减少磁盘 I/O）。
-
-<b>临时调整 MySQL 服务端参数（全局提速）</b>
--- 关闭每笔事务实时刷盘（从 1 改为 2，I/O 性能提升极明显）
-SET GLOBAL innodb_flush_log_at_trx_commit = 2;
--- 放大单次数据包限制，防止超大 INSERT 报 Packet error
-SET GLOBAL max_allowed_packet = 1073741824; -- 1GB
-
-    </details></td><td>mysql restore</td></tr>
-        <!-- 分割线 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary>mysql_import.sh #大文件sql数据导入，逐步导入，避免过多数据导入失败。需要SESSION ADMIN权限来关闭bin log，以加快导入速度。</summary>
-#!/bin/bash</br></br># 参数配置</br>MYSQL_BIN=&#x27;/usr/bin/mysql&#x27;</br>MYSQL_BIN=&#x27;/usr/bin/mariadb&#x27;</br>MYSQL_CNF=&#x22;/etc/my.cnf&#x22;</br>MYSQL_HOST=&#x22;1.1.1.2&#x22;</br>MYSQL_PORT=&#x22;3306&#x22;</br>MYSQL_USER=&#x22;user01&#x22;</br>MYSQL_PASSWORD=&#x22;pass01&#x22;</br>TARGET_DB=&#x22;db01&#x22;</br>SQL_FILE=&#x22;sql01.sql&#x22;</br>SQL_LINE_VARIABLES_FILE=&#x22;/dev/shm/SQL_LINE_VARIABLES_FILE.txt&#x22;</br>BATCH_SIZE=27</br>BATCH_SIZE_FILE=&#x27;/dev/shm/count.txt&#x27;</br></br># 检查 SQL 文件是否存在</br>if [ ! -f &#x22;$SQL_FILE&#x22; ]; then</br>    echo &#x22;[ERROR] 错误: 文件 $SQL_FILE 不存在！&#x22;</br>    exit 1</br>fi</br># 检查 SQL_LINE_VARIABLES_FILE 文件是否存在</br>if [[ -f &#x22;$SQL_LINE_VARIABLES_FILE&#x22; &#x26;&#x26; ${#SQL_LINE_VARIABLES_FILE} -gt 5  ]]; then</br>&#x09;rm -rf &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>fi</br>touch &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br></br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 存在。&#x22;</br></br></br>exec {FD_SQL}&#x3c;&#x22;$SQL_FILE&#x22;</br>[[ $? -ne 0 ]] &#x26;&#x26; echo &#x22;[ERROR] $SQL_FILE FAILED, exit...&#x22; &#x26;&#x26; exit 1</br></br>echo &#x22;[INFO] SQL_FILE 文件已打开，准备开始读取。&#x22;</br>TOTAL_COUNTER=0</br></br>while true</br>do</br>echo &#x22;[INFO] $(date) TOTAL_COUNTER : $TOTAL_COUNTER&#x22; &#x3e;&#x26;2</br></br>#以下内容会输送到MYSQL中，不要再STDOUT中输出非必要内容</br>{</br>&#x09;#存储的变量的初始化</br>while read -r line || [ -n &#x22;$line&#x22; ]</br>do</br>echo &#x22;$line&#x22;</br>done &#x3c;&#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br></br>    # 1. 连接初期设置（关闭约束与日志以提高写入性能）</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=0;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=0;&#x22;</br>    echo &#x22;SET AUTOCOMMIT=0;&#x22;</br>    echo &#x22;SET sql_log_bin=0;&#x22;</br>    echo &#x22;BEGIN;&#x22;</br></br>    # 2. 使用 read 逐行读取 SQL 并按批次 COMMIT/BEGIN</br>    count=0</br>    while IFS= read -u &#x22;$FD_SQL&#x22; -r line || [ -n &#x22;$line&#x22; ]; do</br>&#x09;#&#x09;echo &#x22;$line&#x22; &#x3e;&#x26;2</br>&#x09;#命令指定行</br>&#x09;if [[ &#x22;$line&#x22; =~ ^&#x5c;/&#x5c;*.*&#x5c; SET&#x5c; .*=.*&#x5c;*&#x5c;/ ]] ; then</br>&#x09;&#x09;#echo &#x27;[DEBUG] SET LINE MATCH&#x27; &#x3e;&#x26;2</br>&#x09;&#x09;line=${line#* SET}</br>&#x09;&#x09;line=${line% &#x5c;**}</br>&#x09;&#x09;line=&#x22;SET $line;&#x22;</br>&#x09;&#x09;grep -q --fixed-strings &#x22;$line&#x22; &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>&#x09;&#x09;#注意，此处有瑕疵，没有次序对比，可能有变动的变量导致问题</br>&#x09;&#x09;if [[ $? -ne 0 ]]</br>&#x09;&#x09;&#x09;then</br>&#x09;&#x09;&#x09;echo &#x22;$line&#x22; &#x3e;&#x3e;&#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>&#x09;&#x09;&#x09;#echo &#x22;[DEBUG] SQL_LINE_VARIABLES+= $line&#x22; &#x3e;&#x26;2</br>&#x09;&#x09;fi</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>&#x09;&#x09;echo &#x22;[INFO] SET VARIABLES : $line&#x22; &#x3e;&#x26;2</br>&#x09;&#x09;((count++))</br>&#x09;&#x09;continue</br>&#x09;fi</br>&#x09;if [ $count -eq 0 ]; then</br>&#x09;&#x09;echo &#x22;BEGIN;&#x22;</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>&#x09;&#x09;echo &#x22;[INFO] 第一行$line&#x22; &#x3e;&#x26;2</br>&#x09;#避免create语句多行被分割，使用分号确认结尾</br>        elif [[ $count -ge $BATCH_SIZE &#x26;&#x26; &#x22;$line&#x22; =~ &#x5c;;[[:space:]]*$ ]]; then</br>&#x09;&#x09;break;</br>&#x09;else</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>        fi</br>        ((count++))</br>        #echo &#x22;[DEBUG] count $count&#x22; &#x3e;&#x26;2</br>    done</br>&#x09;echo &#x22;$count&#x22; &#x3e;&#x22;$BATCH_SIZE_FILE&#x22;</br></br>    # 3. 循环结束后提交剩余未提交的数据并恢复设置</br>    echo &#x22;$line&#x22;</br>    echo &#x22;[INFO] 最后一行$line&#x22; &#x3e;&#x26;2</br>    echo &#x22;COMMIT;&#x22;</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=1;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=1;&#x22;</br></br>} | &#x22;$MYSQL_BIN&#x22; --defaults-file=&#x22;$MYSQL_CNF&#x22; &#x5c;</br>        --host=&#x22;$MYSQL_HOST&#x22; &#x5c;</br>        --port=&#x22;$MYSQL_PORT&#x22; &#x5c;</br>        --user=&#x22;$MYSQL_USER&#x22; &#x5c;</br>&#x09;--password=&#x22;password01&#x22; &#x5c;</br>        --max-allowed-packet=1G &#x5c;</br>        --line-numbers &#x5c;</br>        --skip-ssl &#x5c;</br>        --unbuffered &#x5c;</br>        &#x22;$TARGET_DB&#x22;</br></br># 获取管道中 mysql 命令的返回状态码</br>if [[ ${PIPESTATUS[1]} -eq 0 ]]; then</br>    echo &#x22;$(cat &#x22;$BATCH_SIZE_FILE&#x22;)数据导入成功完成！&#x22;</br>else</br>    echo &#x22;导入过程中发生错误，请检查日志！&#x22;</br>    break;</br>fi</br>sleep 1 || break</br>#当数量不满足BATCH_SIZE的数量，但是while终止，需要进行中断.</br></br>if [[ $(cat &#x22;$BATCH_SIZE_FILE&#x22;) -lt $BATCH_SIZE ]] ; then</br>echo &#x22;$(date) END&#x22;</br>exit 0</br>fi</br></br>((TOTAL_COUNTER++))</br></br></br>done</br></br>exec {FD_SQL}&#x3e;&#x26;-</br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 已经关闭($?)。&#x22;</br>
-    </details></td><td>mysql restore</td></tr>
-        <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary>mysql install and init</summary>
 <b>#初始化并创建数据库</b>
 mysqld --no-defaults --initialize-insecure --user=yum --datadir=/mnt/mysql_data --log-error=/mnt/mysql_log/error.log
@@ -165,7 +132,7 @@ ALTER USER &#x27;root&#x27;@&#x27;127.0.0.1&#x27; IDENTIFIED BY &#x27;password01
 -- ALTER USER &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;password01&#x27;;
 
 -- 数据库授权管理
--- GRANT ALL ON ekp20220510.* TO &#x27;root&#x27;@&#x27;127.0.0.1&#x27;;</br>
+-- GRANT ALL ON db01.* TO &#x27;root&#x27;@&#x27;127.0.0.1&#x27;;</br>
 
 -- 全局/系统级动态权限 SESSION_VARIABLES_ADMIN (SET sql_log_bin=0;)
 -- GRANT SESSION_VARIABLES_ADMIN ON *.* TO &#x27;root&#x27;@&#x27;127.0.0.1&#x27;;
@@ -174,15 +141,134 @@ ALTER USER &#x27;root&#x27;@&#x27;127.0.0.1&#x27; IDENTIFIED BY &#x27;password01
 FLUSH PRIVILEGES;
     </details></td><td>mysql init</td></tr>
         <!-- 分割线 -->
+    <tr><td><details><summary>阿里云mysql逻辑备份恢复</summary>
+【注意：】本命令仅涉及8.0版本以上的mysql,其他版本参照：<a href="https://help.aliyun.com/zh/rds/apsaradb-rds-for-mysql/restore-the-data-of-an-apsaradb-rds-for-mysql-instance-from-a-physical-backup-file-to-a-self-managed-mysql-database" target="_blank">RDS MySQL物理备份文件恢复到自建数据库</a></br>
+<b>解压文件【耗时7分钟】</b></br>
+tar --zstd -xf MYSQL_27GB.qp.xb.tar.zst</br>
+解压后文件信息</br>
+-rw-r--r--  1 yum  yum   29G Aug 14 14:51 hins53739_data_202608141.qp.xb</br>
+<b>解压xb文件【耗时12分钟】</b></br>
+cat hins53739_data_202608141.qp.xb | xbstream -x -v -C ./OA_20260814</br>
+<b>解压qp文件【耗时20分钟】</b></br>
+xtrabackup --decompress --remove-original --target-dir=/mnt/OA_20260814</br>
+2026-08-17T15:33:27.199153+08:00 0 [Note] [MY-011825] [Xtrabackup] decompressing ./db01/oms_relation_model.ibd.qp</br>
+2026-08-17T15:33:27.216484+08:00 0 [Note] [MY-011825] [Xtrabackup] removing ./db01/oms_relation_model.ibd.qp</br>
+du -h -d 1 OA_20260814</br>
+141G    OA_20260814/db01</br>
+116K    OA_20260814/sys</br>
+260K    OA_20260814/mysql</br>
+1.6M    OA_20260814/performance_schema</br>
+4.0K    OA_20260814/recycle_bin</br>
+141G    OA_20260814</br>
+<b>备份恢复准备</b></br>
+<b>MySQL 8.0恢复前准备【耗时1分钟】</b></br>
+xtrabackup --defaults-file=/mnt/OA_20260814/backup-my.cnf  --prepare --target-dir=/mnt/OA_20260814/</br>
+--defaults-file 通过传入配置文件设置MySQL默认选项。RDS MySQL备份文件中，提供名为backup-my.cnf的配置文件，该文件位于备份解压目录，即/var/mysql_bkdata/。</br>
+--prepare XtraBackup工具的准备命令。</br>
+--target-dir 备份解压目录/var/mysql_bkdata/。</br>
+【备注：】--prepare 的作用是“回放与回滚”，物理备份是数据文件在某个时间点的“快照”，数据文件和日志文件（ib_logfile*）是不一致的。备份工具需要复制所有文件，但无法保证在复制的那一秒，所有数据都已从内存刷新到磁盘。它主要做两件事：前滚（Apply Redo Log）：将备份期间产生的事务日志（Redo Log）应用到数据文件中，把数据推进到最新的、一致的状态。回滚（Rollback）：将未提交的事务（在备份时处于活动状态）进行回滚，撤销其修改。</br>
+2026-08-17T15:48:27.267375+08:00 0 [Note] [MY-011825] [Xtrabackup] Thread# 0 - Opened 4621/5162 tablespaces</br>
+2026-08-17T15:48:31.824239+08:00 0 [Note] [MY-011825] [Xtrabackup] Thread# 0 Opened 5162 tablespaces</br>
+2026-08-17T15:48:31.824318+08:00 0 [Note] [MY-011825] [Xtrabackup] Completed loading of 5162 tablespaces into cache in 44.5724 seconds</br>
+2026-08-17T15:48:31.924261+08:00 0 [Note] [MY-011825] [Xtrabackup] Time taken to build dictionary: 0.0992627 seconds</br>
+2026-08-17T15:48:32.930178+08:00 0 [Note] [MY-011825] [Xtrabackup] starting shutdown with innodb_fast_shutdown = 1</br>
+2026-08-17T15:48:32.930434+08:00 0 [Note] [MY-012330] [InnoDB] FTS optimize thread exiting.</br>
+2026-08-17T15:48:32.938899+08:00 0 [Note] [MY-013072] [InnoDB] Starting shutdown...</br>
+2026-08-17T15:48:33.041277+08:00 0 [Note] [MY-013084] [InnoDB] Log background threads are being closed...</br>
+2026-08-17T15:48:33.085828+08:00 0 [Note] [MY-012980] [InnoDB] Shutdown completed; log sequence number 1006563863574</br>
+2026-08-17T15:48:33.109088+08:00 0 [Note] [MY-011825] [Xtrabackup] completed OK!</br>
+</br>
+修改自建数据库配置文件</br>
+vim /mnt/mysql_data/my1.cnf</br>
+datadir = /mnt/mysql_data/data</br>
+innodb_log_file_size=1048576000</br>
+#参数innodb_log_file_size的取值需要与/var/mysql_bkdata/backup-my.cnf中的取值相同，您可以使用cat /var/mysql_bkdata/backup-my.cnf | grep innodb_log_file_size查询。</br>
+lower_case_table_names=1</br>
+#在RDS MySQL管理控制台中查看实例参数lower_case_table_names的取值，如果取值为1，则需要修改自建数据库配置文件my.cnf。否则2026-08-17T08:35:53.450773Z 1 [ERROR] [MY-011087] [Server] Different lower_case_table_names settings for server (&#\x27;0&#\x27;) and data dictionary (&#\x27;1&#\x27;).</br>
+<b>恢复数据【耗时30分钟】</b></br>
+mkdir /mnt/mysql_data/data/</br>
+xtrabackup --defaults-file=/mnt/mysql_data/my1.cnf --copy-back --target-dir=/mnt/OA_20260814/</br>
+--defaults-file自建数据库的my.cnf文件，根据此配置文件中设置的数据目录（datadir），获取恢复数据的目标路径。</br>
+--copy-backXtraBackup工具的恢复命令。</br>
+--target-dir备份解压目录/var/mysql_bkdata/，XtraBackup工具将此目录数据恢复到自建数据库的数据目录中。</br>
+【备注：】--copy-back作用：xtrabackup 在 prepare 之后，会修改 ib_logfile 的属性，使其处于一种“已准备好被 InnoDB 接管，但尚未完成最终初始化的状态”。MySQL 的启动程序在检测到这种特殊状态时，会认为日志文件被“外部工具”修改过，从而拒绝启动，或强制进入一个无限的恢复循环，导致启动挂起。copy-back主要做了以下内容：</br>
+安全地移动文件：将 prepare 完成的、处于“只读、一致”状态的数据文件，从备份目录复制到 MySQL 的 datadir。</br>
+恢复配置文件：它会确保 ibdata1、ib_logfile* 等关键文件被正确放置在目标位置。</br>
+</br>
+2026-08-17T16:12:01.665687+08:00 1 [Note] [MY-011825] [Xtrabackup] Copying ./db01/ekp_bb04db8a49_7e85b2d098.ibd to /mnt/mysql_data/data/db01/ekp_bb04db8a49_7e85b2d098.ibd</br>
+2026-08-17T16:12:01.685055+08:00 1 [Note] [MY-011825] [Xtrabackup] Done: Copying ./db01/ekp_bb04db8a49_7e85b2d098.ibd to /mnt/mysql_data/data/db01/ekp_bb04db8a49_7e85b2d098.ibd</br>
+2026-08-17T16:12:01.714965+08:00 1 [Note] [MY-011825] [Xtrabackup] Copying ./db01/km_archives_template_aeditor.ibd to /mnt/mysql_data/data/db01/km_archives_template_aeditor.ibd</br>
+2026-08-17T16:12:01.715110+08:00 1 [Note] [MY-011825] [Xtrabackup] Done: Copying ./db01/km_archives_template_aeditor.ibd to /mnt/mysql_data/data/db01/km_archives_template_aeditor.ib</br>
+</br>
+2026-08-17T16:33:31.697650+08:00 1 [Note] [MY-011825] [Xtrabackup] Done: Copying ./mysql.ibd to /mnt/mysql_data/data/mysql.ibd</br>
+2026-08-17T16:33:32.245393+08:00 0 [Note] [MY-011825] [Xtrabackup] completed OK!</br>
+</br>
+</br>
+<b>启动数据库</b></br>
+chown -R yum:user /var/mysql_newdata</br>
+</br>
+mysqld --defaults-file=/mnt/mysql_data/my1.cnf --user=yum --datadir=/mnt/mysql_data/data  --log-error=/mnt/mysql_log/error.log --socket=/mnt/mysql_data/mysql.sock --console</br>
+</br>
+</br>
+
+
+
+
+    </details></td><td>mysql restore</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-wrap;"><details><summary>进行快速的数据导入(导入前分片，避免太多导入导致失败) 【关闭外键和事务】</summary>
+<b>执行数据导入命令</b>
+(
+  echo "SET FOREIGN_KEY_CHECKS=0;"
+  echo "SET UNIQUE_CHECKS=0;"
+  echo "SET AUTOCOMMIT=0;"
+  echo "SET sql_log_bin=0;"
+  cat /path/to/huge_backup.sql
+  echo "COMMIT;"
+  echo "SET FOREIGN_KEY_CHECKS=1;"
+  echo "SET UNIQUE_CHECKS=1;"
+) | mysql --defaults-file=/tmp/.my.cnf --host=1.1.1.2 --port=3306 --user=root --max-allowed-packet=1G database01
+
+#【注意】sql_log_bin 是一个会话级别的系统变量，不要在主库上执行此操作，否则恢复的数据变更不会被同步到任何从库，会导致主从数据不一致。
+
+<b>原理说明：</b>
+FOREIGN_KEY_CHECKS=0：暂停外键约束检查。
+UNIQUE_CHECKS=0：暂停唯一索引检查（导入完成后再统一构建）。
+AUTOCOMMIT=0：关闭自动提交，避免每行 INSERT 产生一次磁盘写日志。
+sql_log_bin=0：关闭 Binlog 日志记录（不写入二进制日志，大幅减少磁盘 I/O）。
+
+<b>临时调整 MySQL 服务端参数（全局提速）</b>
+-- 关闭每笔事务实时刷盘（从 1 改为 2，I/O 性能提升极明显）
+SET GLOBAL innodb_flush_log_at_trx_commit = 2;
+-- 放大单次数据包限制，防止超大 INSERT 报 Packet error
+SET GLOBAL max_allowed_packet = 1073741824; -- 1GB
+
+    </details></td><td>mysql restore</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>mysql_import.sh #大文件sql数据导入，逐步导入，避免过多数据导入失败。需要SESSION ADMIN权限来关闭bin log，以加快导入速度。</summary>
+#!/bin/bash</br></br># 参数配置</br>MYSQL_BIN=&#x27;/usr/bin/mysql&#x27;</br>MYSQL_BIN=&#x27;/usr/bin/mariadb&#x27;</br>MYSQL_CNF=&#x22;/etc/my.cnf&#x22;</br>MYSQL_HOST=&#x22;1.1.1.2&#x22;</br>MYSQL_PORT=&#x22;3306&#x22;</br>MYSQL_USER=&#x22;user01&#x22;</br>MYSQL_PASSWORD=&#x22;pass01&#x22;</br>TARGET_DB=&#x22;db01&#x22;</br>SQL_FILE=&#x22;sql01.sql&#x22;</br>SQL_LINE_VARIABLES_FILE=&#x22;/dev/shm/SQL_LINE_VARIABLES_FILE.txt&#x22;</br>BATCH_SIZE=27</br>BATCH_SIZE_FILE=&#x27;/dev/shm/count.txt&#x27;</br></br># 检查 SQL 文件是否存在</br>if [ ! -f &#x22;$SQL_FILE&#x22; ]; then</br>    echo &#x22;[ERROR] 错误: 文件 $SQL_FILE 不存在！&#x22;</br>    exit 1</br>fi</br># 检查 SQL_LINE_VARIABLES_FILE 文件是否存在</br>if [[ -f &#x22;$SQL_LINE_VARIABLES_FILE&#x22; &#x26;&#x26; ${#SQL_LINE_VARIABLES_FILE} -gt 5  ]]; then</br>&#x09;rm -rf &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>fi</br>touch &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br></br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 存在。&#x22;</br></br></br>exec {FD_SQL}&#x3c;&#x22;$SQL_FILE&#x22;</br>[[ $? -ne 0 ]] &#x26;&#x26; echo &#x22;[ERROR] $SQL_FILE FAILED, exit...&#x22; &#x26;&#x26; exit 1</br></br>echo &#x22;[INFO] SQL_FILE 文件已打开，准备开始读取。&#x22;</br>TOTAL_COUNTER=0</br></br>while true</br>do</br>echo &#x22;[INFO] $(date) TOTAL_COUNTER : $TOTAL_COUNTER&#x22; &#x3e;&#x26;2</br></br>#以下内容会输送到MYSQL中，不要再STDOUT中输出非必要内容</br>{</br>&#x09;#存储的变量的初始化</br>while read -r line || [ -n &#x22;$line&#x22; ]</br>do</br>echo &#x22;$line&#x22;</br>done &#x3c;&#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br></br>    # 1. 连接初期设置（关闭约束与日志以提高写入性能）</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=0;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=0;&#x22;</br>    echo &#x22;SET AUTOCOMMIT=0;&#x22;</br>    echo &#x22;SET sql_log_bin=0;&#x22;</br>    echo &#x22;BEGIN;&#x22;</br></br>    # 2. 使用 read 逐行读取 SQL 并按批次 COMMIT/BEGIN</br>    count=0</br>    while IFS= read -u &#x22;$FD_SQL&#x22; -r line || [ -n &#x22;$line&#x22; ]; do</br>&#x09;#&#x09;echo &#x22;$line&#x22; &#x3e;&#x26;2</br>&#x09;#命令指定行</br>&#x09;if [[ &#x22;$line&#x22; =~ ^&#x5c;/&#x5c;*.*&#x5c; SET&#x5c; .*=.*&#x5c;*&#x5c;/ ]] ; then</br>&#x09;&#x09;#echo &#x27;[DEBUG] SET LINE MATCH&#x27; &#x3e;&#x26;2</br>&#x09;&#x09;line=${line#* SET}</br>&#x09;&#x09;line=${line% &#x5c;**}</br>&#x09;&#x09;line=&#x22;SET $line;&#x22;</br>&#x09;&#x09;grep -q --fixed-strings &#x22;$line&#x22; &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>&#x09;&#x09;#注意，此处有瑕疵，没有次序对比，可能有变动的变量导致问题</br>&#x09;&#x09;if [[ $? -ne 0 ]]</br>&#x09;&#x09;&#x09;then</br>&#x09;&#x09;&#x09;echo &#x22;$line&#x22; &#x3e;&#x3e;&#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>&#x09;&#x09;&#x09;#echo &#x22;[DEBUG] SQL_LINE_VARIABLES+= $line&#x22; &#x3e;&#x26;2</br>&#x09;&#x09;fi</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>&#x09;&#x09;echo &#x22;[INFO] SET VARIABLES : $line&#x22; &#x3e;&#x26;2</br>&#x09;&#x09;((count++))</br>&#x09;&#x09;continue</br>&#x09;fi</br>&#x09;if [ $count -eq 0 ]; then</br>&#x09;&#x09;echo &#x22;BEGIN;&#x22;</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>&#x09;&#x09;echo &#x22;[INFO] 第一行$line&#x22; &#x3e;&#x26;2</br>&#x09;#避免create语句多行被分割，使用分号确认结尾</br>        elif [[ $count -ge $BATCH_SIZE &#x26;&#x26; &#x22;$line&#x22; =~ &#x5c;;[[:space:]]*$ ]]; then</br>&#x09;&#x09;break;</br>&#x09;else</br>&#x09;&#x09;echo &#x22;$line&#x22;</br>        fi</br>        ((count++))</br>        #echo &#x22;[DEBUG] count $count&#x22; &#x3e;&#x26;2</br>    done</br>&#x09;echo &#x22;$count&#x22; &#x3e;&#x22;$BATCH_SIZE_FILE&#x22;</br></br>    # 3. 循环结束后提交剩余未提交的数据并恢复设置</br>    echo &#x22;$line&#x22;</br>    echo &#x22;[INFO] 最后一行$line&#x22; &#x3e;&#x26;2</br>    echo &#x22;COMMIT;&#x22;</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=1;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=1;&#x22;</br></br>} | &#x22;$MYSQL_BIN&#x22; --defaults-file=&#x22;$MYSQL_CNF&#x22; &#x5c;</br>        --host=&#x22;$MYSQL_HOST&#x22; &#x5c;</br>        --port=&#x22;$MYSQL_PORT&#x22; &#x5c;</br>        --user=&#x22;$MYSQL_USER&#x22; &#x5c;</br>&#x09;--password=&#x22;password01&#x22; &#x5c;</br>        --max-allowed-packet=1G &#x5c;</br>        --line-numbers &#x5c;</br>        --skip-ssl &#x5c;</br>        --unbuffered &#x5c;</br>        &#x22;$TARGET_DB&#x22;</br></br># 获取管道中 mysql 命令的返回状态码</br>if [[ ${PIPESTATUS[1]} -eq 0 ]]; then</br>    echo &#x22;$(cat &#x22;$BATCH_SIZE_FILE&#x22;)数据导入成功完成！&#x22;</br>else</br>    echo &#x22;导入过程中发生错误，请检查日志！&#x22;</br>    break;</br>fi</br>sleep 1 || break</br>#当数量不满足BATCH_SIZE的数量，但是while终止，需要进行中断.</br></br>if [[ $(cat &#x22;$BATCH_SIZE_FILE&#x22;) -lt $BATCH_SIZE ]] ; then</br>echo &#x22;$(date) END&#x22;</br>exit 0</br>fi</br></br>((TOTAL_COUNTER++))</br></br></br>done</br></br>exec {FD_SQL}&#x3e;&#x26;-</br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 已经关闭($?)。&#x22;</br>
+    </details></td><td>mysql restore</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>sql_import_read_line.sh #数据恢复，分段导入大的sql文件</summary>
+#!/bin/bash</br></br>echo &#x27;</br>1. 【注意：】dump文件不含有用户创建和权限信息，可能缺失function等定义,请先建立对应的数据库管理员账户或其他账户并赋权，否则部分view执行可能失败。</br>&#x27;</br>read r1</br></br># 参数配置</br>MYSQL_BIN=&#x27;/usr/bin/mysql&#x27;</br>MYSQL_BIN=&#x27;/usr/bin/mariadb&#x27;</br>MYSQL_CNF=&#x22;/etc/my.cnf&#x22;</br>MYSQL_HOST=&#x22;&#x3c;your_mysql_server_ip&#x3e;&#x22;</br>MYSQL_PORT=&#x22;3306&#x22;</br>MYSQL_USER=&#x22;USER01&#x22;</br>MYSQL_PASSWORD=&#x22;&#x3c;YOUR_PASSWORD&#x3e;&#x22;</br>TARGET_DB=&#x22;db01&#x22;</br>SQL_FILE=&#x22;a.sql&#x22;</br>SQL_FILE=&#x22;backup.sql&#x22;</br>SQL_LINE_VARIABLES_FILE=&#x22;/dev/shm/SQL_LINE_VARIABLES_FILE.txt&#x22;</br>BATCH_SIZE=10000</br>BATCH_SIZE_FILE=&#x27;/dev/shm/count.txt&#x27;</br>LINES_NUMBER=0;</br></br># 检查 SQL 文件是否存在</br>if [ ! -f &#x22;$SQL_FILE&#x22; ]; then</br>    echo &#x22;[ERROR] 错误: 文件 $SQL_FILE 不存在！&#x22;</br>    exit 1</br>fi</br># 检查 SQL_LINE_VARIABLES_FILE 文件是否存在</br>#if [[ -f &#x22;$SQL_LINE_VARIABLES_FILE&#x22; &#x26;&#x26; ${#SQL_LINE_VARIABLES_FILE} -gt 5  ]]; then</br>#       rm -rf &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>#fi</br>touch &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br></br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 存在。&#x22;</br></br></br>exec {FD_SQL}&#x3c;&#x22;$SQL_FILE&#x22;</br>[[ $? -ne 0 ]] &#x26;&#x26; echo &#x22;[ERROR] $SQL_FILE FAILED, exit...&#x22; &#x26;&#x26; exit 1</br></br>echo &#x22;[INFO] SQL_FILE 文件已打开，准备开始读取。&#x22;</br>TOTAL_COUNTER=0</br></br>while true</br>do</br>echo &#x22;[INFO] $(date) TOTAL_COUNTER : $TOTAL_COUNTER&#x22; &#x3e;&#x26;2</br></br>#以下内容会输送到MYSQL中，不要再STDOUT中输出非必要内容</br>{</br>        #存储的变量的初始化</br>while read -r line || [ -n &#x22;$line&#x22; ]</br>do</br>echo &#x22;$line&#x22;</br>done &#x3c;&#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br></br>    # 1. 连接初期设置（关闭约束与日志以提高写入性能）</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=0;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=0;&#x22;</br>    echo &#x22;SET AUTOCOMMIT=0;&#x22;</br>    echo &#x22;SET sql_log_bin=0;&#x22;</br>    echo &#x22;BEGIN;&#x22;</br></br>    # 2. 使用 read 逐行读取 SQL 并按批次 COMMIT/BEGIN</br>    count=0</br>    while IFS= read -u &#x22;$FD_SQL&#x22; -r line || [ -n &#x22;$line&#x22; ]; do</br>&#x09;((LINES_NUMBER++))</br>        #       echo &#x22;$line&#x22; &#x3e;&#x26;2</br>        #命令指定行</br>        [[ -z &#x22;${line:-}&#x22; ]] &#x26;&#x26; continue</br>        if [[ &#x22;$line&#x22; =~ ^&#x5c;/&#x5c;*.*&#x5c; SET&#x5c; .*=.*&#x5c;*&#x5c;/ ]] ; then</br>                #echo &#x27;[DEBUG] SET LINE MATCH&#x27; &#x3e;&#x26;2</br>                line=${line#* SET}</br>                line=${line% &#x5c;**}</br>                line=&#x22;SET $line;&#x22;</br>                grep -q --fixed-strings &#x22;$line&#x22; &#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>                #注意，此处有瑕疵，没有次序对比，可能有变动的变量导致问题</br>                if [[ $? -ne 0 ]]</br>                        then</br>                        echo &#x22;$line&#x22; &#x3e;&#x3e;&#x22;$SQL_LINE_VARIABLES_FILE&#x22;</br>                        #echo &#x22;[DEBUG] SQL_LINE_VARIABLES+= $line&#x22; &#x3e;&#x26;2</br>                fi</br>                echo &#x22;$line&#x22;</br>                echo &#x22;[INFO] SET VARIABLES : $line&#x22; &#x3e;&#x26;2</br>                ((count++))</br>                continue</br>        fi</br>        if [ $count -eq 0 ]; then</br>                echo &#x22;BEGIN;&#x22;</br>                echo &#x22;$line&#x22;</br>                echo &#x22;[INFO] 第一行$line&#x22; &#x3e;&#x26;2</br>        #避免create语句多行被分割，使用分号确认结尾</br>        elif [[ $count -ge $BATCH_SIZE &#x26;&#x26; &#x22;$line&#x22; =~ &#x5c;;[[:space:]]*$ ]]; then</br>                break;</br>        else</br>                echo &#x22;$line&#x22;</br>        fi</br>        ((count++))</br>        #echo &#x22;[DEBUG] count $count&#x22; &#x3e;&#x26;2</br>    done</br>        echo &#x22;$count&#x22; &#x3e;&#x22;$BATCH_SIZE_FILE&#x22;</br></br>    # 3. 循环结束后提交剩余未提交的数据并恢复设置</br>    echo &#x22;$line&#x22;</br>    echo &#x22;[INFO] 最后一行$line&#x22; &#x3e;&#x26;2</br>    echo &#x22;COMMIT;&#x22;</br>    echo &#x22;SET FOREIGN_KEY_CHECKS=1;&#x22;</br>    echo &#x22;SET UNIQUE_CHECKS=1;&#x22;</br></br>} | mysql -u root --socket=/mnt/mysql_data/mysql.sock db01</br># &#x22;$MYSQL_BIN&#x22; --defaults-file=&#x22;$MYSQL_CNF&#x22; &#x5c;</br>#        --host=&#x22;$MYSQL_HOST&#x22; &#x5c;</br>#        --port=&#x22;$MYSQL_PORT&#x22; &#x5c;</br>#        --user=&#x22;$MYSQL_USER&#x22; &#x5c;</br>#       --password=&#x22;$MYSQL_PASSWORD&#x22; &#x5c;</br>#        --max-allowed-packet=1G &#x5c;</br>#        --line-numbers &#x5c;</br>#        --skip-ssl &#x5c;</br>#        --unbuffered &#x5c;</br>#        &#x22;$TARGET_DB&#x22;</br></br></br></br></br># 获取管道中 mysql 命令的返回状态码</br>if [[ ${PIPESTATUS[1]} -eq 0 ]]; then</br>    echo &#x22;$(cat &#x22;$BATCH_SIZE_FILE&#x22;)数据导入成功完成！&#x22;</br>else</br>    echo &#x22;导入过程中发生错误，请检查日志！&#x22;</br>    break;</br>fi</br>sleep 1 || break</br>#当数量不满足BATCH_SIZE的数量，但是while终止，需要进行中断.</br></br>if [[ $(cat &#x22;$BATCH_SIZE_FILE&#x22;) -lt $BATCH_SIZE ]] ; then</br>echo &#x22;$(date) END&#x22;</br>exit 0</br>fi</br></br>((TOTAL_COUNTER++))</br></br></br>done</br></br>exec {FD_SQL}&#x3e;&#x26;-</br>echo &#x22;[INFO] SQL_FILE $SQL_FILE 已经关闭($?)。&#x22;</br>echo &#x22;LINES_NUMBER : &#x3c;$LINES_NUMBER&#x3e;&#x22;</br>date</br>
+    </details></td><td>mysql restore</td></tr>
+        <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary>数据库管理命令-开启和重启</summary>
 SHUTDOWN #关闭数据库【注意：可能导致关闭后无法启动】
 RESTART #重新启动数据库【注意：可能导致无法重启，未测试】
     </details></td><td>mysql sql</td></tr>
         <!-- 分割线 -->
+    <tr><td><details><summary>查看最近新创建的table</summary>
+SELECT</br>    TABLE_SCHEMA AS &#x27;数据库&#x27;,</br>    TABLE_NAME AS &#x27;表名&#x27;,</br>    CREATE_TIME AS &#x27;创建时间&#x27;,</br>    TABLE_ROWS AS &#x27;行数&#x27;,</br>    DATA_LENGTH + INDEX_LENGTH AS &#x27;大小(字节)&#x27;</br>FROM information_schema.TABLES</br>WHERE TABLE_SCHEMA = &#x27;database01&#x27;  -- 替换为你的数据库名</br>  AND CREATE_TIME &#x3e; DATE_SUB(NOW(), INTERVAL 7 DAY)</br>ORDER BY CREATE_TIME DESC;</br>
+    </details></td><td>mysql sql</td></tr>
+        <!-- 分割线 -->
     <tr><td><details><summary>mysqldump备份数据库</summary>
-<h3>#备份所有数据库</h3>
-mysqldump -u 用户名 -p -R --all-databases &#x3e; all_backup.sql #备份所有数据库及其所有函数 mysqldump 默认不会备份存储过程和函数，备份时必须显式加上 -R 或 --<b>routines</b> 参数</br>
-#【补充：】同时备份<b>函数</b>和<b>事件</b>：如果需要一并备份事件（Event），可以加上 -E 或 <b>--events</b> 参数</br>
+<b>导出数据库 + 包含 Function</b></br>
+mysqldump -u root -p &#x5c;</br>  --routines &#x5c;</br>  --events &#x5c;</br>  --triggers &#x5c;</br>  --databases your_database_name &#x3e; db_backup.sql</br>
+默认情况下，mysqldump 不会导出存储过程和自定义函数。你必须显式添加 -R（或 --routines）参数</br>
+--routines (-R)：导出所有的 Stored Procedures 和 Functions。</br>
+--triggers：导出触发器（默认开启，建议显式声明）。</br>
+--events：导出定时事件。</br>
 <details><summary>所有非系统用户的创建与授权SQL的导出。</summary>
 自动拼接出所有非系统用户的创建与授权 SQL , 导出后的 all_users_grants.sql 文件直接包含带有加密密码的 CREATE USER 和 GRANT 语句，迁移时在新库执行即可。</br>mysql -u root -p -B -N -e &#x22;</br>SELECT CONCAT(&#x27;SHOW GRANTS FOR &#x5c;&#x27;&#x27;, user, &#x27;&#x5c;&#x27;@&#x5c;&#x27;&#x27;, host, &#x27;&#x5c;&#x27;;&#x27;) </br>FROM mysql.user </br>WHERE user NOT IN (&#x27;mysql.sys&#x27;, &#x27;mysql.session&#x27;, &#x27;mysql.infoschema&#x27;, &#x27;root&#x27;);</br>&#x22; | mysql -u root -p -B -N | sed &#x27;s/$/;/&#x27; &#x3e; all_users_grants.sql</br></br>
 </details>

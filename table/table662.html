@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>t626</title>
+  <title>t662</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 626 知识 软件设计和开发</h1>
+      <h1>table 622 产品 火山引擎/字节跳动</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,14 +59,25 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details><summary>数据安全管理核“三员”分工原则</summary>
-<p><strong>☐ 软件的数据安全是否符合安全管理核心：“三员”分工原则</strong></p>
-<p><strong>系统管理员</strong>：负责系统运行维护。<br> 具体包括软硬件安装、日常维护、数据备份与恢复，以及普通用户账号的增删等操作。<br> <em>管运维，但管不了权限审批。</em></p><p><strong>安全管理员</strong>：负责安全策略管理。<br> 核心职责包括权限审批（决定谁能看什么）、数据分类分级、安全策略配置（如加密规则），以及组织安全培训和应急响应。<br> <em>管权限，但管不了审计。</em></p><p><strong>审计管理员</strong>：负责监督检查。<br> 独立记录和分析系统管理员和安全管理员的所有操作日志，监督其是否存在违规行为。<br> <em>管审计，但不做具体运维和授权。</em></p><p><strong>重要原则：</strong><br> 一些法规明确要求“三员”必须由不同人员担任，且不得相互兼任。</p>
-    </details></td><td>软件设计 数据安全</td></tr>
+    <tr><td><details><summary>飞连问题</summary>
+ipconfig /release #飞连永远获取不到IP地址，显示169网段的IP，使用该方法可能会解决</br>
+<a href="https://open.feishu.cn/tool/cardbuilder?from=cotentmodule" target="_blank">https://open.feishu.cn/tool/cardbuilder?from=cotentmodule # 消息卡片搭建工具 - 飞书开放平台</a></br>
+
+
+    </details></td><td>飞连</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>代码规范与审查</summary>
-<a href="table803.html" target=_blank>c语言代码规范</a>
-    </details></td><td>软件开发 代码规范</td></tr>
+    <tr><td><details><summary>飞书群webhook机器人 send.sh</summary>
+#!/bin/bash</br>export LC_TIME=POSIX</br>DURL=&#x27;https://open.feishu.cn/open-apis/bot/v2/hook/88a9....&#x27;</br>curl $DURL -H &#x27;Content-Type: application/json&#x27; -d &#x27;{ &#x22;msg_type&#x22;: &#x22;post&#x22;, &#x22;content&#x22;: { &#x22;post&#x22;: { &#x22;zh-CN&#x22;: { &#x22;title&#x22;: &#x22;AMG918080-dahuaicc&#x22;, &#x22;content&#x22;: [ [ { &#x22;tag&#x22;: &#x22;text&#x22;, &#x22;text&#x22;: &#x27;&#x22;$(jq . --raw-input --slurp &#x3c;&#x3c;&#x3c; &#x22;$1&#x22; )&#x22;&#x27; } ] ] } } } }&#x27;</br>
+    </details></td><td>飞书 群webhook机器人</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>帮助文档</summary>
+https://open.feishu.cn/cardkit #新版的卡片生成工具，支持AI生成
+    </details></td><td>飞书 群webhook机器人</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>链接地址</summary>
+<a href="https://console.volcengine.com/message/innermsg" target="_blank">https://console.volcengine.com/message/innermsg #消息中心</a>
+<a href="https://console.volcengine.com/finance/bill/detail" target="_blank">https://console.volcengine.com/finance/bill/detail #费用中心 --- 账单明细 #提供费用清单，可选按日还是按月</a>
+    </details></td><td>火山引擎 官方链接</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>

@@ -117,12 +117,12 @@ A-Z 【跨文件mark】
 :let n=0 | g/opIndex/s#\=printf("abc %X",n)/ |let n+=1 #substitude竟然支持printf</br>
 :s/\n\n/\r/g #vi的行处理有些不一致的地方查找使用n，替换使用r否则替换会变成\x00</br>
 :let @a=0 | s/#/\='abc_'.(@a+setreg('a',@a+1))/g #命令模式行内substitute换序列序号</br>
-:'<,'>s/\%V2/b/g #仅替换选区内，而非全行或全段
-:g/ABC/d #删除含有匹配字符的行
+:'<,'>s/\%V2/b/g #仅替换选区内，而非全行或全段</br>
+:g/ABC/d #删除含有匹配字符的行</br>
     </details></td><td>vim 查找和替换</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>vim 复制和粘贴操作</summary>
-gv #重新选取上次的选区
+gv #重新选取上次的选区</br>
 yy / 3yy / p #复制本行 / 从本行开始复制3行 / 粘贴复制内容到本行之下</br>
 
     </details></td><td>vim 内容编辑</td></tr>
@@ -425,6 +425,13 @@ floor(): round down，下舍入</br>
 trunc(): 简单截断小数点后面的数</br>
 
     </details></td><td>vim 内置函数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>vim help</summary>
+:help pattern-atoms #&#x5c;%V &#x5c;%u等定义</br>
+    </details></td><td>vim help</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
         <!-- 分割线 -->
       </tbody>
     </table>

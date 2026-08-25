@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t37</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 37 bash ip/iproute2</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>ip link bond</summary>
+<b>侧配置LACP动态聚合组（生产标准参数）</b></br>
+modprobe bonding</br>
+ip link add bond-isl-sw1 type bond mode 4 miimon 100 lacp_rate fast</br>
+ip link set isl0-sw1  master bond-isl-sw1</br>
+ip link set isl1-sw1 master bond-isl-sw1</br>
+ip link set bond-isl-sw1 master sw1 up</br>
+</br>
+echo &#x22;==== SW1 bond聚合状态 ====&#x22;</br>
+cat /proc/net/bonding/bond-isl-sw1</br>
+</br>
+Linux Bonding共7种工作模式，日常运维最常用的为Mode2静态聚合和Mode4动态LACP聚合，二者稳定性天差地别。</br>
+为规避线上故障，务必牢记：生产环境禁止使用Mode2静态聚合。</br>
+</br>
+</br>
+<b>#备用线路</b></br>
+ip link add bond0 type bond</br>
+ip link set bond0 type bond miimon 100 mode active-backup</br>
+ip link set em1 down</br>
+ip link set em1 master bond0</br>
+ip link set em2 down</br>
+ip link set em2 master bond0</br>
+ip link set bond0 up</br>
+</br>
+<b>#ip bond mode 7种模式</b></br>
+Mode=0(balance-rr) 表示负载分担round-robin，和交换机的聚合强制不协商的方式配合。</br>
+Mode=1(active-backup) 表示主备模式，只有一块网卡是active,另外一块是备的standby，这时如果交换机配的是捆绑，将不能正常工作，因为交换机往两块网卡发包，有一半包是丢弃的。</br>
+Mode=2(balance-xor) 表示XOR Hash负载分担，和交换机的聚合强制不协商方式配合。（需要xmit_hash_policy）</br>
+Mode=3(broadcast) 表示所有包从所有interface发出，这个不均衡，只有冗余机制...和交换机的聚合强制不协商方式配合。</br>
+Mode=4(802.3ad) 表示支持802.3ad协议，和交换机的聚合LACP方式配合（需要xmit_hash_policy）</br>
+Mode=5(balance-tlb) 是根据每个slave的负载情况选择slave进行发送，接收时使用当前轮到的slave</br>
+Mode=6(balance-alb) 在5的tlb基础上增加了rlb。</br>
+</br>
+5和6不需要交换机端的设置，网卡能自动聚合。4需要支持802.3ad。0，2和3理论上需要静态聚合方式</br>
+但实测中0可以通过mac地址欺骗的方式在交换机不设置的情况下不太均衡地进行接收。</br>
+</br>
+    </details></td><td>ip link bond</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip link bridge</summary>
+ip link help bridge #帮助命令</br>
+ip link add link eth0 name virtbr0 type bridge #创建网桥</br>
+ip link set dev veth0 master br0 #网桥添加端口</br>
+ip link set dev vnet01 nomaster #端口取消加入网桥</br>
+bridge fdb show #bridge 查询数据流向</br>
+</br>
+</br>
+    </details></td><td>ip link bridge</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip link xvlan</summary>
+ip link add name vxlan0 type vxlan id 100 dstport 4789 remote 192.168.1.2 local 192.168.57.50 dev eth0 #创建vxlan</br>
+#注意,没有srcport参数,端口的开通是对应的,dstport 4789对应的本地端口与desport端口一致,不用单独配置本地端口</br>
+</br>
+#vxlan 隧道MTU导致的故障</br>
+ip link set dev br01 advmss 1400 #该命令可以有误，可能是在路由配置中添加advmss</br>
+#对于vxlan等隧道,可能出现MTU的分片问题(小包ping通,remmina无法工作),需要通知应用层在SYN过程中更改MSS,防止分片被丢弃.</br>
+</br>
+    </details></td><td>ip link xvlan</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip link vlan</summary>
+ip link add link eth0 name vlan3 type vlan id 3 #创建vlan</br>
+</br>
+    </details></td><td>ip link vlan</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip tunnel</summary>
+ip tunnel help #帮助</br>
+#gre点对点隧道</br>
+ip tunnel add gre01 mode gre remote 122.4.93.254 local 192.168.1.103 dev eth0</br>
+#lsmod查询是否支持。</br>
+#remote是指远端的地址。</br>
+#local是本地封装地址，将本地地址封装后发送出去。</br>
+#dev指定远端从本设备口发出，不受路由变化而改变oif。</br>
+#不需要指定端口号是因为gre本身就是传输协议。</br>
+</br>
+</br>
+    </details></td><td>ip tunnel</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip link vrf</summary>
+ip link add name vrf0 type vrf table10 #并使用table10作为默认路由表</br>
+ip link set dev vrf0 up #启用虚拟路由器</br>
+ip link set vxlan0 master vrf0 #将端口添加到虚拟路由器中</br>
+ping 1.1.1.3 -I vrf0 #在vrf0上ping1.1.1.3（如果不设置master就不需要进行指定vrf的操作了）</br>
+</br>
+vrf或者vxlan进行中转时，到172.16.10.0/24源地址永远是192.168.99.56</br>
+原因是：按照路由表src或者策略路由，确实正确的源地址进行了发送。但是，nft防火墙可以强制更改数据包，毁灭源地址。。。</br>
+所以，最终源地址是有路由决定的，nft或者iptables防火墙二次修改的，检查路由，检查防火墙。</br>
+</br>
+vrf 和bridge的区别</br>
+vrf的端口和IP将不会被宿主机检测到和处理，本机发包将无视vrf中的端口和IP</br>
+</br>
+netns和vrf的区别</br>
+应用程序无法绑定到vrf下的端口，也无法直接调用。应用程序可以绑定并运行于一个namespace下，做到网络协议栈的完全隔离和使用。</br>
+</br>
+    </details></td><td>ip link vrf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip netns</summary>
+ip netns add netns01</br>
+ls /var/run/netns/</br>
+ip link add name veth0 type veth peer name veth1</br>
+ip link set dev veth1 netns ns0</br>
+ip address add 1.2.2.2/24 dev veth0</br>
+ip link set dev veth0 up</br>
+ip netns exec ns0 /bin/bash</br>
+ip address add 1.2.2.3/24 dev veth1</br>
+ip link set dev veth1 up</br>
+    </details></td><td>ip netns</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip 前置参数</summary>
+ip -s link #查看统计情况
+
+    </details></td><td>ip 前置参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip maddress</summary>
+ip maddress list #查看组播地址
+    </details></td><td>ip maddress</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip 常见故障</summary>
+常见错误：</br>
+Error: argument "veth_netns01_out" is wrong: "name" not a valid ifname #网口名字太长，修改成短的就可以了</br>
+Error Device does not allow enslaving to a bridve #无线网卡无法加入bridge中。可以通过ip link set master命令测试
+    </details></td><td>ip 常见故障</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip tuntap</summary>
+ip tuntap add dev tap0 mod tap user user01 group group01# 创建 tap</br>
+ip tuntap add dev tun0 mod tun user user01 group group01# 创建 tun</br>
+ip tuntap del dev tap0 mod tap # 删除 tap</br>
+ip tuntap del dev tun0 mod tun # 删除 tun</br>
+    </details></td><td>ip tuntap</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip rule</summary>
+ip rule add from 172.16.26.0/24 pref 9999 table 200</br>
+ip rule add from 10.200.0.11 pref 103 blackhole #黑洞策略路由</br>
+</br>
+    </details></td><td>ip rule</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ip route</summary>
+<b>rt_tables</b></br>
+vim /etc/iproute2/rt_tables</br>
+252 table01 #手动配置iproute2的table名称</br>
+</br>
+<b>ip route get</b></br>
+ip route get 1.1.1.1 from 2.2.2.2 iif eth01</br>
+</br>
+<b>blackhole</b></br>
+ip route add blackhole 202.54.5.2/32 table 111</br>
+</br>
+<b>MSS</b></br>
+ip route replace default via 192.168.1.1 dev b01vif497 mtu 1400 advmss 1300 #MTU的分片问题的路由方案</br>
+ip link set dev eth0 mtu 1400 #link解决方案</br>
+</br>
+</br>
+<b>route cache</b></br>
+ip route get 172.30.224.100</br>
+cache redirected expires 191sec #路由重定向故障 </br>
+172.30.224.100 via 172.16.16.100 dev enp6s19 src 172.16.16.21 uid 1004</br>
+cache <redirected> expires 191sec</br>
+#注意:</br>
+最初发往 172.30.224.100 的包确实是按照路由表走了 172.16.16.9</br>
+172.16.16.9 收到包后，发现其实可以直接发给目标，不需要经过自己</br>
+172.16.16.9 向你的机器发送了 ICMP 重定向："你去 172.30.224.100 应该直接走 172.16.16.100"</br>
+你的系统接受并缓存了这个重定向，后续流量直接走 172.16.16.100</br>
+</br>
+ip route show cache 172.30.224.100</br>
+ip route flush cache 172.30.224.100</br>
+    </details></td><td>ip route</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

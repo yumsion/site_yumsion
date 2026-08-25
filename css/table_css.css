@@ -339,6 +339,7 @@ tbody tr:hover {
 
 
 tbody td {
+  border:1px solid black;
   padding: 14px 18px;
   border-bottom: 1px solid #edf0f5;
   color: #1e293b;
@@ -348,17 +349,20 @@ tbody td {
 }
 
 tbody td:first-child {
+  border:1px solid black;
   padding-left: 22px;
   font-weight: 480;
 }
 
 tbody td:last-child {
+  border:1px solid black;
   padding-right: 22px;
   color: #475569;
 }
 
 /* ===== 分类列 - 按钮样式 ===== */
 tbody tr td:last-child {
+  border:1px solid black;
   background: transparent;
   padding: 6px 4px;
   text-align: left;
@@ -426,6 +430,7 @@ tbody tr td:last-child {
 
 /* 内容列占更多空间 */
 tbody td:first-child {
+  border:1px solid black;
   min-width: 10%;
   max-width: 90%;
 }
@@ -485,16 +490,19 @@ tbody tr.hidden-row {
 
   thead th,
   tbody td {
+  border:1px solid black;
     padding: 12px 14px;
   }
 
   thead th:first-child,
   tbody td:first-child {
+  border:1px solid black;
     padding-left: 16px;
   }
 
   thead th:last-child,
   tbody td:last-child {
+  border:1px solid black;
     padding-right: 16px;
   }
 
@@ -553,17 +561,20 @@ tbody tr.hidden-row {
 
   thead th,
   tbody td {
+  border:1px solid black;
     padding: 10px 10px;
     font-size: 0.82rem;
   }
 
   thead th:first-child,
   tbody td:first-child {
+  border:1px solid black;
     padding-left: 10px;
   }
 
   thead th:last-child,
   tbody td:last-child {
+  border:1px solid black;
     padding-right: 10px;
   }
 
@@ -580,12 +591,14 @@ tbody tr.hidden-row {
   }
 
   tbody td:first-child {
+  border:1px solid black;
     word-break: break-word;
   }
 }
 
 @media screen and (max-width: 380px) {
   .table-container {
+  border:1px solid black;
     padding: 10px 6px 10px;
   }
 
@@ -599,6 +612,7 @@ tbody tr.hidden-row {
 
   thead th,
   tbody td {
+  border:1px solid black;
     padding: 8px 6px;
     font-size: 0.75rem;
   }
