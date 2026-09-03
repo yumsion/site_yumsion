@@ -59,61 +59,7 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details><summary>PVE 硬件支持</summary>
-<details style="white-space:pre-wrap;"><summary>USB2RJ45 ASIX Electronics Corp. AX88179 Gigabit Ethernet #PVE8.2.2 支持性不好</summary>
-Settings for enxf8e43be27dc0:
-        Supported ports: [  ]
-        Supported link modes:   Not reported
-        Supported pause frame use: No
-        Supports auto-negotiation: No
-        Supported FEC modes: Not reported
-        Advertised link modes:  Not reported
-        Advertised pause frame use: No
-        Advertised auto-negotiation: No
-        Advertised FEC modes: Not reported
-        Speed: Unknown!
-        Duplex: Half
-        Auto-negotiation: off
-        Port: Twisted Pair
-        PHYAD: 0
-        Transceiver: internal
-        MDI-X: Unknown
-        Current message level: 0x00000007 (7)
-                               drv probe link
-        Link detected: yes
-</details>
-<details style="white-space:pre-wrap;"><summary>万兆光纤网卡 CX312B Mellanox Technologies MT27520 Family [ConnectX-3 Pro] #PVE8.2.2 支持</summary>
-Settings for enp43s0:
-        Supported ports: [ FIBRE ]
-        Supported link modes:   1000baseX/Full
-                                10000baseCR/Full
-                                10000baseSR/Full
-        Supported pause frame use: Symmetric Receive-only
-        Supports auto-negotiation: No
-        Supported FEC modes: Not reported
-        Advertised link modes:  1000baseX/Full
-                                10000baseCR/Full
-                                10000baseSR/Full
-        Advertised pause frame use: Symmetric
-        Advertised auto-negotiation: No
-        Advertised FEC modes: Not reported
-        Speed: 10000Mb/s
-        Duplex: Full
-        Auto-negotiation: off
-        Port: FIBRE
-        PHYAD: 0
-        Transceiver: internal
-        Supports Wake-on: d
-        Wake-on: d
-        Current message level: 0x00000014 (20)
-                               link ifdown
-        Link detected: no
-
-</details>
-
-    </details></td><td>PVE 硬件支持</td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary>PVE init</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>PVE init</summary>
 #ISO下载
 https://mirrors.tuna.tsinghua.edu.cn/proxmox/iso/ #ISO 下载连接
 
@@ -213,7 +159,7 @@ systemctl restart corosync.service && systemctl restart pve-cluster.service
 
     </details></td><td>PVE init</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>PVE 文件系统</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>PVE 文件系统</summary>
 /var/lib/vz/template/iso #local ISO image的实际存储未知
 /mnt/pve/WDC160G #disks --- Directory 默认的挂载位置
 /etc/pve/qemu-server/102.conf #虚拟机配置文件
@@ -231,7 +177,7 @@ systemctl restart corosync.service && systemctl restart pve-cluster.service
 
     </details></td><td>PVE 文件系统</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>PVE qm 虚拟机管理命令</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>PVE qm 虚拟机管理命令</summary>
 qm stop 100 #关闭VM 100
 qm set 100 --tags myfirstag;mysecondtag #设置虚拟机tag
 qm importdisk 101 /var/lib/vz/template/iso/op.img local #导入一个磁盘
@@ -240,7 +186,7 @@ qm set --onboot=no 100 #关闭VM 100的开机启动
 
     </details></td><td>PVE qm</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>PVE pvecm</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>PVE pvecm</summary>
 pvecm create cluster01 #创建一个集群，集群管理线路与业务线路要隔离，否则造成集群通讯障碍
 pvecm status #查看cluster状态
 pvecm add 192.168.1.2 #join到cluster，实际是通过ssh进行通讯的
@@ -282,7 +228,7 @@ PVE集群修改/etc/hosts,修改192.168.100.2为正确的值
 
     </details></td><td>PVE pvecm</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>PVE ceph</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>PVE ceph</summary>
 
 pveceph install --repository no-subscription #安装pveceph组件，用于集群
 ceph osd pool ls #查看ceph 的pool 。ceph osd pool ls detail显示详细信息
@@ -360,7 +306,7 @@ ceph osd crush rule ls-by-class CLASS
 
     </details></td><td>PVE ceph</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>PVE 故障</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>PVE 故障</summary>
 <details><summary>lvm加载故障：pve/data_tmeta is active</summary>
 activating LV 'pve/data' failed: Activation of logical volume pve/data is prohibited while logical volume pve/data_tmeta is active.
 #该故障可能是硬盘空间总量小于分配的虚拟机硬盘使用量之和导致的。
@@ -377,7 +323,7 @@ rm /var/lib/pve-manager/pve-replication-state.json
 </details>
     </details></td><td>PVE 故障</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>PVE 其他命令</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>PVE 其他命令</summary>
 pveversion -v #查看目前的PVE的版本信息
     </details></td><td>PVE 其他命令</td></tr>
         <!-- 分割线 -->

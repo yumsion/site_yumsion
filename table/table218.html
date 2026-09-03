@@ -147,6 +147,8 @@ ExecStart=/usr/sbin/snmptrapd -c /home/snmp/etc/snmptrapd.conf -C -m ALL -u snmp
 WantedBy=multi-user.target</br>
 </br>
 </br>
+    </details></td><td>snmptrapd systemd</td></tr>
+    <tr><td><details><summary>snmptrapd sh</summary>
 </br>
 snmptrapd -C -c snmptrapd.conf -f -d -Lo #不使用默认配置 前台运行 debug模式 输出到stdout</br>
 </br>
@@ -198,6 +200,31 @@ snmptrap -Ci snmpuser3 ... #该用户可以这样发送v3 trap information，使
 7 or d for LOG_DEBUG.</br>
 </br>
 </br>
+    </details></td><td>snmptrapd snmptrapd.conf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>snmptrapd.conf 示例MG2024</summary>
+vim /home/snmp/snmptrapd.conf</br>
+snmpTrapdAddr  0.0.0.0:162</br>
+doNotRetainNotificationLogs yes</br>
+doNotLogTraps yes</br>
+doNotFork yes</br>
+pidFile /dev/shm/snmptrapd.pid</br>
+authCommunity   log,execute community_NAME01</br>
+authCommunity   execute community_trap_TRAP01</br>
+#format1 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N&#x5c;n&#x5c;t%W Trap (%q) Uptime: %#T&#x5c;n%v&#x5c;n</br>
+#format2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N&#x5c;n&#x5c;t%W Trap (%q) Uptime: %#T&#x5c;n%v&#x5c;n</br>
+format print1 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N&#x5c;n&#x5c;t%W Trap (%q) Uptime: %#T&#x5c;n%v&#x5c;n</br>
+format print2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b]:&#x5c;n%v&#x5c;n</br>
+format syslog1 %a: %W Trap (%q) Uptime: %#T%#v&#x5c;n</br>
+format syslog2 %B [%b]: Trap %#v&#x5c;n</br>
+format execute %H:%M:%S %Y/%m/%d</br>
+ignoreAuthFailure no</br>
+#traphandle default /usr/bin/perl /home/snmp/zabbix_trap_receiver.pl #this line run with error ,Undefined subroutine &#x26;NetSNMP::TrapReceiver::register called at /home/snmp/zabbix_trap_receiver.pl </br>
+line 112.</br>
+#traphandle default /usr/bin/perl /usr/bin/traptoemail -s mysmtp.somewhere.com -f admin@somewhere.com me@somewhere.com</br>
+#/usr/bin/perl do &#x22;/home/snmp/zabbix_trap_receiver.pl&#x22;</br>
+perl do &#x22;/home/snmp/zabbix_trap_receiver.pl&#x22; </br>
+
     </details></td><td>snmptrapd snmptrapd.conf</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>snmptranslate</summary>
@@ -292,25 +319,10 @@ mibs ALL #LOAD ALL MIBS , LIKE PARAMETER -m +ALL</br>
 </br>
 </br>
 vim /home/snmp/snmptrapd.conf</br>
-snmpTrapdAddr 0.0.0.0:162</br>
-doNotRetainNotificationLogs yes</br>
-doNotLogTraps yes</br>
-doNotFork yes</br>
-pidFile /dev/shm/snmptrapd.pid</br>
-authCommunity log,execute community01</br>
-authCommunity execute community01_trap</br>
-#format1 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q) Uptime: %#T\n%v\n</br>
-#format2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q) Uptime: %#T\n%v\n</br>
-format print1 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q) Uptime: %#T\n%v\n</br>
-format print2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b]:\n%v\n</br>
-format syslog1 %a: %W Trap (%q) Uptime: %#T%#v\n</br>
-format syslog2 %B [%b]: Trap %#v\n</br>
-format execute %H:%M:%S %Y/%m/%d</br>
-ignoreAuthFailure no</br>
-#traphandle default /usr/bin/perl /home/snmp/zabbix_trap_receiver.pl #this line run with error ,Undefined subroutine &NetSNMP::TrapReceiver::register called at /home/snmp/zabbix_trap_receiver.pl line 112.</br>
-#traphandle default /usr/bin/perl /usr/bin/traptoemail -s mysmtp.somewhere.com -f admin@somewhere.com me@somewhere.com</br>
-#/usr/bin/perl do "/home/snmp/zabbix_trap_receiver.pl"</br>
-perl do "/home/snmp/zabbix_trap_receiver.pl" #THIS FILE IS from usr share zabbix</br>
+
+
+
+
     </details></td><td>snmp install</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>

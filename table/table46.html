@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t46</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 46 cmd 网络相关</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>配置IP地址</summary>
+<details><summary>动态IP和静态IP共存</summary>
+netsh int ipv4 set interface "以太网" dhcpstaticipcoexistence=enabled</br>
+netsh int ipv4 add address "以太网" 192.168.100.101 255.255.255.0</br>
+</details>
+#配置静态IP地址</br>
+netsh interface ip set address name=&#x22;本地连接&#x22; source=static addr=192.168.1.24 mask=255.255.255.0 gateway=192.168.1.1</br>
+netsh interface ip set dns &#x22;本地连接&#x22; source=static addr=223.5.5.5</br>
+</br>
+</br>
+#配置动态IP地址</br>
+netsh interface ip set address name=&#x22;本地连接&#x22; source=dhcp</br>
+netsh interface ip set dns &#x22;本地连接&#x22; source=dhcp</br>
+</br>
+</br>
+#查看无线密码</br>
+netsh wlan show profile name=&#x22;Hi-Cable-A05DCA&#x22; key=clear</br>
+</br>
+</br>
+#配置端口映射</br>
+netsh interface portproxy add v4tov4 listenport=3340 listenaddress=192.168.204.150 connectport=3389 connectaddress=192.168.2.3 #设置端口映射</br>
+netstat -ano | findstr :3340 #查询端口监听情况</br>
+netsh interface portproxy show all #查询端口映射表</br>
+netsh interface portproxy delete v4tov4 listenport=3340 listenaddress=192.168.204.150 #删除端口映射</br>
+</br>
+#MTU配置</br>
+netsh interface ipv4 set subinterface &#x22;本地连接&#x22; mtu=1492 store=persistent #修改MTU</br>
+</br>
+#NAT设置</br>
+#设置端口映射</br>
+netsh interface portproxy add v4tov4 listenport=3340 listenaddress=0.0.0.0 connectport=3389 connectaddress=192.168.2.3</br>
+#查询端口监听情况</br>
+netstat -ano | findstr :3340</br>
+#查询端口映射表</br>
+netsh interface portproxy show all</br>
+#删除端口映射</br>
+netsh interface portproxy delete v4tov4 listenport=3340 listenaddress=192.168.204.150</br>
+</br>
+#Teredo隧道IPv6</br>
+netsh interface teredo set state enterpriseclient server=default</br>
+#打开Teredo隧道</br>
+netsh interface teredo set state server=teredo.remlab.net</br>
+#因为某历害国屏蔽了默认的Teredo隧道服务器。设置备用服务器</br>
+netsh interface teredo set state disable</br>
+#禁用Teredo隧道</br>
+</br>
+#组播 查询</br>
+netsh interface ipv4 show joins</br>
+</br>
+netsh interface show interface #查看目前的网络接口</br>
+</br>
+</br>
+#网卡延迟启动</br>
+#配置注册表，让网卡不自动开机启动</br>
+reg ADD &#x22;HKLM&#x5c;SYSTEM&#x5c;CurrentControlSet&#x5c;Enum&#x5c;PCI&#x5c;VEN_10EC网卡硬件ID&#x22; /v ConfigFlags /t REG_DWORD /d 1 /f</br>
+</br>
+#配置延迟运行命令，执行网卡启动命令</br>
+netsh interface set interface name=&#x22;以太网&#x22; admin=ENABLE</br>
+</br>
+</br>
+
+
+    </details></td><td>netsh IP配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>netsh 防火墙配置</summary>
+#打开关闭防火墙</br>
+netsh advfirewall set allprofiles state off</br>
+</br>
+#添加rule</br>
+netsh advfirewall firewall add rule name=&#x22;deny tcp 139&#x22; dir=in protocol=tcp localport=139 action=block</br>
+netsh advfirewall firewall add rule name=&#x22;deny udp 139&#x22; dir=in protocol=udp localport=139 action=block</br>
+netsh advFirewall Firewall add rule name=&#x22;OSRadar Rule PING IPv4&#x22; protocol=icmpv4:8,any dir=in action=allow</br>
+</br>
+    </details></td><td>netsh 防火墙配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>获取指定IP通讯的进程</summary>
+查询进程脚本</br>
+# 精简监控版本（修正版）</br>
+# 文件名: MonitorSimple.ps1</br>
+</br>
+$targetIP = &#x22;4.3.2.1&#x22;</br>
+$outputFile = &#x22;D:&#x5c;1.txt&#x22;</br>
+</br>
+Write-Host &#x22;监控连接到 $targetIP 的连接，每10秒检查一次...&#x22; -ForegroundColor Cyan</br>
+Write-Host &#x22;按 Ctrl+C 停止`n&#x22;</br>
+</br>
+while ($true) {</br>
+$connections = netstat -ano | Select-String $targetIP</br>
+</br>
+if ($connections) {</br>
+$timestamp = Get-Date -Format &#x22;yyyy-MM-dd HH:mm:ss&#x22;</br>
+$processIds = $connections | ForEach-Object {</br>
+if ($_ -match &#x27;&#x5c;s+(&#x5c;d+)&#x5c;s*$&#x27;) { $matches[1] }</br>
+} | Select-Object -Unique</br>
+</br>
+# 构建输出</br>
+&#x22;`n========== $timestamp ==========&#x22; | Out-File $outputFile -Append -Encoding UTF8</br>
+$connections | Out-File $outputFile -Append -Encoding UTF8</br>
+</br>
+foreach ($procId in $processIds) {</br>
+try {</br>
+$proc = Get-Process -Id $procId -ErrorAction Stop</br>
+&#x22;PID: $procId -&#x3e; $($proc.ProcessName) ($($proc.Path))&#x22; | Out-File $outputFile -Append -Encoding UTF8</br>
+}</br>
+catch {</br>
+&#x22;PID: $procId -&#x3e; 无法获取进程信息&#x22; | Out-File $outputFile -Append -Encoding UTF8</br>
+}</br>
+}</br>
+</br>
+Write-Host &#x22;[$timestamp] 发现连接，已写入 $outputFile&#x22; -ForegroundColor Green</br>
+}</br>
+</br>
+Start-Sleep -Seconds 10</br>
+}</br>
+</br>
+    </details></td><td>脚本 获取指定IP通讯的进程</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

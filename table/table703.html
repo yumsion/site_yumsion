@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>t254</title>
+  <title>t703</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 254 LINUX apt dpkg debian</h1>
+      <h1>table 703 知识 RegEx/正则表达式</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,24 +59,47 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details><summary>debian 13 网络配置 修改dhcp为静态IP地址</summary>
-<b>修改dhcp为静态IP地址</b></br>
-<b>方式1</b> ls /etc/netplan/</br>
-<b>方式2</b> systemctl status NetworkManager</br>
-<b>方式3</b> ls /etc/systemd/network/ 有 .network 文件则说明系统在使用 systemd-networkd</br>
-<b>方式4</b> cat /etc/network/interfaces</br>
-vim /etc/network/interfaces</br>
--- iface eth0 inet dhcp</br>
-++</br>
-iface eth0 inet static</br>
-    address 192.168.1.100</br>
-    netmask 255.255.255.0</br>
-    gateway 192.168.1.1</br>
-    dns-nameservers 8.8.8.8 1.1.1.1</br>
-    </details></td><td></td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details><summary>Perl 兼容正则表达式（Perl Compatible Regular Expressions，简称 PCRE）</summary>
+字符类</br>
+&#x5c;d 数字</br>
+&#x5c;D 非数字</br>
+&#x5c;w 单词字符(字母/数字/下划线) </br>
+&#x5c;W 非单词字符</br>
+&#x5c;s 空白字符</br>
+&#x5c;S 非空白字符</br>
+</br>
+重复</br>
+{3,5} 重复，最少3次，最多5次</br>
++ 重复，至少1次</br>
+* 重复，0次或以上</br>
+? 重复，0次或1次</br>
+.* 贪婪匹配（默认）</br>
+.*? 懒惰匹配（Lazy）</br>
+.*+ 占有匹配（Possessive）尽可能多地匹配且绝对不回溯</br>
+</br>
+</br>
+边界匹配，占位符</br>
+^ 行开头</br>
+$ 行尾巴</br>
+&#x5c;b 单词边界</br>
+&#x5c;B 非单词边界</br>
+</br>
+</br>
+称预查/零宽断言</br>
+(?= pattern) 正向先行断言，后面是pattern</br>
+(?! pattern) 负向先行断言，后面不跟pattern</br>
+(?&#x3c;= pattern) 正向后行断言，前面必须是 pattern</br>
+(?&#x3c;! pattern) 负向后行断言，前面不能是 pattern</br>
+</br>
+</br>
+捕获组与非捕获组</br>
+(pattern) 捕获组 保存匹配的文本，后续可用 &#x5c;1, &#x5c;2 引用或在代码中提取。</br>
+(?:pattern) 非捕获组,仅作逻辑分组（如组合数量词），不保存文本，提升匹配性能。</br>
+(?&#x3c;name&#x3e;pattern) 命名捕获组,为捕获组命名，通过名字提取，如 (?&#x3c;year&#x3e;&#x5c;d{4})-(?&#x3c;month&#x3e;&#x5c;d{2})</br>
+(?&#x3e;pattern) 原子组,匹配成功后抛弃该组内的回溯点，功能类似于占有匹配。</br>
+</br>
+
+    </details></td><td>PCRE</td></tr>
         <!-- 分割线 -->
       </tbody>
     </table>

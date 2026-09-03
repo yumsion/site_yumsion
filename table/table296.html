@@ -63,7 +63,211 @@
 timeout检查</br>
 sysctl -a | grep timeout</br>
 </br>
-#!/bin/bash</br># ==============================================================================</br># 脚本名称: check_conntrack_tcp_dual.sh</br># 说明: 全量双向对比 TCP 协议栈与 Conntrack 参数 (兼顾“连接连通性”与“抗爆表能力”)</br># ==============================================================================</br></br>RED=&#x27;&#x5c;033[0;31m&#x27;</br>GREEN=&#x27;&#x5c;033[0;32m&#x27;</br>YELLOW=&#x27;&#x5c;033[0;33m&#x27;</br>BLUE=&#x27;&#x5c;033[0;34m&#x27;</br>NC=&#x27;&#x5c;033[0m&#x27;</br></br>echo -e &#x22;${BLUE}======================================================================${NC}&#x22;</br>echo -e &#x22;${BLUE}    Linux 全量 TCP vs Conntrack 双向协同与资源安全性诊断工具            ${NC}&#x22;</br>echo -e &#x22;${BLUE}======================================================================${NC}&#x22;</br>echo</br></br>if ! lsmod | grep -q nf_conntrack; then</br>    echo -e &#x22;${RED}[ERROR] nf_conntrack 模块未加载！请先执行 modprobe nf_conntrack${NC}&#x22;</br>    exit 1</br>fi</br></br>get_sysctl() {</br>    local val</br>    val=$(sysctl -n &#x22;$1&#x22; 2&#x3e;/dev/null)</br>    echo &#x22;${val:-0}&#x22;</br>}</br></br># 1. 提取 Conntrack 参数</br>ct_est=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_established)</br>ct_close_wait=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_close_wait)</br>ct_fin_wait=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_fin_wait)</br>ct_time_wait=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_time_wait)</br>ct_syn_sent=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_syn_sent)</br>ct_syn_recv=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_syn_recv)</br>ct_max=$(get_sysctl net.netfilter.nf_conntrack_max)</br>ct_count=$(get_sysctl net.netfilter.nf_conntrack_count)</br></br># 精确获取 hashsize</br>hashsize=0</br>if [ -f /sys/module/nf_conntrack/parameters/hashsize ]; then</br>    hashsize=$(cat /sys/module/nf_conntrack/parameters/hashsize)</br>elif [ -f /proc/sys/net/netfilter/nf_conntrack_buckets ]; then</br>    hashsize=$(cat /proc/sys/net/netfilter/nf_conntrack_buckets)</br>fi</br></br># 2. 提取 TCP 关键参数</br>tcp_fin_timeout=$(get_sysctl net.ipv4.tcp_fin_timeout)</br>tcp_tw_reuse=$(get_sysctl net.ipv4.tcp_tw_reuse)</br>tcp_keepalive_time=$(get_sysctl net.ipv4.tcp_keepalive_time)</br>tcp_keepalive_intvl=$(get_sysctl net.ipv4.tcp_keepalive_intvl)</br>tcp_keepalive_probes=$(get_sysctl net.ipv4.tcp_keepalive_probes)</br>tcp_syn_retries=$(get_sysctl net.ipv4.tcp_syn_retries)</br>tcp_synack_retries=$(get_sysctl net.ipv4.tcp_synack_retries)</br></br># 计算 Keepalive 总探测尝试周期</br>keepalive_total_fail_time=$((tcp_keepalive_intvl * tcp_keepalive_probes))</br></br># 打印提取数据</br>echo -e &#x22;${GREEN}[1] 当前网络参数汇总提取表:${NC}&#x22;</br>echo &#x22;----------------------------------------------------------------------&#x22;</br>printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_fin_timeout&#x22; &#x22;${tcp_fin_timeout}s&#x22; &#x22;nf_conntrack_tcp_timeout_fin_wait&#x22; &#x22;${ct_fin_wait}s&#x22;</br>printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_tw_reuse&#x22; &#x22;${tcp_tw_reuse}&#x22; &#x22;nf_conntrack_tcp_timeout_time_wait&#x22; &#x22;${ct_time_wait}s&#x22;</br>printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_keepalive_time&#x22; &#x22;${tcp_keepalive_time}s&#x22; &#x22;nf_conntrack_tcp_timeout_established&#x22; &#x22;${ct_est}s&#x22;</br>printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;keepalive intvl*probes (探测失败时长)&#x22; &#x22;${keepalive_total_fail_time}s&#x22; &#x22;nf_conntrack_tcp_timeout_close_wait&#x22; &#x22;${ct_close_wait}s&#x22;</br>printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_syn_retries&#x22; &#x22;${tcp_syn_retries}次&#x22; &#x22;nf_conntrack_tcp_timeout_syn_sent&#x22; &#x22;${ct_syn_sent}s&#x22;</br>printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;nf_conntrack_hashsize&#x22; &#x22;${hashsize}&#x22; &#x22;nf_conntrack_count / max&#x22; &#x22;${ct_count} / ${ct_max}&#x22;</br>echo &#x22;----------------------------------------------------------------------&#x22;</br>echo</br></br># 3. 诊断评估</br>echo -e &#x22;${GREEN}[2] 双向逻辑匹配与系统风险评估:${NC}&#x22;</br>ERR_COUNT=0</br>WARN_COUNT=0</br></br># ------------------------------------------------------------------------------</br># 规则 1: FIN_WAIT 状态匹配 (下限: 防误杀; 上限: 防白白占用表项)</br># ------------------------------------------------------------------------------</br>if [ &#x22;$ct_fin_wait&#x22; -lt &#x22;$tcp_fin_timeout&#x22; ]; then</br>    echo -e &#x22;${RED}[HIGH RISK] 规则 1 校验失败 (FIN_WAIT 阶段 Conntrack 过早回收):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: ct_fin_wait (${ct_fin_wait}s) &#x3c; tcp_fin_timeout (${tcp_fin_timeout}s)&#x22;</br>    echo -e &#x22;  └─ 隐患: Conntrack 表项先被删除，后续 FIN 包或 ACK 包会被标记为 INVALID 并丢弃。&#x22;</br>    echo -e &#x22;  └─ 建议: 将 ct_fin_wait 调整为 ≥ tcp_fin_timeout (推荐值均设为 30s)。&#x22;</br>    ((ERR_COUNT++))</br>elif [ &#x22;$((ct_fin_wait - tcp_fin_timeout))&#x22; -gt 30 ]; then</br>    echo -e &#x22;${YELLOW}[WARNING] 规则 1 触发告警 (FIN_WAIT 阶段 Conntrack 表项挂死时间过长):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: ct_fin_wait (${ct_fin_wait}s) 远大于 tcp_fin_timeout (${tcp_fin_timeout}s)&#x22;</br>    echo -e &#x22;  └─ 隐患: Socket 已经彻底销毁，但 Conntrack 表项还要挂手长时间，白白浪费内存容量。&#x22;</br>    echo -e &#x22;  └─ 建议: 将 ct_fin_wait 调低至与 tcp_fin_timeout 一致 (推荐 30s)。&#x22;</br>    ((WARN_COUNT++))</br>else</br>    echo -e &#x22;[PASS] 规则 1 检查通过: FIN_WAIT 状态回收时间精准协同 (${ct_fin_wait}s vs ${tcp_fin_timeout}s)。&#x22;</br>fi</br></br># ------------------------------------------------------------------------------</br># 规则 2: TIME_WAIT 状态匹配 (下限: 防端口重用时 SYN INVALID 丢包; 上限: 防表项积累)</br># ------------------------------------------------------------------------------</br>if [ &#x22;$tcp_tw_reuse&#x22; -ge 1 ] &#x26;&#x26; [ &#x22;$ct_time_wait&#x22; -gt 60 ]; then</br>    echo -e &#x22;${YELLOW}[WARNING] 规则 2 触发告警 (TIME_WAIT 快速重用与 Conntrack 超时冲突):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: tcp_tw_reuse = ${tcp_tw_reuse} (已开启端口复用)，ct_time_wait = ${ct_time_wait}s (&#x3e;60s)&#x22;</br>    echo -e &#x22;  └─ 隐患: TCP 栈已允许复用端口建连，但 Conntrack 依旧保留旧条目，新 SYN 包可能被认作 INVALID 丢弃！&#x22;</br>    echo -e &#x22;  └─ 建议: 开启 tw_reuse 时，务必将 ct_time_wait 降至 30s。&#x22;</br>    ((WARN_COUNT++))</br>elif [ &#x22;$ct_time_wait&#x22; -gt 60 ]; then</br>    echo -e &#x22;${YELLOW}[WARNING] 规则 2 触发告警 (TIME_WAIT 表项残留时间过长):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: ct_time_wait = ${ct_time_wait}s&#x22;</br>    echo -e &#x22;  └─ 隐患: 高并发短连接场景下，表项回收太慢，极易导致 Conntrack 爆表。&#x22;</br>    echo -e &#x22;  └─ 建议: 将 ct_time_wait 降至 30s。&#x22;</br>    ((WARN_COUNT++))</br>else</br>    echo -e &#x22;[PASS] 规则 2 检查通过: TIME_WAIT 状态的 Conntrack 回收配置合理 (${ct_time_wait}s)。&#x22;</br>fi</br></br># ------------------------------------------------------------------------------</br># 规则 3: ESTABLISHED 状态双向校验 (下限: 防心跳前切断; 上限: 防僵尸连接霸满表项)</br># ------------------------------------------------------------------------------</br>if [ &#x22;$tcp_keepalive_time&#x22; -ge &#x22;$ct_est&#x22; ]; then</br>    echo -e &#x22;${RED}[HIGH RISK] 规则 3 校验失败 (KeepAlive 心跳周期的首次探测慢于 Conntrack 超时):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: tcp_keepalive_time (${tcp_keepalive_time}s) ≥ ct_est (${ct_est}s)&#x22;</br>    echo -e &#x22;  └─ 隐患: 在 TCP 触发第一次保活心跳之前，Conntrack 表项就已经失效，导致连接被防火墙静默断掉。&#x22;</br>    echo -e &#x22;  └─ 建议: 确保 tcp_keepalive_time &#x3c; ct_est。&#x22;</br>    ((ERR_COUNT++))</br>elif [ &#x22;$ct_est&#x22; -gt 14400 ]; then</br>    echo -e &#x22;${YELLOW}[WARNING] 规则 3 触发告警 (ESTABLISHED 超时过长，有严重爆表隐患):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: ct_est = ${ct_est}s (约 $((ct_est/3600)) 小时)，tcp_keepalive_time = ${tcp_keepalive_time}s&#x22;</br>    echo -e &#x22;  └─ 隐患: 虽然能够成功保活，但超长的超时会导致大量非正常断网的“僵尸连接”死扣内存空间不释放！&#x22;</br>    echo -e &#x22;  └─ 建议: 将 ct_est 降低至 7200s (2小时) 或更短 (如 1200s~3600s)。&#x22;</br>    ((WARN_COUNT++))</br>else</br>    echo -e &#x22;[PASS] 规则 3 检查通过: ESTABLISHED 保持周期合理 (${ct_est}s)，且大于 KeepAlive 首次探测时间 (${tcp_keepalive_time}s)。&#x22;</br>fi</br></br># ------------------------------------------------------------------------------</br># 规则 4: CLOSE_WAIT 状态校验 (防应用层 Socket 未释放/连接池泄露)</br># ------------------------------------------------------------------------------</br>if [ &#x22;$ct_close_wait&#x22; -gt 30 ]; then</br>    echo -e &#x22;${YELLOW}[WARNING] 规则 4 触发告警 (CLOSE_WAIT 处于高风险耗尽区):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: ct_close_wait = ${ct_close_wait}s (&#x3e;30s)&#x22;</br>    echo -e &#x22;  └─ 隐患: 若应用层遇到异常未及时 close() 释放 Socket，Conntrack 表将长时间充斥半关闭连接直至爆表。&#x22;</br>    echo -e &#x22;  └─ 建议: 将 ct_close_wait 降低至 30s 以下。&#x22;</br>    ((WARN_COUNT++))</br>else</br>    echo -e &#x22;[PASS] 规则 4 检查通过: ct_close_wait (${ct_close_wait}s) 控制在安全可控范围。&#x22;</br>fi</br></br># ------------------------------------------------------------------------------</br># 规则 5: SYN_SENT 状态校验 (下限: 防重试被丢弃; 上限: 防 SYN 攻击/无法到达的 IP 挂死)</br># ------------------------------------------------------------------------------</br># 计算 SYN 重试实际退避总耗时 (1s + 2s + 4s + ...)</br>est_syn_time=0</br>for ((i=0; i&#x3c;tcp_syn_retries; i++)); do</br>    est_syn_time=$((est_syn_time + (1 &#x3c;&#x3c; i)))</br>done</br></br>if [ &#x22;$ct_syn_sent&#x22; -lt &#x22;$est_syn_time&#x22; ]; then</br>    echo -e &#x22;${RED}[HIGH RISK] 规则 5 校验失败 (SYN_SENT 超时短于 TCP 重试周期):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: ct_syn_sent (${ct_syn_sent}s) &#x3c; 理论 SYN 重试时间 (${est_syn_time}s)&#x22;</br>    echo -e &#x22;  └─ 隐患: 防火墙提前清掉了握手表项，导致后续发出的 SYN 重发包被当成 INVALID 丢弃。&#x22;</br>    echo -e &#x22;  └─ 建议: 将 tcp_syn_retries 降至 3~4 次，或调大 ct_syn_sent。&#x22;</br>    ((ERR_COUNT++))</br>elif [ &#x22;$ct_syn_sent&#x22; -gt 60 ]; then</br>    echo -e &#x22;${YELLOW}[WARNING] 规则 5 触发告警 (SYN_SENT 保持时间过长):${NC}&#x22;</br>    echo -e &#x22;  └─ 数值: ct_syn_sent = ${ct_syn_sent}s (&#x3e;60s)&#x22;</br>    echo -e &#x22;  └─ 隐患: 遇到网络不可达或 SYN Flood 攻击时，半开连接条目滞留过久，容易挤爆 Conntrack 表。&#x22;</br>    echo -e &#x22;  └─ 建议: 将 ct_syn_sent 降至 30s，同时控制 tcp_syn_retries 次数为 3~4 次。&#x22;</br>    ((WARN_COUNT++))</br>else</br>    echo -e &#x22;[PASS] 规则 5 检查通过: SYN_SENT 超时设定合理 (${ct_syn_sent}s)，与 SYN 重试机制完好适配。&#x22;</br>fi</br></br># ------------------------------------------------------------------------------</br># 规则 6: Hashsize 与 Max 配比区间校验 (防 CPU 软中断飙高或内存浪费)</br># ------------------------------------------------------------------------------</br>if [ &#x22;$hashsize&#x22; -gt 0 ]; then</br>    ratio=$((ct_max / hashsize))</br>    if [ &#x22;$ratio&#x22; -gt 8 ]; then</br>        echo -e &#x22;${RED}[HIGH RISK] 规则 6 校验失败 (Conntrack 桶深度配比严重失衡):${NC}&#x22;</br>        echo -e &#x22;  └─ 数值: ct_max = ${ct_max}, hashsize = ${hashsize} (当前配比 ${ratio}:1 &#x3e; 8:1)&#x22;</br>        echo -e &#x22;  └─ 隐患: Hash 桶过浅导致冲突链表太长！并发升高时 CPU 软中断 (softirq) 会直接飙满卡死。&#x22;</br>        echo -e &#x22;  └─ 建议: 调整 hashsize，使配比保持在 4:1 (即 hashsize = ct_max / 4)。&#x22;</br>        ((ERR_COUNT++))</br>    elif [ &#x22;$ratio&#x22; -lt 2 ]; then</br>        echo -e &#x22;${YELLOW}[WARNING] 规则 6 触发告警 (Hash 桶分配过多，占用额外连续物理内存):${NC}&#x22;</br>        echo -e &#x22;  └─ 数值: ct_max = ${ct_max}, hashsize = ${hashsize} (当前配比 ${ratio}:1)&#x22;</br>        echo -e &#x22;  └─ 隐患: 配比过小虽然查找快，但会白白消耗 Zone Normal 的连续物理内存。&#x22;</br>        echo -e &#x22;  └─ 建议: 推荐最佳黄金配比为 4:1 (例如 max=262144 时，hashsize 设为 65536)。&#x22;</br>        ((WARN_COUNT++))</br>    else</br>        echo -e &#x22;[PASS] 规则 6 检查通过: nf_conntrack_max 与 hashsize 配比为 ${ratio}:1 (处在 2:1 ~ 8:1 黄金区间)。&#x22;</br>    fi</br>else</br>    echo -e &#x22;${YELLOW}[WARNING] 规则 6 检查跳过: 未能在系统中获取到有效的 hashsize 值。${NC}&#x22;</br>fi</br></br># 4. 总结与建议</br>echo</br>echo -e &#x22;${BLUE}======================================================================${NC}&#x22;</br>if [ &#x22;$ERR_COUNT&#x22; -eq 0 ] &#x26;&#x26; [ &#x22;$WARN_COUNT&#x22; -eq 0 ]; then</br>    echo -e &#x22;${GREEN}总结评估: 完美！你的网络栈参数与 Conntrack 配置在“连通性”与“资源回收”上达到了极佳的平衡。${NC}&#x22;</br>elif [ &#x22;$ERR_COUNT&#x22; -eq 0 ]; then</br>    echo -e &#x22;${YELLOW}总结评估: 发现 $WARN_COUNT 项优化告警（主要集中在资源回收效率上）。无阻断性高危风险，建议根据提示进行调优。${NC}&#x22;</br>else</br>    echo -e &#x22;${RED}总结评估: 检测到 $ERR_COUNT 项高危参数冲突及 $WARN_COUNT 项告警！请优先修复高危项，防止出现连接误杀或服务挂死！${NC}&#x22;</br>fi</br>echo -e &#x22;${BLUE}======================================================================${NC}&#x22;
+#!/bin/bash</br>
+# ==============================================================================</br>
+# 脚本名称: check_conntrack_tcp_dual.sh</br>
+# 说明: 全量双向对比 TCP 协议栈与 Conntrack 参数 (兼顾“连接连通性”与“抗爆表能力”)</br>
+# ==============================================================================</br>
+</br>
+RED=&#x27;&#x5c;033[0;31m&#x27;</br>
+GREEN=&#x27;&#x5c;033[0;32m&#x27;</br>
+YELLOW=&#x27;&#x5c;033[0;33m&#x27;</br>
+BLUE=&#x27;&#x5c;033[0;34m&#x27;</br>
+NC=&#x27;&#x5c;033[0m&#x27;</br>
+</br>
+echo -e &#x22;${BLUE}======================================================================${NC}&#x22;</br>
+echo -e &#x22;${BLUE}    Linux 全量 TCP vs Conntrack 双向协同与资源安全性诊断工具            ${NC}&#x22;</br>
+echo -e &#x22;${BLUE}======================================================================${NC}&#x22;</br>
+echo</br>
+</br>
+if ! lsmod | grep -q nf_conntrack; then</br>
+    echo -e &#x22;${RED}[ERROR] nf_conntrack 模块未加载！请先执行 modprobe nf_conntrack${NC}&#x22;</br>
+    exit 1</br>
+fi</br>
+</br>
+get_sysctl() {</br>
+    local val</br>
+    val=$(sysctl -n &#x22;$1&#x22; 2&#x3e;/dev/null)</br>
+    echo &#x22;${val:-0}&#x22;</br>
+}</br>
+</br>
+# 1. 提取 Conntrack 参数</br>
+ct_est=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_established)</br>
+ct_close_wait=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_close_wait)</br>
+ct_fin_wait=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_fin_wait)</br>
+ct_time_wait=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_time_wait)</br>
+ct_syn_sent=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_syn_sent)</br>
+ct_syn_recv=$(get_sysctl net.netfilter.nf_conntrack_tcp_timeout_syn_recv)</br>
+ct_max=$(get_sysctl net.netfilter.nf_conntrack_max)</br>
+ct_count=$(get_sysctl net.netfilter.nf_conntrack_count)</br>
+</br>
+# 精确获取 hashsize</br>
+hashsize=0</br>
+if [ -f /sys/module/nf_conntrack/parameters/hashsize ]; then</br>
+    hashsize=$(cat /sys/module/nf_conntrack/parameters/hashsize)</br>
+elif [ -f /proc/sys/net/netfilter/nf_conntrack_buckets ]; then</br>
+    hashsize=$(cat /proc/sys/net/netfilter/nf_conntrack_buckets)</br>
+fi</br>
+</br>
+# 2. 提取 TCP 关键参数</br>
+tcp_fin_timeout=$(get_sysctl net.ipv4.tcp_fin_timeout)</br>
+tcp_tw_reuse=$(get_sysctl net.ipv4.tcp_tw_reuse)</br>
+tcp_keepalive_time=$(get_sysctl net.ipv4.tcp_keepalive_time)</br>
+tcp_keepalive_intvl=$(get_sysctl net.ipv4.tcp_keepalive_intvl)</br>
+tcp_keepalive_probes=$(get_sysctl net.ipv4.tcp_keepalive_probes)</br>
+tcp_syn_retries=$(get_sysctl net.ipv4.tcp_syn_retries)</br>
+tcp_synack_retries=$(get_sysctl net.ipv4.tcp_synack_retries)</br>
+</br>
+# 计算 Keepalive 总探测尝试周期</br>
+keepalive_total_fail_time=$((tcp_keepalive_intvl * tcp_keepalive_probes))</br>
+</br>
+# 打印提取数据</br>
+echo -e &#x22;${GREEN}[1] 当前网络参数汇总提取表:${NC}&#x22;</br>
+echo &#x22;----------------------------------------------------------------------&#x22;</br>
+printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_fin_timeout&#x22; &#x22;${tcp_fin_timeout}s&#x22; &#x22;nf_conntrack_tcp_timeout_fin_wait&#x22; &#x22;${ct_fin_wait}s&#x22;</br>
+printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_tw_reuse&#x22; &#x22;${tcp_tw_reuse}&#x22; &#x22;nf_conntrack_tcp_timeout_time_wait&#x22; &#x22;${ct_time_wait}s&#x22;</br>
+printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_keepalive_time&#x22; &#x22;${tcp_keepalive_time}s&#x22; &#x22;nf_conntrack_tcp_timeout_established&#x22; &#x22;${ct_est}s&#x22;</br>
+printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;keepalive intvl*probes (探测失败时长)&#x22; &#x22;${keepalive_total_fail_time}s&#x22; &#x22;nf_conntrack_tcp_timeout_close_wait&#x22; &#x22;${ct_close_wait}s&#x22;</br>
+printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;net.ipv4.tcp_syn_retries&#x22; &#x22;${tcp_syn_retries}次&#x22; &#x22;nf_conntrack_tcp_timeout_syn_sent&#x22; &#x22;${ct_syn_sent}s&#x22;</br>
+printf &#x22;%-42s : %-10s | %-32s : %s&#x5c;n&#x22; &#x22;nf_conntrack_hashsize&#x22; &#x22;${hashsize}&#x22; &#x22;nf_conntrack_count / max&#x22; &#x22;${ct_count} / ${ct_max}&#x22;</br>
+echo &#x22;----------------------------------------------------------------------&#x22;</br>
+echo</br>
+</br>
+# 3. 诊断评估</br>
+echo -e &#x22;${GREEN}[2] 双向逻辑匹配与系统风险评估:${NC}&#x22;</br>
+ERR_COUNT=0</br>
+WARN_COUNT=0</br>
+</br>
+# ------------------------------------------------------------------------------</br>
+# 规则 1: FIN_WAIT 状态匹配 (下限: 防误杀; 上限: 防白白占用表项)</br>
+# ------------------------------------------------------------------------------</br>
+if [ &#x22;$ct_fin_wait&#x22; -lt &#x22;$tcp_fin_timeout&#x22; ]; then</br>
+    echo -e &#x22;${RED}[HIGH RISK] 规则 1 校验失败 (FIN_WAIT 阶段 Conntrack 过早回收):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: ct_fin_wait (${ct_fin_wait}s) &#x3c; tcp_fin_timeout (${tcp_fin_timeout}s)&#x22;</br>
+    echo -e &#x22;  └─ 隐患: Conntrack 表项先被删除，后续 FIN 包或 ACK 包会被标记为 INVALID 并丢弃。&#x22;</br>
+    echo -e &#x22;  └─ 建议: 将 ct_fin_wait 调整为 ≥ tcp_fin_timeout (推荐值均设为 30s)。&#x22;</br>
+    ((ERR_COUNT++))</br>
+elif [ &#x22;$((ct_fin_wait - tcp_fin_timeout))&#x22; -gt 30 ]; then</br>
+    echo -e &#x22;${YELLOW}[WARNING] 规则 1 触发告警 (FIN_WAIT 阶段 Conntrack 表项挂死时间过长):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: ct_fin_wait (${ct_fin_wait}s) 远大于 tcp_fin_timeout (${tcp_fin_timeout}s)&#x22;</br>
+    echo -e &#x22;  └─ 隐患: Socket 已经彻底销毁，但 Conntrack 表项还要挂手长时间，白白浪费内存容量。&#x22;</br>
+    echo -e &#x22;  └─ 建议: 将 ct_fin_wait 调低至与 tcp_fin_timeout 一致 (推荐 30s)。&#x22;</br>
+    ((WARN_COUNT++))</br>
+else</br>
+    echo -e &#x22;[PASS] 规则 1 检查通过: FIN_WAIT 状态回收时间精准协同 (${ct_fin_wait}s vs ${tcp_fin_timeout}s)。&#x22;</br>
+fi</br>
+</br>
+# ------------------------------------------------------------------------------</br>
+# 规则 2: TIME_WAIT 状态匹配 (下限: 防端口重用时 SYN INVALID 丢包; 上限: 防表项积累)</br>
+# ------------------------------------------------------------------------------</br>
+if [ &#x22;$tcp_tw_reuse&#x22; -ge 1 ] &#x26;&#x26; [ &#x22;$ct_time_wait&#x22; -gt 60 ]; then</br>
+    echo -e &#x22;${YELLOW}[WARNING] 规则 2 触发告警 (TIME_WAIT 快速重用与 Conntrack 超时冲突):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: tcp_tw_reuse = ${tcp_tw_reuse} (已开启端口复用)，ct_time_wait = ${ct_time_wait}s (&#x3e;60s)&#x22;</br>
+    echo -e &#x22;  └─ 隐患: TCP 栈已允许复用端口建连，但 Conntrack 依旧保留旧条目，新 SYN 包可能被认作 INVALID 丢弃！&#x22;</br>
+    echo -e &#x22;  └─ 建议: 开启 tw_reuse 时，务必将 ct_time_wait 降至 30s。&#x22;</br>
+    ((WARN_COUNT++))</br>
+elif [ &#x22;$ct_time_wait&#x22; -gt 60 ]; then</br>
+    echo -e &#x22;${YELLOW}[WARNING] 规则 2 触发告警 (TIME_WAIT 表项残留时间过长):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: ct_time_wait = ${ct_time_wait}s&#x22;</br>
+    echo -e &#x22;  └─ 隐患: 高并发短连接场景下，表项回收太慢，极易导致 Conntrack 爆表。&#x22;</br>
+    echo -e &#x22;  └─ 建议: 将 ct_time_wait 降至 30s。&#x22;</br>
+    ((WARN_COUNT++))</br>
+else</br>
+    echo -e &#x22;[PASS] 规则 2 检查通过: TIME_WAIT 状态的 Conntrack 回收配置合理 (${ct_time_wait}s)。&#x22;</br>
+fi</br>
+</br>
+# ------------------------------------------------------------------------------</br>
+# 规则 3: ESTABLISHED 状态双向校验 (下限: 防心跳前切断; 上限: 防僵尸连接霸满表项)</br>
+# ------------------------------------------------------------------------------</br>
+if [ &#x22;$tcp_keepalive_time&#x22; -ge &#x22;$ct_est&#x22; ]; then</br>
+    echo -e &#x22;${RED}[HIGH RISK] 规则 3 校验失败 (KeepAlive 心跳周期的首次探测慢于 Conntrack 超时):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: tcp_keepalive_time (${tcp_keepalive_time}s) ≥ ct_est (${ct_est}s)&#x22;</br>
+    echo -e &#x22;  └─ 隐患: 在 TCP 触发第一次保活心跳之前，Conntrack 表项就已经失效，导致连接被防火墙静默断掉。&#x22;</br>
+    echo -e &#x22;  └─ 建议: 确保 tcp_keepalive_time &#x3c; ct_est。&#x22;</br>
+    ((ERR_COUNT++))</br>
+elif [ &#x22;$ct_est&#x22; -gt 14400 ]; then</br>
+    echo -e &#x22;${YELLOW}[WARNING] 规则 3 触发告警 (ESTABLISHED 超时过长，有严重爆表隐患):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: ct_est = ${ct_est}s (约 $((ct_est/3600)) 小时)，tcp_keepalive_time = ${tcp_keepalive_time}s&#x22;</br>
+    echo -e &#x22;  └─ 隐患: 虽然能够成功保活，但超长的超时会导致大量非正常断网的“僵尸连接”死扣内存空间不释放！&#x22;</br>
+    echo -e &#x22;  └─ 建议: 将 ct_est 降低至 7200s (2小时) 或更短 (如 1200s~3600s)。&#x22;</br>
+    ((WARN_COUNT++))</br>
+else</br>
+    echo -e &#x22;[PASS] 规则 3 检查通过: ESTABLISHED 保持周期合理 (${ct_est}s)，且大于 KeepAlive 首次探测时间 (${tcp_keepalive_time}s)。&#x22;</br>
+fi</br>
+</br>
+# ------------------------------------------------------------------------------</br>
+# 规则 4: CLOSE_WAIT 状态校验 (防应用层 Socket 未释放/连接池泄露)</br>
+# ------------------------------------------------------------------------------</br>
+if [ &#x22;$ct_close_wait&#x22; -gt 30 ]; then</br>
+    echo -e &#x22;${YELLOW}[WARNING] 规则 4 触发告警 (CLOSE_WAIT 处于高风险耗尽区):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: ct_close_wait = ${ct_close_wait}s (&#x3e;30s)&#x22;</br>
+    echo -e &#x22;  └─ 隐患: 若应用层遇到异常未及时 close() 释放 Socket，Conntrack 表将长时间充斥半关闭连接直至爆表。&#x22;</br>
+    echo -e &#x22;  └─ 建议: 将 ct_close_wait 降低至 30s 以下。&#x22;</br>
+    ((WARN_COUNT++))</br>
+else</br>
+    echo -e &#x22;[PASS] 规则 4 检查通过: ct_close_wait (${ct_close_wait}s) 控制在安全可控范围。&#x22;</br>
+fi</br>
+</br>
+# ------------------------------------------------------------------------------</br>
+# 规则 5: SYN_SENT 状态校验 (下限: 防重试被丢弃; 上限: 防 SYN 攻击/无法到达的 IP 挂死)</br>
+# ------------------------------------------------------------------------------</br>
+# 计算 SYN 重试实际退避总耗时 (1s + 2s + 4s + ...)</br>
+est_syn_time=0</br>
+for ((i=0; i&#x3c;tcp_syn_retries; i++)); do</br>
+    est_syn_time=$((est_syn_time + (1 &#x3c;&#x3c; i)))</br>
+done</br>
+</br>
+if [ &#x22;$ct_syn_sent&#x22; -lt &#x22;$est_syn_time&#x22; ]; then</br>
+    echo -e &#x22;${RED}[HIGH RISK] 规则 5 校验失败 (SYN_SENT 超时短于 TCP 重试周期):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: ct_syn_sent (${ct_syn_sent}s) &#x3c; 理论 SYN 重试时间 (${est_syn_time}s)&#x22;</br>
+    echo -e &#x22;  └─ 隐患: 防火墙提前清掉了握手表项，导致后续发出的 SYN 重发包被当成 INVALID 丢弃。&#x22;</br>
+    echo -e &#x22;  └─ 建议: 将 tcp_syn_retries 降至 3~4 次，或调大 ct_syn_sent。&#x22;</br>
+    ((ERR_COUNT++))</br>
+elif [ &#x22;$ct_syn_sent&#x22; -gt 60 ]; then</br>
+    echo -e &#x22;${YELLOW}[WARNING] 规则 5 触发告警 (SYN_SENT 保持时间过长):${NC}&#x22;</br>
+    echo -e &#x22;  └─ 数值: ct_syn_sent = ${ct_syn_sent}s (&#x3e;60s)&#x22;</br>
+    echo -e &#x22;  └─ 隐患: 遇到网络不可达或 SYN Flood 攻击时，半开连接条目滞留过久，容易挤爆 Conntrack 表。&#x22;</br>
+    echo -e &#x22;  └─ 建议: 将 ct_syn_sent 降至 30s，同时控制 tcp_syn_retries 次数为 3~4 次。&#x22;</br>
+    ((WARN_COUNT++))</br>
+else</br>
+    echo -e &#x22;[PASS] 规则 5 检查通过: SYN_SENT 超时设定合理 (${ct_syn_sent}s)，与 SYN 重试机制完好适配。&#x22;</br>
+fi</br>
+</br>
+# ------------------------------------------------------------------------------</br>
+# 规则 6: Hashsize 与 Max 配比区间校验 (防 CPU 软中断飙高或内存浪费)</br>
+# ------------------------------------------------------------------------------</br>
+if [ &#x22;$hashsize&#x22; -gt 0 ]; then</br>
+    ratio=$((ct_max / hashsize))</br>
+    if [ &#x22;$ratio&#x22; -gt 8 ]; then</br>
+        echo -e &#x22;${RED}[HIGH RISK] 规则 6 校验失败 (Conntrack 桶深度配比严重失衡):${NC}&#x22;</br>
+        echo -e &#x22;  └─ 数值: ct_max = ${ct_max}, hashsize = ${hashsize} (当前配比 ${ratio}:1 &#x3e; 8:1)&#x22;</br>
+        echo -e &#x22;  └─ 隐患: Hash 桶过浅导致冲突链表太长！并发升高时 CPU 软中断 (softirq) 会直接飙满卡死。&#x22;</br>
+        echo -e &#x22;  └─ 建议: 调整 hashsize，使配比保持在 4:1 (即 hashsize = ct_max / 4)。&#x22;</br>
+        ((ERR_COUNT++))</br>
+    elif [ &#x22;$ratio&#x22; -lt 2 ]; then</br>
+        echo -e &#x22;${YELLOW}[WARNING] 规则 6 触发告警 (Hash 桶分配过多，占用额外连续物理内存):${NC}&#x22;</br>
+        echo -e &#x22;  └─ 数值: ct_max = ${ct_max}, hashsize = ${hashsize} (当前配比 ${ratio}:1)&#x22;</br>
+        echo -e &#x22;  └─ 隐患: 配比过小虽然查找快，但会白白消耗 Zone Normal 的连续物理内存。&#x22;</br>
+        echo -e &#x22;  └─ 建议: 推荐最佳黄金配比为 4:1 (例如 max=262144 时，hashsize 设为 65536)。&#x22;</br>
+        ((WARN_COUNT++))</br>
+    else</br>
+        echo -e &#x22;[PASS] 规则 6 检查通过: nf_conntrack_max 与 hashsize 配比为 ${ratio}:1 (处在 2:1 ~ 8:1 黄金区间)。&#x22;</br>
+    fi</br>
+else</br>
+    echo -e &#x22;${YELLOW}[WARNING] 规则 6 检查跳过: 未能在系统中获取到有效的 hashsize 值。${NC}&#x22;</br>
+fi</br>
+</br>
+# 4. 总结与建议</br>
+echo</br>
+echo -e &#x22;${BLUE}======================================================================${NC}&#x22;</br>
+if [ &#x22;$ERR_COUNT&#x22; -eq 0 ] &#x26;&#x26; [ &#x22;$WARN_COUNT&#x22; -eq 0 ]; then</br>
+    echo -e &#x22;${GREEN}总结评估: 完美！你的网络栈参数与 Conntrack 配置在“连通性”与“资源回收”上达到了极佳的平衡。${NC}&#x22;</br>
+elif [ &#x22;$ERR_COUNT&#x22; -eq 0 ]; then</br>
+    echo -e &#x22;${YELLOW}总结评估: 发现 $WARN_COUNT 项优化告警（主要集中在资源回收效率上）。无阻断性高危风险，建议根据提示进行调优。${NC}&#x22;</br>
+else</br>
+    echo -e &#x22;${RED}总结评估: 检测到 $ERR_COUNT 项高危参数冲突及 $WARN_COUNT 项告警！请优先修复高危项，防止出现连接误杀或服务挂死！${NC}&#x22;</br>
+fi</br>
+echo -e &#x22;${BLUE}======================================================================${NC}&#x22;
     </details></td><td>linux 系统配置</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>丢包检测</summary>
@@ -93,8 +297,18 @@ localedef 是 Linux 系统中用于编译和生成 locale 数据的命令，定�
 </details>
     </details></td><td>linux 软件安装</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details style="white-space:pre-wrap;"><summary>linux 网络参数</summary>
+#TCP 好像不受影响，可能是硬件卸载，UDP需要调整，且收到CPU频率影响，低频指定跑到一定的数量，发不过来。
+#10G光卡，避免内核缓冲区太小导致网卡流量突发时溢出 生产环境（PVE 虚拟机、数据库、视频流） 推荐值：256MB ~ 512MB
+sysctl -w net.core.rmem_max=268435456   # 256MB
+sysctl -w net.core.rmem_default=268435456
+#关联参数
+# 对应 256MB、512MB、1GB
+sysctl -w net.ipv4.udp_mem="65536 131072 262144"
+#网卡队列 backlog 当内核来不及处理时，网卡 DMA 会将包暂存在这个队列。默认 1000，对于万兆太小。
+sysctl -w net.core.netdev_max_backlog=50000
+
+    </details></td>linux 网络参数<td></td></tr>
         <!-- 分割线 -->
       </tbody>
     </table>

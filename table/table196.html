@@ -66,7 +66,7 @@ ethtool -s eth0 wol g #设置eth0的wol参数为g（还可能是p）</br>
 ethtool -s eth0 wol d#关闭eth0的wol功能 </br>
 ethtool -s eth0 speed 1000 duplex full autoneg off #速率和协商配置</br>
 ethtool -K eno1 tso off gso off #禁用 tcp 分段卸载和通用分段卸载</br>
-ethtool -k eno1 #Features for eno1，细节参数</br>
+ethtool -k eno1 #Features for eno1，细节参数,如TSO/GSO软硬件卸载</br>
 ethtool -m enp43s0 #--dump-module-eeprom|--module-info DEVNAME Query/Decode Module EEPROM information and optical diagnostics if available 光模块信息查看</br>
 ethtool -p eth0 #让eth0的网口灯闪烁一下</br>
     </details></td><td>ethtool</td></tr>

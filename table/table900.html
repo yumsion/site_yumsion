@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t900</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 900 知识 光模块/光转电/网卡兼容性表格</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>万兆光模块兼容性</summary>
+<details><summary>绿联万兆光模块 10G多模双纤SFP+光模块850nm LC接口 300米 99元/只</summary>
+【H3C S7006X 】2026年08月28日 可以使用，但无法获取光模块波长等信息。
+【PVE8.2.2】正常使用，可以获取到光信号信息，可以正常协商并获取对应的数据。
+</details>
+<details><summary></summary></details>
+    </details></td><td>万兆光模块</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>万兆PCI-E光卡兼容性</summary>
+<details><summary>万兆光纤网卡 Mellanox Technologies MT27710 Family ConnectX-4 Lx</summary>
+LR-LINK 联瑞10G万兆双口光纤网卡 基于Mellanox主控 (10G双口）LRES1055PF-2SFP+
+Ethernet controller: Mellanox Technologies MT27710 Family [ConnectX-4 Lx]
+root@pvetest:~# ethtool enp1s0f0np0
+Settings for enp1s0f0np0:
+        Supported ports: [ FIBRE ]
+        Supported link modes:   1000baseKX/Full
+                                10000baseKR/Full
+        Supported pause frame use: Symmetric
+        Supports auto-negotiation: Yes
+        Supported FEC modes: None        RS      BASER
+        Advertised link modes:  1000baseKX/Full
+                                10000baseKR/Full
+        Advertised pause frame use: Symmetric
+        Advertised auto-negotiation: Yes
+        Advertised FEC modes: None
+        Link partner advertised link modes:  Not reported
+        Link partner advertised pause frame use: No
+        Link partner advertised auto-negotiation: Yes
+        Link partner advertised FEC modes: Not reported
+        Speed: 10000Mb/s
+        Duplex: Full
+        Auto-negotiation: on
+        Port: FIBRE
+        PHYAD: 0
+        Transceiver: internal
+        Supports Wake-on: d
+        Wake-on: d
+        Link detected: yes
+
+</details>
+<details><summary>万兆光纤网卡 CX312B Mellanox Technologies MT27520 Family [ConnectX-3 Pro] #PVE8.2.2 支持</summary>
+Settings for enp43s0:
+        Supported ports: [ FIBRE ]
+        Supported link modes:   1000baseX/Full
+                                10000baseCR/Full
+                                10000baseSR/Full
+        Supported pause frame use: Symmetric Receive-only
+        Supports auto-negotiation: No
+        Supported FEC modes: Not reported
+        Advertised link modes:  1000baseX/Full
+                                10000baseCR/Full
+                                10000baseSR/Full
+        Advertised pause frame use: Symmetric
+        Advertised auto-negotiation: No
+        Advertised FEC modes: Not reported
+        Speed: 10000Mb/s
+        Duplex: Full
+        Auto-negotiation: off
+        Port: FIBRE
+        PHYAD: 0
+        Transceiver: internal
+        Supports Wake-on: d
+        Wake-on: d
+        Current message level: 0x00000014 (20)
+                               link ifdown
+        Link detected: no
+
+</details>
+<details><summary></summary>
+</details>
+<details><summary></summary>
+</details>
+<details><summary></summary>
+</details>
+    </details></td><td>万兆PCI-E光卡</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>USB转RJ45网卡</summary>
+<details><summary>ASIX Electronics Corp. AX88179 Gigabit Ethernet</summary>
+【 7.1.8-arch1-3】 driver: cdc_ncm 正常使用，但是无法正确识别协商速率等
+USB2RJ45 ASIX Electronics Corp. AX88179 Gigabit Ethernet
+Settings for enxf8e43be27dc0:
+        Supported ports: [  ]
+        Supported link modes:   Not reported
+        Supported pause frame use: No
+        Supports auto-negotiation: No
+        Supported FEC modes: Not reported
+        Advertised link modes:  Not reported
+        Advertised pause frame use: No
+        Advertised auto-negotiation: No
+        Advertised FEC modes: Not reported
+        Speed: Unknown!
+        Duplex: Half
+        Auto-negotiation: off
+        Port: Twisted Pair
+        PHYAD: 0
+        Transceiver: internal
+        MDI-X: Unknown
+        Current message level: 0x00000007 (7)
+                               drv probe link
+        Link detected: yes
+</details>
+<details><summary></summary>
+</details>
+<details><summary></summary>
+</details>
+
+    </details></td><td>USB转RJ45网卡</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>
