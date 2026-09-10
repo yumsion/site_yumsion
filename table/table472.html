@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>t591</title>
+  <title>t472</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 591 H3C ACL</h1>
+      <h1>table 472 cmd 进程相关</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,72 +59,9 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary>ACL 规则</summary>
-acl adv 3500
-description PORT_MULTICAST_DROP_INOUT
-#mDNS广播
-rule 100 deny udp source-port eq 5353 destination-port eq 5353
-#组播地址
-#224.0.0.0-239.255.255.255
-#224.0.0.0/4
-rule deny ip source 224.0.0.0 15.255.255.255
-rule deny ip destination 224.0.0.0 15.255.255.255
-
-
-#NBNS流量
-rule deny udp destination-port eq 137
-
-#广播包阻挡
- rule 200 permit udp destination 255.255.255.255 0 source-port eq bootpc
- rule 205 deny ip destination 255.255.255.255 0
-
-
-#ipv6
-acl ipv6 advanced 3500
-description deny_IPv6
-rule 100 deny ipv6
-
-
-
-#策略实施
- packet-filter 3500 inbound
- packet-filter ipv6 3500 inbound
- packet-filter 3500 outbound
- packet-filter ipv6 3500 outbound
-
-
-
-
-acl adv 3600 route policy acl
-acl adv 3800 interface vlanif acl
-acl adv 3900
-description SECURITY_ACL
-
-
-
-#多packet-filter匹配规则
-interface GigabitEthernet1/0/3
-packet-filter 3004 outbound
-packet-filter ipv6 3000 outbound
-packet-filter mac 4000 outbound
-#以上三条是串行处理。
-#IPv4：如果acl 3004和acl mac 3000都是permit状态，则IPv4通过。
-#IPv6：将会通过acl ipv6 3000进行判断。
-
-
-    </details></td><td>ACL 规则</td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details><summary>powershell 获取进程信息</summary>
+ Get-Process | Format-Table id,name,ws,path</br>
+    </details></td><td>powershell 获取进程</td></tr>
         <!-- 分割线 -->
       </tbody>
     </table>

@@ -123,6 +123,36 @@ option client reject enable rssi 25
 配置信号强度
 配置信道
     </details></td><td>H3C 无线信号相关</td></tr>
+    <tr><td style="white-space:pre-warp;"><details><summary>H3C的AP自动接入和固件升级【WEBUI】</summary>
+Wireless Configuration -- AP ManagementAP -- Global Settings
+
+Software upgrade #检查AP和AC的版本，不一致则使用AC上的版本升级AP上的版本
+#wa5600a.ipe，文件不存在，下载到apimge文件夹后，后提示下载失败。
+#下载对应的AC version版本，还是出现这个问题，可能下载的同version版本有发布时间的不同。
+#如果确实需要升级AP的版本，建议先网上下载并升级AC，并上传所有的ipe版本，否则ipe版本可能不匹配。
+
+Auto AP #自动AP发现和注册，不能手动修改AP配置。
+
+Auto AP conversion #自动上线后，自动固化配置，防止重复上线。
+    </details></td><td>H3C AP 新AP的接入</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary>查看所有AP</summary>
+display wlan ap all #查看所有AP 名称/运行状态/ Model / Serial ID
+display wlan ap all verbose #查看所有AP 详细信息，信道radio，等
+display wlan client ap name XXX #查看AP上的用户数量
+    </details></td><td>H3C AP 命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary></summary>
+    </details></td><td></td></tr>
         <!-- 分割线 -->
       </tbody>
     </table>

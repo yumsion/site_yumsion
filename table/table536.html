@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>t591</title>
+  <title>t536</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 591 H3C ACL</h1>
+      <h1>table 536 H3C 端口相关</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,66 +59,57 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary>ACL 规则</summary>
-acl adv 3500
-description PORT_MULTICAST_DROP_INOUT
-#mDNS广播
-rule 100 deny udp source-port eq 5353 destination-port eq 5353
-#组播地址
-#224.0.0.0-239.255.255.255
-#224.0.0.0/4
-rule deny ip source 224.0.0.0 15.255.255.255
-rule deny ip destination 224.0.0.0 15.255.255.255
+    <tr><td><details><summary>路由器端口配置</summary>
+interface GigabitEthernet2/0/0</br>
+ port link-mode route </br>
+ description Multiple_Line1</br>
+ combo enable copper</br>
+ ip address 1.1.8.29 255.255.255.192</br>
+ dns server 1.1.1.1</br>
+ dns server 223.5.5.5</br>
+ ip last-hop hold #解决“来回路径不一致”问题</br>
+ packet-filter name GigabitEthernet2/0/0 inbound  </br>
+ qos reserved-bandwidth pct 100</br>
+ nat outbound #执行简单地址转换</br>
+ nat server protocol tcp global current-interface 873 inside 172.16.1.1 873 description description01  #NAT</br>
+</br>
+
+    </details></td><td>路由器端口配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>端口配置</summary>
+display transceiver diagnosis interface [ interface-type interface-number ] 查看光模块信息
+display counters rate outbound interface #查看端口速率
 
 
-#NBNS流量
-rule deny udp destination-port eq 137
+[interface GigibitEthernet1/0/5]flow-interval 20 #设置速率统计间隔
+[GE1/0/7]combo enable fiber #光电复用端口启用光口
+<h3c>reset counter interface GigabitEthernet 1/0/1 #重置计数器
 
-#广播包阻挡
- rule 200 permit udp destination 255.255.255.255 0 source-port eq bootpc
- rule 205 deny ip destination 255.255.255.255 0
+ip source binding ip-address 1.2.3.4 #源地址检测，不支持子网掩码，多条复用
 
+<details><summary>IP Source Guard</summary>
+interface GigabitEthernet1/0/13
+port link-type trunk
+port trunk permit vlan 1 31 187 327 500
+flow-interval 10
+ip verify source ip-address
+ip source binding ip-address 172.16.31.99 vlan 31
+ip source binding ip-address 192.168.187.4 vlan 31
+ip source binding ip-address 192.168.187.4 vlan 187 #本行逻辑AND，多行任意一行符合条目就放行。
 
-#ipv6
-acl ipv6 advanced 3500
-description deny_IPv6
-rule 100 deny ipv6
+display ip verify source excluded
 
+</details>
 
+<details><summary>通过probe获取接口号</summary>
+probe
+[S7006X_B2F1-probe]display system internal ifmgr list
+</details>
 
-#策略实施
- packet-filter 3500 inbound
- packet-filter ipv6 3500 inbound
- packet-filter 3500 outbound
- packet-filter ipv6 3500 outbound
-
-
-
-
-acl adv 3600 route policy acl
-acl adv 3800 interface vlanif acl
-acl adv 3900
-description SECURITY_ACL
-
-
-
-#多packet-filter匹配规则
-interface GigabitEthernet1/0/3
-packet-filter 3004 outbound
-packet-filter ipv6 3000 outbound
-packet-filter mac 4000 outbound
-#以上三条是串行处理。
-#IPv4：如果acl 3004和acl mac 3000都是permit状态，则IPv4通过。
-#IPv6：将会通过acl ipv6 3000进行判断。
-
-
-    </details></td><td>ACL 规则</td></tr>
+    </details></td><td>端口配置</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    </details></td><td>端口配置</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>
