@@ -5,7 +5,7 @@ details details summary {
   cursor: pointer;
 }
 details details {
-padding-left: 2rem;
+  padding-left: 2rem;
 }
 details details summary {
   margin-left: -2rem; /* 将摘要拉回原位 */
@@ -285,8 +285,8 @@ h1 {
 /* ===== 表格外层 ===== */
 .table-container table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 4px;
+  border-collapse: collapse;   /* 合并边框，消除间隙与双线 */
+  border-spacing: 0;           /* 合并后无效，置 0 */
   display: table;
   font-size: 0.95rem;
 }
@@ -301,16 +301,14 @@ thead th {
   font-size: 0.9rem;
   letter-spacing: 0.3px;
   text-transform: uppercase;
-  border-bottom: 2px solid #dce1ea;
+  border: 1px solid black;     /* 表头也加完整边框 */
 }
 
 thead th:first-child {
-  border-radius: 16px 0 0 16px;
   padding-left: 22px;
 }
 
 thead th:last-child {
-  border-radius: 0 16px 16px 0;
   padding-right: 22px;
 }
 
@@ -318,8 +316,6 @@ thead th:last-child {
 tbody tr {
   background: #ffffff;
   transition: background 0.15s ease, box-shadow 0.15s ease;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 /* ===== 隔行背景色 - 灰色交替 ===== */
@@ -333,15 +329,13 @@ tbody tr:nth-child(even) {
 
 /* 悬停效果覆盖隔行背景 */
 tbody tr:hover {
-  background: #f0f2f7 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  background: #8f8f8f !important;
 }
 
-
+/* 所有 td 统一完整边框（含中间列） */
 tbody td {
-  border:1px solid black;
+  border: 1px solid black;
   padding: 14px 18px;
-  border-bottom: 1px solid #edf0f5;
   color: #1e293b;
   vertical-align: middle;
   line-height: 1.5;
@@ -349,20 +343,19 @@ tbody td {
 }
 
 tbody td:first-child {
-  border:1px solid black;
   padding-left: 22px;
   font-weight: 480;
+  min-width: 10%;
+  max-width: 90%;
 }
 
 tbody td:last-child {
-  border:1px solid black;
   padding-right: 22px;
   color: #475569;
 }
 
 /* ===== 分类列 - 按钮样式 ===== */
 tbody tr td:last-child {
-  border:1px solid black;
   background: transparent;
   padding: 6px 4px;
   text-align: left;
@@ -376,9 +369,9 @@ tbody tr td:last-child {
 .category-tag {
   display: inline-block;
   padding: 6px 18px;
-  background: #eef2f9;
-  color: #1e3a5f;
-  border-radius: 40px;
+  background: #f0f0f0;
+  color: #000000;
+  border-radius: 16px;
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -386,6 +379,7 @@ tbody tr td:last-child {
   border: 2px solid transparent;
   user-select: none;
   position: relative;
+  border:1px solid black;
 }
 
 /* 分类标签悬停效果 */
@@ -412,27 +406,15 @@ tbody tr td:last-child {
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
-
 /* vim 相关分类 */
-.category-tag[data-category="vim hex"],
-.category-tag[data-category="vim 初始化"],
 .category-tag[data-category="vim 内置函数"] {
   background: #e8eaf6;
   color: #283593;
 }
-.category-tag[data-category="vim hex"]:hover,
-.category-tag[data-category="vim 初始化"]:hover,
 .category-tag[data-category="vim 内置函数"]:hover {
   background: #3f51b5;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
-}
-
-/* 内容列占更多空间 */
-tbody td:first-child {
-  border:1px solid black;
-  min-width: 10%;
-  max-width: 90%;
 }
 
 /* ===== 隐藏行（筛选） ===== */
@@ -490,19 +472,17 @@ tbody tr.hidden-row {
 
   thead th,
   tbody td {
-  border:1px solid black;
+    border: 1px solid black;
     padding: 12px 14px;
   }
 
   thead th:first-child,
   tbody td:first-child {
-  border:1px solid black;
     padding-left: 16px;
   }
 
   thead th:last-child,
   tbody td:last-child {
-  border:1px solid black;
     padding-right: 16px;
   }
 
@@ -561,20 +541,18 @@ tbody tr.hidden-row {
 
   thead th,
   tbody td {
-  border:1px solid black;
+    border: 1px solid black;
     padding: 10px 10px;
     font-size: 0.82rem;
   }
 
   thead th:first-child,
   tbody td:first-child {
-  border:1px solid black;
     padding-left: 10px;
   }
 
   thead th:last-child,
   tbody td:last-child {
-  border:1px solid black;
     padding-right: 10px;
   }
 
@@ -591,14 +569,12 @@ tbody tr.hidden-row {
   }
 
   tbody td:first-child {
-  border:1px solid black;
     word-break: break-word;
   }
 }
 
 @media screen and (max-width: 380px) {
   .table-container {
-  border:1px solid black;
     padding: 10px 6px 10px;
   }
 
@@ -612,7 +588,7 @@ tbody tr.hidden-row {
 
   thead th,
   tbody td {
-  border:1px solid black;
+    border: 1px solid black;
     padding: 8px 6px;
     font-size: 0.75rem;
   }

@@ -134,7 +134,7 @@ netsh advFirewall Firewall add rule name=&#x22;OSRadar Rule PING IPv4&#x22; prot
 </br>
     </details></td><td>netsh 防火墙配置</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>获取指定IP通讯的进程</summary>
+    <tr><td><details><summary>获取指定IP通讯的进程.bat</summary>
 查询进程脚本</br>
 # 精简监控版本（修正版）</br>
 # 文件名: MonitorSimple.ps1</br>
@@ -176,11 +176,17 @@ Start-Sleep -Seconds 10</br>
 </br>
     </details></td><td>脚本 获取指定IP通讯的进程</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details><summary>使用powershell获取关联服务</summary>
+Get-NetUDPEndpoint -LocalPort 5353 | Format-list</br>
+Get-CimInstance -ClassName Win32_Service |Where-Object { $_.ProcessId -eq 2672  }</br>
+    </details></td><td>powershell 获取关联服务</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details><summary>test tabe</summary>
+<table>
+<tr><td>c1lll</td><td>2</td></tr>
+<tr><td>4</td><td></td>3</tr>
+</table>
+    </details></td><td>test</td></tr>
         <!-- 分割线 -->
       </tbody>
     </table>

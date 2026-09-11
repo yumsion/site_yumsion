@@ -1,24 +1,29 @@
 (function() {
   'use strict';
 
-  // 获取 DOM 元素
   const filterInput = document.getElementById('filterInput');
   const resetBtn = document.getElementById('resetFilterBtn');
   const table = document.getElementById('dataTable');
-  const tbody = table.querySelector('tbody');
 
-  // 如果 tbody 不存在，直接返回
+  if (!table) return;
+
+  const tbody = table.querySelector('tbody');
   if (!tbody) return;
 
-  // 获取所有数据行
-  const rows = Array.from(tbody.querySelectorAll('tr'));
+  // 仅获取 tbody 的直属子行
+  const rows = Array.from(tbody.children).filter(el => el.tagName === 'TR');
 
-  // 筛选函数
+  // 获取某行的直属 td
+  function getDirectCells(row) {
+    return Array.from(row.children).filter(el => el.tagName === 'TD');
+  }
+
+  // 筛选函数：使用 textContent，允许匹配嵌套 table 中的内容
   function filterTable(keyword) {
     const cleanKeyword = keyword.trim().toLowerCase();
 
     rows.forEach(row => {
-      const cells = row.querySelectorAll('td');
+      const cells = getDirectCells(row);
       if (cells.length === 0) {
         row.classList.remove('hidden-row');
         return;
@@ -29,26 +34,10 @@
         return;
       }
 
-      const contentCell = cells[0];
-      const categoryCell = cells[1];
+      // 整行文本（包含嵌套 table 内容）
+      const rowText = row.textContent.trim().toLowerCase();
 
-      let match = false;
-
-      if (contentCell) {
-        const contentText = contentCell.textContent.trim().toLowerCase();
-        if (contentText.includes(cleanKeyword)) {
-          match = true;
-        }
-      }
-
-      if (!match && categoryCell) {
-        const categoryText = categoryCell.textContent.trim().toLowerCase();
-        if (categoryText.includes(cleanKeyword)) {
-          match = true;
-        }
-      }
-
-      if (match) {
+      if (rowText.includes(cleanKeyword)) {
         row.classList.remove('hidden-row');
       } else {
         row.classList.add('hidden-row');
@@ -56,42 +45,39 @@
     });
   }
 
-  // 重置函数：清空输入框 + 显示所有行
+  // 重置函数
   function resetFilter() {
     filterInput.value = '';
-    // 显示所有行
     rows.forEach(row => row.classList.remove('hidden-row'));
-    // 触发 input 事件，让其他监听器也能同步（如果有）
     filterInput.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
-  // 将分类单元格转换为按钮样式
+  // 将分类单元格转换为按钮样式（仅处理直属 td）
   function convertCategoriesToButtons() {
     rows.forEach(row => {
-      const cells = row.querySelectorAll('td');
+      const cells = getDirectCells(row);
       if (cells.length < 2) return;
-      
+
       const categoryCell = cells[1];
+
+      // 避免重复转换
+      if (categoryCell.querySelector('.category-tag')) return;
+
       const categoryText = categoryCell.textContent.trim();
-      
-      // 清空单元格内容
+      if (!categoryText) return;
+
       categoryCell.innerHTML = '';
-      
-      // 创建按钮元素
+
       const button = document.createElement('span');
       button.className = 'category-tag';
       button.textContent = categoryText;
       button.setAttribute('data-category', categoryText);
-      
-      // 添加点击事件
+
       button.addEventListener('click', function(e) {
         e.stopPropagation();
         const category = this.textContent.trim();
-        // 设置筛选框的值
         filterInput.value = category;
-        // 触发筛选
         filterTable(category);
-        // 给输入框添加高亮反馈
         filterInput.style.borderColor = '#5b7cfa';
         filterInput.style.boxShadow = '0 0 0 4px rgba(91, 124, 250, 0.2)';
         setTimeout(() => {
@@ -99,8 +85,7 @@
           filterInput.style.boxShadow = '';
         }, 800);
       });
-      
-      // 添加键盘支持 (辅助功能)
+
       button.setAttribute('role', 'button');
       button.setAttribute('tabindex', '0');
       button.addEventListener('keydown', function(e) {
@@ -109,31 +94,22 @@
           this.click();
         }
       });
-      
+
       categoryCell.appendChild(button);
     });
   }
 
-  // 监听输入事件
   filterInput.addEventListener('input', function(e) {
-    const keyword = e.target.value;
-    filterTable(keyword);
+    filterTable(e.target.value);
   });
 
-  // 监听重置按钮点击
   resetBtn.addEventListener('click', function() {
     resetFilter();
   });
 
-  // 页面加载完成后初始化
   window.addEventListener('load', function() {
-    // 先转换分类为按钮
     convertCategoriesToButtons();
-    
-    // 确保所有行可见
     rows.forEach(row => row.classList.remove('hidden-row'));
-    
-    // 如果输入框有值，触发筛选（例如浏览器自动填充）
     if (filterInput.value.trim() !== '') {
       filterTable(filterInput.value);
     }
