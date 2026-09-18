@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>t254</title>
+  <title>t168</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 254 LINUX apt dpkg debian</h1>
+      <h1>table 168</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,20 +59,54 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details><summary>debian 13 网络配置 修改dhcp为静态IP地址</summary>
-<b>修改dhcp为静态IP地址</b></br>
-<b>方式1</b> ls /etc/netplan/</br>
-<b>方式2</b> systemctl status NetworkManager</br>
-<b>方式3</b> ls /etc/systemd/network/ 有 .network 文件则说明系统在使用 systemd-networkd</br>
-<b>方式4</b> cat /etc/network/interfaces</br>
-vim /etc/network/interfaces</br>
--- iface eth0 inet dhcp</br>
-++</br>
-iface eth0 inet static</br>
-    address 192.168.1.100</br>
-    netmask 255.255.255.0</br>
-    gateway 192.168.1.1</br>
-    dns-nameservers 8.8.8.8 1.1.1.1</br>
+    <tr><td><details><summary>openssl.cnf 资源初始化</summary>
+#openssl version -a</br>
+mkdir openssl</br>
+cd openssl</br>
+cp /etc/ssl/openssl.cnf ./</br>
+mkdir certs crl newcerts private rsa req</br>
+touch index.txt cacert.pem crlnumber private/cakey.pem crl.pem</br>
+echo 01 &#x3e; serial</br>
+vim openssl.cnf</br>
+[ CA_default ]</br>
+dir = .</br>
+#openvpn等证书验证，需要该证书包含正确的 Extended Key Usage (EKU) 或 Key Usage (KU) 扩展
+#使用ca子命令签发时，使用该扩展。
+[ server_cert ]</br>
+basicConstraints = CA:FALSE</br>
+nsCertType = server</br>
+keyUsage = critical, digitalSignature, keyEncipherment</br>
+extendedKeyUsage = serverAuth</br>
+
+
+    </details></td><td>openssl.cnf 资源初始化</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>openssl 生成一套pki</summary>
+openssl genpkey -algorithm rsa -out private/cakey.pem</br>
+openssl req -config openssl.cnf -x509 -CAkey private/cakey.pem -days +36500 -extensions v3_ca -key private/cakey.pem -out cacert.pem</br>
+NAME=server</br>
+openssl req -new -config openssl.cnf -keyout rsa/$NAME.pem -out req/$NAME.req -nodes</br>
+openssl ca -in req/$NAME.req -config openssl.cnf -days +36500 -extensions usr_cert -extfile openssl.cnf -keyfile private/cakey.pem -cert cacert.pem</br>
+chmod 600 private/cakey.pem
+ls -alh private/cakey.pem cacert.pem newcerts/
+
+    </details></td><td>openssl 生成一套pki</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>gen_ca.sh 批量生产证书</summary>
+NAME01=openvpn_TL_server</br>
+openssl req -new -out req/${NAME01}.req -config openssl.cnf -keyout rsa/${NAME01}.key -newkey rsa:2048 -nodes -days +3650 -extensions usr_cert</br>
+openssl ca -config openssl.cnf -create_serial -days 3650 -keyfile private/pki.key -cert cacert.pem -in req/${NAME01}.req -extfile openssl.cnf -extensions usr_cert -out certs/${NAME01}.ca</br>
+mkdir ${NAME01}</br>
+cp certs/${NAME01}.ca ${NAME01}/</br>
+cp rsa/${NAME01}.key ${NAME01}/</br>
+cp cacert.pem ${NAME01}/</br>
+
+    </details></td><td>openssl gen_ca.sh</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>

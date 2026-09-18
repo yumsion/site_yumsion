@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t232</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 232 bash ntp crony 时间同步</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>ntp 网址</summary>
+ntp.aliyun.com
+    </details></td><td>ntp 网址</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>systemd-timesyncd</summary>
+#时间同步服务：systemd-timesyncd</br>
+#配置NTP服务器的配置文件</br>
+vim /etc/systemd/timesyncd.conf</br>
+</br>
+#这个文件没有什么好修改的，没有什么配置项目</br>
+vim /usr/lib/systemd/system/systemd-timesyncd.service</br>
+</br>
+systemctl restart systemd-timesyncd</br>
+</br>
+配置优先级：</br>
+1.除了配置文件，时间服务器信息还可能来自 DHCP 或 systemd-networkd 的 .network 文件。timesyncd.conf 中的设置通常作为系统级默认值</br>
+2.systemd-timesyncd 是一个轻量级的 SNTP 客户端，适合大多数桌面和简单服务器场景。如果系统上安装了功能更完整的 chrony 或 ntpd 并启用了服务，timesyncd 通常会自动退让，不再进行同步。</br>
+
+    </details></td><td>systemd-timesyncd</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ntp.conf</summary>
+vim /etc/ntp.conf</br>
+restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap #设置下级客户端权限</br>
+<details><summary>restrict 参数介绍</summary>
+ignore：彻底拒绝，一票否决</br>
+作用：拒绝所有类型的 NTP 连接和数据包，包括普通的校时请求和 ntpq/ntpdc 的管理查询。</br>
+机制：ntpd 甚至不会为此地址打开监听端口。如果某个地址匹配了 ignore 规则，它会覆盖后续其他限制（除 drop 外），让所有其他参数失效。</br>
+nomodify：禁止修改，但可校时</br>
+作用：客户端不能使用 ntpq 或 ntpdc 来修改服务器的时间参数或配置。</br>
+场景：服务器允许客户端来校时，但绝对不允许客户端反过来“动”服务器。这是保护服务器稳定性的基本设置。</br>
+noquery：禁止管理查询，不影响校时</br>
+作用：客户端不能使用 ntpq、ntpdc 等指令来查询服务器状态（如查看服务器列表、变量等）。</br>
+纠偏：你提到的“等于不提供网络校时”是不准确的。根据 Red Hat 官方文档，noquery 仅仅阻止管理查询，并不阻止普通的时间校时请求。ntpd 仍然会正常响应客户端的校时包，只是不理会工具发出的状态查询包。</br>
+notrap：关闭陷阱，防远程日志</br>
+作用：不提供 trap 这个远程时间登录功能，拒绝为匹配的主机提供模式 6 控制消息陷阱服务。</br>
+机制：Trap 是 ntpdc 控制消息协议的一部分，原本用于远程事件日志记录。禁用它可以减少一个潜在的信息泄露或攻击面。</br>
+notrust：拒绝未认证客户端</br>
+作用：拒绝没有通过加密认证的数据包。</br>
+注意：在旧版 NTP 中，没有认证的客户端可能仍能获得服务（只是不信任其来源）。但在强化安全配置时，它常与 nopeer 等配合，用于拒绝所有非加密流量。</br>
+nopeer：防止对等欺骗</br>
+作用：不与其他同一层的 NTP 服务器进行时间同步。</br>
+机制：这可以阻止攻击者冒充对等服务器，向你的服务器发送伪造的时间数据，从而防止时间被恶意篡改。</br>
+
+</details>
+<details><summary>restrict 多条执行规则</summary>
+在 ntp.conf 中，最后一条匹配的规则生效。通常的配置逻辑是：</br>
+默认策略：restrict default ignore 或 restrict default noquery nomodify nopeer notrap，先把大门关紧。</br>
+例外放行：针对特定的信任网段或 IP，单独写一条规则，只放开需要的权限（例如 restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap 允许内网校时）。</br>
+本地环路：通常需要 restrict 127.0.0.1 来允许本机管理。</br>
+</br>
+
+</details>
+</br>
+server 1.cn.pool.ntp.org #设置上级服务器</br>
+server cn.pool.ntp.org iburst minpoll 2 maxpoll 6 #修改同步时间间隔，该值不是秒或分，参照man ntp.conf</br>
+</br>
+interface ignore wildcard #默认监听所有地址，该项取消默认监听</br>
+#监听如下两个地址的网口</br>
+interface listen 127.0.0.1</br>
+interface listen 192.168.1.1</br>
+</br>
+#设置监听端口导致的ntpd无法同步上级服务器</br>
+需要在路由出口设置listen，否则永远是init状态。</br>
+interface listen 10.0.128.8</br>
+</br>
+</br>
+</br>
+systemctl start ntpd.service #启动自动对時服务</br>
+    </details></td><td>ntp.conf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>ntp相关命令</summary>
+ntpq -p #Print a list of the peers</br>
+ntpq -p 127.0.0.1 #直接指定需要查询的host地址</br>
+ntpdate ntp.aliyun.com #直接执行ntp日期更新（会导致时间出现大跨度）</br>
+ntpdate -q 172.16.16.9 #验证NTP时间服务器是否正常工作，并显示时间差等信息
+</br>
+
+    </details></td><td>ntp 命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>chrony 配置</summary>
+systemctl status chrony #查看chrony服务状态</br>
+
+
+    </details></td><td>chrony 配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>chrony 命令</summary>
+<details><summary>chrony 查看对等体状态</summary>
+chronyc sources #查看对等体（即所有时间源，包括配置的服务器和对等节点）状态</br>
+MS Name/IP address Stratum Poll Reach LastRx Last sample</br>
+===============================================================================</br>
+^* time.cloudflare.com 3 10 377 187 -209us[ -209us] +/- 32ms</br>
+^+ t1.time.ir2.yahoo.com 2 10 377 185 -4382us[-4382us] +/- 23ms</br>
+^- time.cloudflare.com 3 10 377 198 -996us[-1220us] +/- 33ms</br>
+MS (模式与状态)：这是最关键的列，由两个字符组成-1-11。</br>
+</br>
+第一个字符 (M - Mode)：</br>
+^：表示一个NTP服务器。</br>
+=：表示一个对等节点 (Peer)。</br>
+#：表示一个本地参考时钟。</br>
+第二个字符 (S - State)：代表该源的状态-1。</br>
+*：当前正在使用的、已同步的主时间源。系统时间以此为基准。</br>
++：可接受的时间源，它的时间与主源一致，可作为备选，参与时间综合计算。</br>
+-：被算法排除的源，由于网络或时间差异等问题，不被使用。</br>
+?：连接丢失或数据包未通过测试的源，可能在服务刚启动时短暂出现。</br>
+x：被标记为“谎报者” (falseticker) 的源，其提供的时间与大多数源不一致，被算法丢弃。</br>
+Stratum (层级)：时间源的层级，数字越小代表其时间越接近权威时钟源-1。</br>
+Poll (轮询间隔)：以2的幂次方（秒）表示的轮询频率，例如 10 表示约每 1024 秒轮询一次-1。</br>
+Reach (可达性)：一个8位寄存器，用八进制数表示。377 代表最近8次轮询全部成功，网络连接非常稳定-1。</br>
+LastRx (上次接收)：距离从该源收到最后一个有效样本的时间。</br>
+Last sample (上次样本)：显示最后一个样本的测量结果，包括本地时钟与该时间源的偏差和误差范围-1。</br>
+
+</details>
+<details><summary>chrony 查看对等体详细跟踪状态</summary>
+chronyc tracking #显示当前系统的详细跟踪状态。它会告诉你系统当前同步于哪个源，以及系统时间的偏差、频率等关键性能指标</br>
+Reference ID : AC101009 (172.16.16.9)</br>
+Stratum : 4</br>
+Ref time (UTC) : Tue Jul 14 09:16:44 2026</br>
+System time : 0.000002194 seconds slow of NTP time</br>
+Last offset : -0.000002450 seconds</br>
+RMS offset : 0.000079958 seconds</br>
+Frequency : 20.513 ppm slow</br>
+Residual freq : -0.007 ppm</br>
+Skew : 0.713 ppm</br>
+Root delay : 0.015112859 seconds</br>
+Root dispersion : 0.029178157 seconds</br>
+Update interval : 64.7 seconds</br>
+Leap status : Normal</br>
+
+</details>
+    </details></td><td>chrony 命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

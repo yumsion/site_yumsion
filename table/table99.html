@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t99</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 99</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>openvpn_server.conf</summary>
+</br>
+lport 10024 #本地监听端口</br>
+proto udp #udp模式，注意，经测试，部分区域的PPPoE线路中，禁止了udp的该类通讯，修改tcp后正常</br>
+proto tcp-server #使用TCP进行通讯
+dev tun #点对点模式</br>
+dev-type tun #如果使用手动的tun且不是使用tun或tap作为prefix,则需要指定该项</br>
+mssfix 1280 # MSS=MTU-40(IPv4) / MSS=MTU-60(IPv6), mssfix 后面必须显式添加数值,默认会将 TCP MSS限制值设为1450字节</br>
+tun-mtu 1300 #设备建立的tun/tap的MTU，影响下个值</br>
+link-mtu 1xxx #将TCP/UDP设备的MTU设置为xxxx，影响上个值</br>
+</br>
+user openvpn</br>
+group openvpn</br>
+</br>
+persist-tun</br>
+persist-key</br>
+</br>
+</br>
+keepalive 10 60</br>
+</br>
+dh /home/openvpn/easy-rsa-master/easyrsa3/pki/dh.pem</br>
+</br>
+verb 3</br>
+log /home/openvpn/openvpn.log</br>
+</br>
+daemon</br>
+</br>
+#client-to-client #是否允许客户端互通</br>
+</br>
+#TLS</br>
+tls-server #本机承担TLS服务器的角色,可不填写，宏server会默认这样</br>
+tls-auth /home/openvpn/config/ta.key 0 #启用TLS认证密钥，0表示TLS服务器</br>
+或</br>
+&#x3c;tls-auth&#x3e;</br>
+#</br>
+# 2048 bit OpenVPN static key</br>
+#</br>
+-----BEGIN OpenVPN Static key V1-----</br>
+......</br>
+-----END OpenVPN Static key V1-----</br>
+</br>
+&#x3c;/tls-auth&#x3e;</br>
+key-direction 0</br>
+</br>
+</br>
+</br>
+
+--cipher AES256 #TLS加密模式,openvpn --show-tls列出支持的 TLS 控制通道加密套件。</br>
+--auth SHA512 #TLS解密模式 openvpn --show-digests 获取列表</br>
+#auth SHA256 #TLS解密模式 openvpn --show-digests 获取列表</br>
+
+
+--verify-client-cert none #不验证客户端证书。该配置与客户端remote-cert-tls server 配置冲突，该配置可能造成客户端之间的横向攻击，拥有合法客户端证书的恶意用户，可能冒充服务器去欺骗其他客户端。
+</br>
+</br>
+#网络配置</br>
+server 10.200.0.1 255.255.255.0 #服务器IP地址，该配置会在VPN运行后，自动配置到对应的网口上,并添加VPN内部路由</br>
+topology subnet #启用子网掩码</br>
+push "topology subnet"#server执行用户空间的bridge角色</br>
+push "route-gateway 10.200.0.1"</br>
+#IPv6</br>
+server-ipv6 2001::/64</br>
+push "route-ipv6 ::/0 #IPv6的配置"</br>
+</br>
+#客户端IP管理</br>
+<details><summary>客户端使用动态IP配置</summary>
+ifconfig-pool 10.200.0.2 10.200.0.254 255.255.255.255</br>
+ifconfig-pool-persist /home/openvpn/ipp.txt #动态IP记录文件</br>
+#注意：</br>
+#1. 只用来做动态IP分配，但是用户端可以自行修改IP，管不住</br>
+#2. ip persist保存文件，需要手动touch并且设置权限，否则默认降权过程导致own为root，文件将会变成空白</br>
+</details>
+</br>
+</br>
+#自定义用户配置</br>
+client-config-dir /home/openvpn/ccd</br>
+<details><summary>ccd配置文件示例</summary>
+--ifconfig-push 10.200.0.10 255.255.254.0 #配置静态IP地址</br>
+--push "dhcp-option DNS 8.8.8.8" #推送DNS</br>
+--push "route 192.168.189.0 255.255.255.0" #推送路由</br>
+--push "route 172.16.16.2 255.255.255.255" #后面还可以加入一个参数，但是MacOS不能加那个参数，会导致报错</br>
+--push "route 8.8.8.8 255.255.255.255" #推送路由</br>
+--push "route-gateway 10.200.0.1" #路由</br>
+--push "route-gateway 10.200.0.1" #在MacOS下测试，添加的路由是10.200.0.1/24，而非0.0.0.0/0</br>
+--iroute 1.1.1.1 255.255.255.255 #向openvpn虚拟路由表中写入该client含有的网段（所有路由中转都是server进行的）</br>
+--route "1.1.1.1 255.255.255.255" #服务器添加路由</br>
+#--redirect-gateway</br>
+</br>
+</details>
+</br>
+</br>
+#用户认证</br>
+auth-nocache #不缓存密码</br>
+<details><summary>使用密码认证方式</summary>
+#使用auth_control_file来实现更加活性的认证方法</br>
+#配置临时文件的存储位置,尽量避免使用硬盘,防止数据恢复工具获取到对应的信息</br>
+--tmp-dir /dev/shm/openvpn</br>
+#mkdir /dev/shm/openvpn &#x26;&#x26; chown openvpn:openvpn /dev/shm/openvpn &#x26;&#x26; chmod 700 /dev/shm/openvpn</br>
+# 启用用户名/密码认证,使用文件传递</br>
+--auth-user-pass-verify /etc/openvpn/scripts/auth.sh via-file</br>
+# 指定控制文件路径（可选，默认由 OpenVPN 自动生成） ,低版本不支持手动指定这个配置,使用tmp-dir来限制这个文件产生的位置</br>
+#--auth-control-file /etc/openvpn/scripts/auth-control.txt #新版本中不用添加这个</br> 
+</br>
+
+<details><summary>vim /etc/openvpn/scripts/auth.sh</summary>
+#!/bin/bash</br>
+# 脚本路径：/etc/openvpn/scripts/auth.sh</br>
+</br>
+# 读取 auth_control_file 内容</br>
+AUTH_FILE=&#x22;$1&#x22;</br>
+USERNAME=$(head -n 1 &#x22;$AUTH_FILE&#x22;)</br>
+PASSWORD=$(tail -n 1 &#x22;$AUTH_FILE&#x22;)</br>
+</br>
+# 示例：检查用户名和密码（实际应替换为数据库/LDAP查询）</br>
+if [[ &#x22;$USERNAME&#x22; == &#x22;testuser&#x22; &#x26;&#x26; &#x22;$PASSWORD&#x22; == &#x22;testpass&#x22; ]]; then</br>
+exit 0 # 认证成功</br>
+else</br>
+exit 1 # 认证失败</br>
+fi</br>
+</br>
+安全注意事项</br>
+chmod 600 /etc/openvpn/scripts/auth-control.txt</br>
+chown nobody:nogroup /etc/openvpn/scripts/auth-control.txt</br>
+
+</details>
+
+</details>
+
+</br>
+#客户端路由推送</br>
+push "dhcp-option DNS 114.114.114.114" #server向下推送DNS</br>
+push "route 10.2.0.0 255.255.255.0" #client端执行的路由命令，网关是server</br>
+push "redirect-gateway" #默认网关</br>
+<details><summary>#redirect-gateway 参数介绍</summary>--redirect-gateway flags...</br>
+!!! This is a client-side option !!!</br>
+</br>
+This option performs three steps:</br>
+1 Create a static route for the --remote address which forwards to the pre-existing default gateway. This is done so that the third step will not create a routing loop.</br>
+2 Delete the default gateway route.</br>
+3 Set the new default gateway to be the VPN endpoint address (derived either from --route-gateway or the second parameter to --ifconfig when --dev tun is specified).</br>
+</br>
+Option flags:</br>
+local -- Add the local flag if both OpenVPN servers are directly connected via a common subnet, such as with wireless. The local flag will cause step 1 above to be omitted.</br>
+autolocal -- Try to automatically determine whether to enable local flag above.</br>
+def1 -- Use this flag to override the default gateway by using 0.0.0.0/1 and 128.0.0.0/1 rather than 0.0.0.0/0. This has the benefit of overriding but not wiping out the original default gateway.</br>
+bypass-dhcp -- Add a direct route to the DHCP server (if it is non-local) which bypasses the tunnel (Available on Windows clients, may not be available on non-Windows clients).</br>
+bypass-dns -- Add a direct route to the DNS server(s) (if they are non-local) which bypasses the tunnel (Available on Windows clients, may not be available on non-Windows clients).</br>
+block-local -- Block access to local LAN when the tunnel is active, except for the LAN gateway itself. This is accomplished by routing the local LAN (except for the LAN gateway address) into the tunnel.</br>
+ipv6 -- Redirect IPv6 routing into the tunnel. This works similar to the def1 flag, that is, more specific IPv6 routes are added (2000::/4, 3000::/4), covering the whole IPv6 unicast space.</br>
+!ipv4 -- Do not redirect IPv4 traffic - typically used in the flag pair ipv6 !ipv4 to redirect IPv6-only.</br>
+</details>
+push "dhcp-option WINS 192.0.1.23" #etBIOS相关？</br>
+</br>
+</br>
+#服务器路由执行</br>
+route 192.8.2.0 255.255.255.0 #server端执行的路由命令</br>
+</br>
+#传输压缩</br>
+comp-lzo #启用lzo压缩</br>
+</br>
+</br>
+</br>
+</br>
+#网络状态脚本</br>
+--script-security 2 #该条要加上，否则不能运行脚本</br>
+--up /home/openvpn/dev_up.sh #端口启动后自动执行的脚本</br>
+#chmod 700 dev_up.sh</br>
+#vim dev_up.sh</br>
+#!/bin/bash，要添加该行，否则出错,即使使用绝对明令路径执行也出错，可能与fork有关</br>
+#Failed running command (--up/--down): could not execute external program</br>
+--client-connect "client_connect.sh add ok" #THIS OPTION WITH ONE PARAMETER , MORE SHOULD WITH QUOTA ,BUT USELESS</br>
+<details><summary>vim client_connect.sh</summary>
+#!/bin/bash</br>
+#Debugging</br>
+#echo $* &#x3e;&#x3e; /tmp/dnsupd.txt #only manualy parameter is passed</br>
+#env &#x3e;&#x3e; /dev/shm/vpn_conn.txt</br>
+#cat $2 &#x3e;&#x3e; /dev/shm/vpn_conn.txt</br>
+echo $common_name &#x3e;&#x3e; /dev/shm/vpn_conn.txt</br>
+echo $ifconfig_pool_remote_ip &#x3e;&#x3e; /dev/shm/vpn_conn.txt</br>
+date &#x3e;&#x3e; /dev/shm/vpn_conn.txt</br>
+echo &#x3e;&#x3e; /dev/shm/vpn_conn.txt</br>
+#success auth ok</br>
+exit 0</br>
+#failed , return auth failed , and close client</br>
+exit 1</br>
+或</br>
+#!/bin/bash</br>
+# 环境变量 common_name 由 OpenVPN 传入，对应证书的 CN</br>
+</br>
+# 最后一个参数是 OpenVPN 提供的临时文件路径，用于写入配置</br>
+CONFIG_FILE=&#x22;$1&#x22;</br>
+</br>
+case &#x22;$common_name&#x22; in</br>
+&#x09;&#x22;user_alice&#x22;)</br>
+&#x09;&#x09;# 为 alice 分配固定 IP</br>
+&#x09;&#x09;echo &#x22;ifconfig-push 10.8.0.50 255.255.255.0&#x22; &#x3e;&#x3e; &#x22;$CONFIG_FILE&#x22;</br>
+&#x09;&#x09;# 推送一条特定路由</br>
+&#x09;&#x09;echo &#x22;push &#x5c;&#x22;route 192.168.100.0 255.255.255.0&#x5c;&#x22;&#x22; &#x3e;&#x3e; &#x22;$CONFIG_FILE&#x22;</br>
+&#x09;&#x09;;;</br>
+&#x09;&#x22;user_bob&#x22;)</br>
+&#x09;&#x09;echo &#x22;ifconfig-push 10.8.0.51 255.255.255.0&#x22; &#x3e;&#x3e; &#x22;$CONFIG_FILE&#x22;</br>
+&#x09;&#x09;;;</br>
+&#x09;*)</br>
+&#x09;&#x09;# 对于其他用户，不做特殊处理，走默认地址池</br>
+&#x09;&#x09;;;</br>
+esac</br>
+
+chmod 555 client_connect.sh</details>
+--client-disconnect "client_connect.sh remove" #SCRIPT MAYBE LEAD TO SECOND CONNECT PAUSE WITH NO RESPONSE , KNOWN REASON</br>
+--learn-address cmd #server学习到的地址，通过参数传给脚本，ADD，UPDATE等，TUN/TAP有区别，返回非0将终止client连接</br>
+</br>
+<details><summary>client connect 等脚本运行时的变量 </summary>
+#延迟认证的结果控制文件。脚本如果 fork 后台进程处理耗时认证，后台进程完成后需向此文件写入 1（成功）或 0（失败），OpenVPN 会轮询读取。</br>
+auth_control_file=/dev/shm/openvpn/openvpn_acf_5bf15a184dca28d152f557c9d12e0e5c.tmp</br>
+#延迟认证的待处理状态文件。当认证需要挂起等待时，脚本可向此文件写入状态信息。</br>
+auth_failed_reason_file=/dev/shm/openvpn/openvpn_afr_2d782dee722746f464ddbc995a0f77c.tmp</br>
+#认证失败原因文件。脚本可向此文件写入失败原因，OpenVPN 会将其记录到日志中，方便排查。</br>
+auth_pending_file=/dev/shm/openvpn/openvpn_apf_1bb3dc77de90ccb2675939afc4c3ecfa.tmp</br>
+#动态配置写入文件。脚本可向此文件写入 ifconfig-push、push 等指令，OpenVPN 会像读取 CCD 文件一样应用这些配置。</br>
+client_connect_config_file=/dev/shm/openvpn/openvpn_cc_1ea310de4d157e4e7b1b83e608942115.tmp</br>
+#延迟连接控制文件。脚本可向此文件写入 1（成功）、0（失败）或 2（延迟），用于异步控制 client-connect 脚本的执行结果。</br>
+client_connect_deferred_file=/dev/shm/openvpn/openvpn_ccr_786bbee543b6e0c172efc93514a638dc.tmp</br>
+</br>
+#客户端证书的 Common Name，或在使用 username-as-common-name 时为用户名。这是识别用户的核心标识。</br>
+common_name=user01</br>
+#配置文件参数</br>
+config=openvpn_server.conf</br>
+daemon=0</br>
+daemon_log_redirect=0</br>
+daemon_pid=913126</br>
+daemon_start_time=1789724788</br>
+dev=tun_mytun</br>
+dev_type=tun</br>
+ifconfig_local=10.200.5.1</br>
+ifconfig_netmask=255.255.255.0</br>
+local_1=58.56.153.62</br>
+local_port_1=15224</br>
+proto_1=tcp-server</br>
+redirect_gateway=0</br>
+remote_port_1=1194</br>
+script_context=init</br>
+script_type=client-connect</br>
+time_ascii=&#x27;2026-09-18 17:46:28&#x27;</br>
+time_unix=1789724788</br>
+#已通过认证的客户端真实 IP 和端口。</br>
+trusted_ip=123.168.85.52</br>
+trusted_port=41109</br>
+tun_mtu=1300</br>
+#还没经过认证的客户端的IP（client-connect.sh可获取）</br>
+untrusted_ip=123.168.85.52</br>
+untrusted_port=41109</br>
+#通过用户名密码认证的用户名。在你的配置中，由于启用了 username-as-common-name，它与 common_name 相同。</br>
+username=user01</br>
+verb=4</br>
+
+</details>
+</br>
+#VPN服务器状态接口</br>
+status /home/openvpn/openvpn.status #目前vpn的用户状态实时记录</br>
+</br>
+</br>
+</br>
+
+    </details></td><td>openvpn_server.conf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>openvpn_client.conf</summary>
+--client #客户端宏</br>
+#--remote 58.56.153.62 15224 udp</br>
+--remote 58.56.153.62 15224 tcp-client</br>
+--tls-client</br>
+--dev tun_mytun</br>
+--dev-type tun</br>
+--keepalive 10 30</br>
+--persist-tun</br>
+--persist-key</br>
+--tun-mtu 1300</br>
+--lport 10234</br>
+#--link-mtu 1500</br>
+#--fragment 1340</br>
+--mssfix 1280 #显示指定数值</br>
+--user openvpn</br>
+--group openvpn</br>
+--verb 4</br>
+</br>
+#--comp-lzo</br>
+#--client-to-client : Internally route client-to-client traffic.</br>
+--auth-user-pass passwd1</br>
+auth-nocache #不缓存认证信息</br>
+</br>
+--cipher AES256</br>
+--auth SHA256 </br>
+</br>
+--remote-cert-tls server #验证服务器证书,需要server生成签名前指定是server_cert</br>
+</br>
+#TLS</br>
+tls-client #TLS角色为客户端，仅客户端侧设置该选项，可不填写。宏client默认该配置</br>
+remote-cert-tls server #检查对端（通常是客户端连接到的服务端）提供的证书是否包含“TLS Web Server Authentication”的扩展密钥用法（Extended Key Usage）</br>
+tls-auth /home/openvpn/config/ta.key 1 #TLS认证密钥，1表示TLS客户端</br>
+或</br>
+&#x3c;tls-auth&#x3e;</br>
+#</br>
+# 2048 bit OpenVPN static key</br>
+#</br>
+-----BEGIN OpenVPN Static key V1-----</br>
+......</br>
+-----END OpenVPN Static key V1-----</br>
+</br>
+&#x3c;/tls-auth&#x3e;</br>
+key-direction 1</br>
+</br>
+</br>
+#用户认证</br>
+<details><summary>使用密码认证方式</summary>
+auth-nocache #不缓存密码</br>
+auth-user-pass /etc/openvpn/client/auth.txt #密码文件</br>
+vim /etc/openvpn/client/auth.txt</br>
+username01</br>
+passwd01</br>
+</details>
+
+    </details></td><td>openvpn_client.conf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>openvpn 命令参数</summary>
+openvpn --genkey secret keys/ta.key #生成TLS-auth密钥</br>
+openvpn --config etc/openvpn.conf #运行openvpn，参数与配置文件中的可以互通</br>
+openvpn --mktun --dev tap0 #创建自定义tap设备，不使用默认的设备名称，类似于veth设备,可以手动加入bridge。使用ip tuntap设置的tun或者tap可以用于qemu虚拟机，但是不能用于openvpn</br>
+#注意：必须以tun或tap开头，用于辅助确认是tun还是tap,否则需要在配置文件中指定类型</br>
+</br>
+    </details></td><td>openvpn 命令参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>openvpn.service</summary>
+[Unit]</br>
+Description=openvpn</br>
+[Service]</br>
+ExecStart=/usr/local/openvpn-2.4.6/sbin/openvpn --config /home/openvpn/etc/openvpn.conf</br>
+Type=forking</br>
+Restart=on-failure</br>
+RestartSec=1200</br>
+[Install]</br>
+WantedBy=multi-user.target</br>
+    </details></td><td>openvpn.service</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>openvpn_server.conf 示例 MG</summary>
+
+vim openvpn_server.conf</br>
+--local 172.16.1.9</br>
+--mode server</br>
+--tls-server</br>
+--dh dh.pem</br>
+--ca cacert.pem</br>
+--cert cert.ca</br>
+--key key.key</br>
+--proto udp</br>
+--lport 1022</br>
+--dev tun_mytun</br>
+--dev-type tun</br>
+--topology subnet</br>
+--ifconfig 10.200.0.1 255.255.255.0</br>
+--ifconfig-pool 10.200.0.10 10.200.0.200</br>
+--push &#x22;route 192.168.8.1 255.255.255.255&#x22;</br>
+#这个有第三个参数，如果填写，可以在无需默认路由的情况下独自存在。如果不填写表示走默认路由。如果默认路由没有填写，安卓端会报错，无法解析路由，造成该行失效</br>
+--push &#x22;topology subnet&#x22;</br>
+--keepalive 10 30</br>
+--persist-tun</br>
+--persist-key</br>
+--tun-mtu 1378</br>
+#--link-mtu 1500</br>
+#--fragment 1340</br>
+--mssfix</br>
+--user openvpn</br>
+--group openvpn</br>
+#--chroot /home/openvpn</br>
+#--daemon</br>
+--log /dev/shm/openvpn.log</br>
+--status /dev/shm/openvpn.status 4</br>
+这个4可能造成status文件中没有任何内容</br>
+--verb 3</br>
+--mute 100</br>
+--connect-retry 10 600</br>
+--connect-retry-max 3</br>
+</br>
+#--comp-lzo</br>
+#--client-to-client : Internally route client-to-client traffic.</br>
+--client-config-dir ccd</br>
+--auth-user-pass-verify openvpn_check_passwd.sh via-env</br>
+--verify-client-cert none #不验证客户端证书,在纯密码认证情况下，不颁发证书，则需要这个配置</br>
+--username-as-common-name</br>
+--script-security 3</br>
+</br>
+</br>
+
+vim psw-file</br>
+user01 password01</br>
+</br>
+vim <a href="../gpg/openvpn_check_password_openssl_hash.sh.gpg" target="_blank">openvpn_check_passwd.sh</a></br>
+vim psw-file</br>
+user01 hashpasswd01 2028-12-30 NULL 35 4</br>
+user02 hashpasswd02 NULL 2027-12-30 35 4</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+chmod 555 openvpn_check_passwd.sh #赋予x权限，否则运行报错</br>
+tree ccd</br>
+ccd</br>
+├── abc</br>
+├── jiangruntian</br>
+</br>
+vim ccd/abc</br>
+--push &#x22;route 192.168.188.0 255.255.255.0&#x22;</br>
+--push &#x22;route 192.168.189.0 255.255.255.0&#x22;</br>
+
+    </details></td><td>openvpn_server.conf 示例</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

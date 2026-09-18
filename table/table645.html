@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>t591</title>
+  <title>t645</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 591 H3C ACL</h1>
+      <h1>table 645</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,86 +59,31 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary>ACL 规则</summary>
-#组播通用过滤规则
-acl adv 3500
-description PORT_MULTICAST_DROP_INOUT
-rule 100 deny udp source-port eq 5353 destination-port eq 5353
-rule deny ip source 224.0.0.0 15.255.255.255
-rule deny ip destination 224.0.0.0 15.255.255.255
-rule deny udp destination-port eq 137
-#广播包阻挡
-rule 200 permit udp destination 255.255.255.255 0 source-port eq bootpc
-rule 205 deny ip destination 255.255.255.255 0
+    <tr><td><details><summary>k8s 查看pod信息</summary>
+kubectl get pods -A -o wide #查看目前的pod信息</br>
+#NAME READY STATUS RESTARTS AGE IP NODE</br>
+#nginx-6fdf99c8b-6wwft 1/1 Running 0 10s 10.244.1.2 node-1</br>
+</br>
+kubectl get pod &#x3c;pod-name&#x3e; -o wide #快速查看 IP,在 IP 列直接看到地址，信息最简洁。</br>
+kubectl describe pod &#x3c;pod-name&#x3e; #查看端口和事件,查看 IP、Ports 以及下方的 Events（事件），用于排查启动问题。</br>
+kubectl get pod &#x3c;pod-name&#x3e; -o yaml #查看完整配置,查看 status.podIP、spec.hostNetwork 等所有细节。</br>
+kubectl exec -it &#x3c;pod-name&#x3e; -- /bin/sh 进入容器后执行 ifconfig 或 ip addr 查看内部网络接口。</br>
+</br>
+</br>
+#使用-n指定namespace,否则是默认namespace ( default ),可能导致没有结果</br>
+kubectl get pod pgsql-postgresql-ha -n middleware -o wide</br>
+kubectl get pod pgsql-postgresql-ha -n middleware -o yaml #更加详细的配置</br>
+</br>
+</br>
 
-acl advanced 3500
- description PORT_MULTICAST_DROP_INOUT
-#mDNS广播
- rule 100 deny udp source-port eq 5353 destination-port eq 5353
-#组播地址
-#224.0.0.0-239.255.255.255
-#224.0.0.0/4
- rule 105 deny ip source 224.0.0.0 15.255.255.255
- rule 110 deny ip destination 224.0.0.0 15.255.255.255
-#NBNS流量
-#NetBIOS 名称服务
- rule 115 deny udp destination-port eq 137
-#NetBIOS 数据报服务
- rule 120 deny udp destination-port eq 138
-#NetBIOS 会话服务
- rule 125 deny tcp destination-port eq 139
-#DHCP REQUEST
- rule 200 permit udp destination 255.255.255.255 0 source-port eq bootpc
-#广播包阻挡
- rule 205 deny ip destination 255.255.255.255 0
-
-
-
-
-
-
-#ipv6
-acl ipv6 advanced 3500
-description deny_IPv6
-rule 100 deny ipv6
-
-
-
-#策略实施
- packet-filter 3500 inbound
- packet-filter ipv6 3500 inbound
- packet-filter 3500 outbound
- packet-filter ipv6 3500 outbound
-
-
-
-
-#其他规则分类
-acl adv 3600 route policy acl
-acl adv 3800 interface vlanif acl
-acl adv 3900
-description SECURITY_ACL
-
-#多packet-filter匹配规则
-interface GigabitEthernet1/0/3
-packet-filter 3004 outbound
-packet-filter ipv6 3000 outbound
-packet-filter mac 4000 outbound
-#以上三条是串行处理。
-#IPv4：如果acl 3004和acl mac 3000都是permit状态，则IPv4通过。
-#IPv6：将会通过acl ipv6 3000进行判断。
-
-
-#规则ACL硬件资源查看,重点查看输出中的 Remaining 字段，如果为 0 或很小，即确认资源已耗尽
-display qos-acl resource
-#查看目前的端口是使用的QOS配置
-display packet-filter interface
-
-
-    </details></td><td>ACL 规则</td></tr>
+    </details></td><td>k8s 查看pod信息</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details><summary>k8s 修改pod配置</summary>
+</br>
+#编辑 Deployment 配置 (如livenessProbe探针)</br>
+ubectl edit deployment &#x3c;pod-name&#x3e;</br>
+</br>
+    </details></td><td>k8s 修改pod配置</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>t591</title>
+  <title>t254</title>
   <!-- 独立样式文件：table_css.css -->
   <link rel="stylesheet" href="../css/table_css.css">
 </head>
@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 591 H3C ACL</h1>
+      <h1>table 254 LINUX apt dpkg debian</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -59,83 +59,53 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary>ACL 规则</summary>
-#组播通用过滤规则
-acl adv 3500
-description PORT_MULTICAST_DROP_INOUT
-rule 100 deny udp source-port eq 5353 destination-port eq 5353
-rule deny ip source 224.0.0.0 15.255.255.255
-rule deny ip destination 224.0.0.0 15.255.255.255
-rule deny udp destination-port eq 137
-#广播包阻挡
-rule 200 permit udp destination 255.255.255.255 0 source-port eq bootpc
-rule 205 deny ip destination 255.255.255.255 0
+    <tr><td><details><summary>debian 13 网络配置 修改dhcp为静态IP地址</summary>
+<b>修改dhcp为静态IP地址</b></br>
+<b>方式1</b> ls /etc/netplan/</br>
+<b>方式2</b> systemctl status NetworkManager</br>
+<b>方式3</b> ls /etc/systemd/network/ 有 .network 文件则说明系统在使用 systemd-networkd</br>
+<b>方式4</b> cat /etc/network/interfaces</br>
+vim /etc/network/interfaces</br>
+-- iface eth0 inet dhcp</br>
+++</br>
+iface eth0 inet static</br>
+    address 192.168.1.100</br>
+    netmask 255.255.255.0</br>
+    gateway 192.168.1.1</br>
+    dns-nameservers 8.8.8.8 1.1.1.1</br>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>debian13 init</summary>
+#清华源</br>
+https://mirrors.tuna.tsinghua.edu.cn/help/debian/</br>
+</br>
+#查看源格式</br>
+#传统格式</br>
+ls /etc/apt/sources.list</br>
+#DEB822 格式</br>
+ls /etc/apt/sources.list.d/debian.sources</br>
+</br>
+#传统格式</br>
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释</br>
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie main contrib non-free non-free-firmware</br>
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie main contrib non-free non-free-firmware</br>
+</br>
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-updates main contrib non-free non-free-firmware</br>
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-updates main contrib non-free non-free-firmware</br>
+</br>
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-backports main contrib non-free non-free-firmware</br>
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-backports main contrib non-free non-free-firmware</br>
+</br>
+# 以下安全更新软件源为官方源配置</br>
+deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware</br>
+# deb-src https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware</br>
+</br>
+#升级软件包</br>
+apt update</br>
+apt upgrade</br>
+</br>
 
-acl advanced 3500
- description PORT_MULTICAST_DROP_INOUT
-#mDNS广播
- rule 100 deny udp source-port eq 5353 destination-port eq 5353
-#组播地址
-#224.0.0.0-239.255.255.255
-#224.0.0.0/4
- rule 105 deny ip source 224.0.0.0 15.255.255.255
- rule 110 deny ip destination 224.0.0.0 15.255.255.255
-#NBNS流量
-#NetBIOS 名称服务
- rule 115 deny udp destination-port eq 137
-#NetBIOS 数据报服务
- rule 120 deny udp destination-port eq 138
-#NetBIOS 会话服务
- rule 125 deny tcp destination-port eq 139
-#DHCP REQUEST
- rule 200 permit udp destination 255.255.255.255 0 source-port eq bootpc
-#广播包阻挡
- rule 205 deny ip destination 255.255.255.255 0
-
-
-
-
-
-
-#ipv6
-acl ipv6 advanced 3500
-description deny_IPv6
-rule 100 deny ipv6
-
-
-
-#策略实施
- packet-filter 3500 inbound
- packet-filter ipv6 3500 inbound
- packet-filter 3500 outbound
- packet-filter ipv6 3500 outbound
-
-
-
-
-#其他规则分类
-acl adv 3600 route policy acl
-acl adv 3800 interface vlanif acl
-acl adv 3900
-description SECURITY_ACL
-
-#多packet-filter匹配规则
-interface GigabitEthernet1/0/3
-packet-filter 3004 outbound
-packet-filter ipv6 3000 outbound
-packet-filter mac 4000 outbound
-#以上三条是串行处理。
-#IPv4：如果acl 3004和acl mac 3000都是permit状态，则IPv4通过。
-#IPv6：将会通过acl ipv6 3000进行判断。
-
-
-#规则ACL硬件资源查看,重点查看输出中的 Remaining 字段，如果为 0 或很小，即确认资源已耗尽
-display qos-acl resource
-#查看目前的端口是使用的QOS配置
-display packet-filter interface
-
-
-    </details></td><td>ACL 规则</td></tr>
+    </details></td><td>init</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>
