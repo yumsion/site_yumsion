@@ -142,8 +142,49 @@ display wlan ap all verbose #查看所有AP 详细信息，信道radio，等
 display wlan client ap name XXX #查看AP上的用户数量
     </details></td><td>H3C AP 命令</td></tr>
         <!-- 分割线 -->
-    <tr><td style="white-space:pre-warp;"><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td style="white-space:pre-warp;"><details><summary>AC控制器 许可备份</summary>
+AC冗余方案。H3C主流的做法是双链路备份（即1+1热备）
+备份AC不需要再单独买一套同样数量的授权。H3C支持License共享，一份授权可以在两台互为备份的AC之间同步使用，不需要叠加购买。
+两台AC均支持双链路备份（WX2500H及以上主流型号基本都支持）。
+确认型号支持，H3C 的 License 共享机制并不是让一份授权永久地在两台 AC 上同时生效，它的核心是一个30 天宽限期
+
+在主AC上指定备份AC的IP，配置优先级、备份VLAN等参数。
+
+N+1 双链路备份 + License 共享，在备份AC上做对称配置，并开启License共享。
+<b>AC 1（主，已安装正式 License）配置：</b>
+# 配置 AP 组的备份 AC 地址（指向 AC 2）
+wlan ap-group 你的AP组名(默认default-group)
+ backup-ac ip AC2的IP地址
+ wlan tunnel-preempt enable   # 可选，主AC恢复后允许抢占
+ quit
+
+# 配置 AP License 共享组
+wlan ap-license-group
+ local ip AC1的IP地址
+ member ip AC2的IP地址 backup   # 指定 AC2 为备角色
+ ap-license-synchronization enable
+ quit
+
+<b>AC 2（备，无正式 License）配置：</b>
+# 配置 AP 组的备份 AC 地址（指向 AC 1）
+wlan ap-group 你的AP组名(默认default-group)
+ backup-ac ip AC1的IP地址
+ quit
+
+# 配置 AP License 共享组
+wlan ap-license-group
+ local ip AC2的IP地址 backup   # 声明自身为备角色
+ member ip AC1的IP地址          # 主 AC 为成员
+ ap-license-synchronization enable
+ quit
+
+
+
+AP上线后，会同时与两台AC建立主/备隧道。
+配置完成后，可以用 display wlan ap-license-group 命令查看共享组状态，确认两台 AC 已建立连接且授权信息同步成功
+
+
+    </details></td><td>AC控制器 许可备份</td></tr>
         <!-- 分割线 -->
     <tr><td style="white-space:pre-warp;"><details><summary></summary>
     </details></td><td></td></tr>

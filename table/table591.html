@@ -89,8 +89,12 @@ acl advanced 3500
  rule 125 deny tcp destination-port eq 139
 #DHCP REQUEST
  rule 200 permit udp destination 255.255.255.255 0 source-port eq bootpc
+#AP隧道建立，如果不添加，AP能获取IP地址，但是不能上线。
+ rule 201 permit udp destination 255.255.255.255 0 destination-port eq 5246
+ rule 202 permit udp destination 255.255.255.255 0 destination-port eq 5247
 #广播包阻挡
  rule 205 deny ip destination 255.255.255.255 0
+
 
 
 

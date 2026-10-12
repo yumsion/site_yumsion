@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t805</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 805 知识 网络机房建设</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>网络机房 参数</summary>
+<table>
+<tr><td>编号</td><td>参数</td><td>描述</td></tr>
+<tr><td>1</td><td>机房装修</td><td></td></tr>
+<tr><td>2</td><td>UPS</td><td>稳压/稳流 后备电源</td></tr>
+<tr><td>3</td><td>动环监控系统</td><td>温湿度监控和告警</td></tr>
+<tr><td>4</td><td>环境指标（机房整体）</td><td></td></tr>
+<tr><td>5</td><td>精密空调</td><td></td></tr>
+<tr><td>6</td><td>气体灭火系统</td><td></td></tr>
+<tr><td>7</td><td>选址要求</td><td></td></tr>
+</table>
+
+    </details></td><td>网络机房 参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>UPS 参数</summary>
+<table>
+<tr><td>1</td><td>UPS架构</td><td>模块化UPS</br>机框容量≥150kVA</br>输出功率因数=1（UPS输出功率因数=1是现代模块化UPS的关键指标，意味着可带满额有功功率负载，避免传统0.9功率因数导致的容量“虚标”）</br>整机效率≥96%</br></td></tr>
+<tr><td>2</td><td>冗余配置</td><td>N+1或2N架构；满配功率模块，支持在线热插拔</td></tr>
+<tr><td>3</td><td>蓄电池</td><td>12V/200Ah铅酸蓄电池，后备时间≥30分钟（按实际负载核算）</td></tr>
+<tr><td>4</td><td>防雷等级</td><td>标准支持D级防雷，含维护旁路开关</td></tr>
+<tr><td>5</td><td>精密列头柜</td><td>双路MCCB输入≥200A/3P，支持单相24路输出</td></tr>
+<tr><td>6</td><td>接口能力</td><td>至少支持以下一种管理方式：RS485/RS232/RESTful API</td></tr>
+</table>
+    </details></td><td>UPS 参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>动环监控系统 参数</summary>
+<table>
+<tr><td>1</td><td>监控主机</td><td>1U机架式，内置≥32G存储，双网口双电源冗余，断电续航≥2小时</td></tr>
+<tr><td>2</td><td>监控范围</td><td>温湿度、配电柜、精密空调、UPS、蓄电池、漏水、门禁、视频</td></tr>
+<tr><td>3</td><td>接口能力</td><td>串口≥8路，以太网≥2路，支持RS485/RS232/DI/DO/AI</td></tr>
+<tr><td>4</td><td>告警功能</td><td>支持短信、邮件、多媒体语音报警；支持双机热备</td></tr>
+</table>
+    </details></td><td>动环监控系统 参数</td></tr>
+    <tr><td><details><summary>环境指标（机房整体） 参数</summary>
+<table>
+<tr><td>1</td><td>冷通道/机柜进风温度</td><td>18℃-27℃</td></tr>
+<tr><td>2</td><td>相对湿度</td><td>露点5.5℃-15℃，同时RH≤60%</td></tr>
+<tr><td>3</td><td>温度变化率</td><td>≤5℃/h（使用磁带驱动时）</td></tr>
+<tr><td>4</td><td>主机房正压</td><td>与其他房间压差≥5Pa，与室外≥10Pa</td></tr>
+<tr><td>5</td><td>噪声（固定工作位）</td><td>≤60dB(A)</td></tr>
+</table>
+    </details></td><td>环境指标（机房整体） 参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>气体灭火系统 参数</summary>
+<table>
+<tr><td>1</td><td>灭火设计浓度</td><td>计算机房/通讯机房：8%；配电室/发电机房：9%；档案库：10%；实际浓度≤设计浓度×1.1</td></tr>
+<tr><td>1</td><td>喷放时间</td><td>机房/电子设备间：≤8s（有效减少HF分解产物对精密设备的腐蚀）；其他防护区≤10s</td></tr>
+<tr><td>1</td><td>浸渍时间</td><td>机房电气火灾：≥5min</td></tr>
+<tr><td>1</td><td>灭火剂充装</td><td>七氟丙烷，最大充装密度≤1120kg/m³；贮存压力2.5MPa（一级）或4.2MPa（二级）</td></tr>
+<tr><td>1</td><td>泄压装置</td><td>自动泄压口，泄压面积按防护区围护结构允许压强计算</td></tr>
+<tr><td>1</td><td>联动控制</td><td>灭火控制器应在灭火前联动关闭风门/风阀、停止空调和新风机、切断非消防电源</td></tr>
+<tr><td>1</td><td>双探测器确认</td><td>主机房须同时设置两组独立火灾探测器（感烟+感温），两组同时报警才启动灭火</br>主机房采用管网气体灭火时，须设两组独立探测器；吊顶内/地板下含可燃物时同样设置</td></tr>
+<tr><td>1</td><td>早期报警</td><td>主机房宜配置吸气式感烟探测器，灵敏度严于0.01%obs/m</td></tr>
+<tr><td>1</td><td>报警联动</td><td>火灾报警系统与灭火系统、视频监控系统联动；防护区内外设声光报警器、放气指示灯</td></tr>
+<tr><td>1</td><td>紧急控制</td><td>防护区入口设紧急启停按钮和手/自动转换装置，具备防误操作保护</td></tr>
+<tr><td>1</td><td></td><td></td></tr>
+</table>
+    </details></td><td>气体灭火系统 参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>机房装修 参数</summary>
+<table>
+<tr><td>1</td><td>防静电地板</td><td>采用防静电架空地板或环氧自流平地坪，减少起尘；架空地板下应定期吸尘。</td></tr>
+<tr><td>2</td><td>顶棚和墙壁</td><td>装修材料顶棚和壁板应为不燃烧体,使用不起尘、不吸尘的材料（如彩钢板、乳胶漆墙面），避免使用普通石膏板或裸露水泥面。</td></tr>
+<tr><td>3</td><td>疏散门/窗子</td><td>疏散门不应少于两个且分散布置；耐火等级不应低于二级；不能飘进绒絮，不能进老鼠和昆虫。双层密封窗，门加装防尘条。</td></tr>
+<tr><td>4</td><td>防虫/防鼠/防尘</td><td>封堵任何入口管道。</td></tr>
+<tr><td>5</td><td>巡检</td><td>定期检查，发现鼠迹（粪便、咬痕、异味）立即排查封堵点。每月检查封堵材料是否老化脱落。空调滤网等定期清理。检查线缆有无咬痕，尤其是角落和隐蔽处</td></tr>
+<tr><td>6</td><td>机房正压</td><td>保持机房正压（室内气压略高于外部），防止外部含尘空气渗入。新风机进风口加装高效过滤装置。</td></tr>
+</table>
+    </details></td><td>机房装修 参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>机房选址要求</summary>
+<table>
+<tr><td>7</td><td>无关管道穿越</td><td>主机房内严禁给水管、排水管、消防管、排污管、强电缆等非机房专用管线穿越。</td></tr>
+<tr><td>7</td><td>正上方用水区域</td><td>机房不应布置在用水区域（卫生间、厨房、水池、水泵房等）的正下方或贴邻</td></tr>
+<tr><td>7</td><td>公共停车库正上方</td><td>A级数据中心不宜建在公共停车库正上方。如无法避免，须对停车库采取防撞防爆措施</td></tr>
+<tr><td>7</td><td>采风口位置</td><td>机房采风口必须远离城市污水管出气口、大型化粪池和污水处理池，保持机房正压</td></tr>
+<tr><td>7</td><td>地下室最底层</td><td>数据中心不宜设置在地下室最底层。若无法避免，必须采取防止管道泄漏、消防排水等水渍损失的专项措施</td></tr>
+<tr><td>7</td><td>低洼地段</td><td>主机房不应设在场地低洼处。A级数据中心首层建筑完成面应高出当地洪水百年重现期水位线1.0m以上，并高出室外地坪至少0.6m</td></tr>
+<tr><td>7</td><td>远离污染源</td><td style="white-space:pre-wrap;">重污染源（冶炼厂、煤矿等）
+中等污染源（化工、橡胶、电镀等）
+轻污染源（食品、皮革加工厂等）
+甲、乙类厂房和仓库、垃圾填埋场
+距离海边或盐湖
+停车场
+铁路或高速公路
+地铁</td></tr>
+</table>
+    </details></td><td>机房选址要求</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>服务器采购标准</summary>
+<table>
+<tr><td>1</td><td>双电源</td><td>电源故障可有替换空间。上级线路或UPS故障/更换时，可以无停机状态下迁移到新线路。</td></tr>
+<tr><td>2</td><td>硬件RAID</td><td>有硬件RAID,支持RAID0,1,5,6,10,50,60等</td></tr>
+<tr><td>3</td><td>扩展性</td><td>内存插条大于12。PCIE插槽大于1。</td></tr>
+<tr><td>4</td><td>带外管理</td><td>有永久授权或永久可用的带外管理</td></tr>
+</table>
+    </details></td><td>服务器采购标准</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

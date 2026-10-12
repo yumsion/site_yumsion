@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t902</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 902 信息收集/告警通知</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>gotify 工具 go语言编写的小型简单信息通知工具</summary>
+<b>#自定义配置启动（端口、数据库路径等）</b></br>
+#如果你想改端口或指定数据库位置，Gotify 现在用的是环境变量，而不是旧的 YAML 配置文件。可以用 GOTIFY_ 前缀来设置：</br>
+# 示例：把端口改成 8080，数据库放到 /var/lib/gotify/gotify.db</br>
+GOTIFY_SERVER_PORT=8080 &#x5c;</br>
+GOTIFY_DATABASE_DIALECT=sqlite3 &#x5c;</br>
+GOTIFY_DATABASE_CONNECTION=/var/lib/gotify/gotify.db &#x5c;</br>
+./gotify-linux-amd64 serve</br>
+</br>
+#Gotify 的默认账号和密码都是 admin</br>
+#如果你在启动时通过环境变量 GOTIFY_DEFAULTUSER_PASS 指定了密码，那默认密码就会被覆盖成你设置的那个，但用户名依然是 admin</br>
+</br>
+<b>#外部脚本监听 WebSocket</b></br>
+#Gotify 暴露了一个 WebSocket 端点（/stream），任何语言写的程序都能连上去实时接收消息，处理后再转发</br>
+websocat &#x27;ws://127.0.0.1:8080/stream?token=CLIENT_Token&#x27;</br>
+</br>
+<b>#Gotify 目前不支持将管理页面和数据接口拆分到不同端口</b></br>
+#反向代理做访问控制</br>
+Nginx 方案示例：将 Gotify 自身绑定在 127.0.0.1:8080（仅本机可访问），然后通过 Nginx 暴露出去。</br>
+#可以针对 /message（发送接口）和 /stream（WebSocket）放行外部访问，而对根路径 /（管理页面）限制为仅内网 IP 可访问：</br>
+#Gotify 的 GOTIFY_SERVER_LISTENADDR 需要设置为 127.0.0.1</br>
+location = /message {</br>
+    proxy_pass http://127.0.0.1:8080;</br>
+    # 允许所有来源访问发送接口</br>
+    allow all;</br>
+}</br>
+</br>
+location /stream {</br>
+    proxy_pass http://127.0.0.1:8080;</br>
+    # WebSocket 需要的头部</br>
+    proxy_http_version 1.1;</br>
+    proxy_set_header Upgrade $http_upgrade;</br>
+    proxy_set_header Connection &#x22;upgrade&#x22;;</br>
+    allow all;</br>
+}</br>
+</br>
+location / {</br>
+    proxy_pass http://127.0.0.1:8080;</br>
+    # 管理页面仅允许内网访问</br>
+    allow 192.168.1.0/24;</br>
+    deny all;</br>
+}</br>
+</br>
+</br>
+<b>client和app有什么关系</b></br>
+Gotify 的数据模型是：User 拥有 App，User 也拥有 Client，谁创建的就是谁的，一个用户创建的app和client是互通的。</br>
+App：属于某个 User，只能发送消息。</br>
+Client：属于某个 User，只能接收消息和进行管理操作</br>
+</br>
+<b>使用curl向gotify发送信息</b></br>
+</br>
+curl -s -S &#x5c;</br>
+-H &#x27;Content-Type: application/json&#x27; &#x5c;</br>
+-H &#x22;X-Gotify-Key: APPToken&#x22; &#x5c;</br>
+&#x22;http://127.0.0.1:8080/message&#x22; &#x5c;</br>
+-d @- &#x3c;&#x3c;_EOF</br>
+{</br>
+  &#x22;message&#x22;: &#x22;Hello:man ![](https://gotify.net/img/logo.png)&#x22;,</br>
+  &#x22;title&#x22;: &#x22;My Title OK&#x22;,</br>
+  &#x22;priority&#x22;: 5,</br>
+  &#x22;extras&#x22;: {&#x22;client::display&#x22;: {&#x22;contentType&#x22;: &#x22;text/markdown&#x22;}}</br>
+}&#x27;</br>
+_EOF</br>
+#Gotify 的 client::display 仅支持 text/plain（默认）和 text/markdown 两种格式，text/html 不在支持范围内</br>
+</br>
+
+    </details></td><td>gotify</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

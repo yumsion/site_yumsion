@@ -327,6 +327,52 @@ rm /var/lib/pve-manager/pve-replication-state.json
 pveversion -v #查看目前的PVE的版本信息
     </details></td><td>PVE 其他命令</td></tr>
         <!-- 分割线 -->
+    <tr><td><details><summary>PVE pvesm</summary>
+pvesm set &#x3c;存储ID&#gt; --disable 1   # 禁用存储</br>
+pvesm set &#x3c;存储ID&#x3e; --disable 0   # 启用存储</br>
+pvesm set &#x3c;存储ID&#x3e; --content iso,backup #修改允许的内容类型（如只允许 ISO 和备份）</br>
+pvesm set &#x3c;存储ID&#x3e; --content iso,backup #设置带宽限制（单位 KiB/s，可针对不同操作分别设置</br>
+    </details></td><td>PVE pvesm</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE migration</summary>
+<details><summary>使用 PVE Remote Migration 无需集群迁移VM</summary>
+Proxmox VE 自带的远程迁移（Remote Migration）功能</br>
+它不需要提前组建集群，能让你把一台独立节点上的 VM 直接搬到另一台独立节点上，很适合临时性的操作。</br>
+CPU 兼容性：如果两个节点的 CPU 型号差异较大，建议在 vm1 的硬件设置中，将 CPU 类型临时改为 kvm64 或 x86-64-v2-AES，以提高兼容性，防止迁移后无法启动</br>
+</br>
+将pve1上的vm1迁移到pve2上</br>
+1. 卸载pve1中挂载的光驱光盘。</br>
+提示 CD/DVD 挂载错误：如果 vm1 挂载了 pve1 本地的 ISO 镜像，会阻止迁移。可以在 vm1 的硬件设置里，把 CD/DVD 驱动器改为“不使用任何介质”</br>
+2. 在 pve2（目标节点）上创建 API 令牌</br>
+数据中心 (Datacenter) -&#x3e; 权限 (Permissions) -&#x3e; API 令牌 (API Tokens)</br>
+【注意：】创建成功后，弹窗会显示 Secret（密钥）。务必立即复制并保存，因为它只显示这一次</br>
+3. 在 pve2（目标节点）上获取指纹</br>
+openssl x509 -fingerprint -sha256 -noout -in /etc/pve/nodes/$(hostname)/pve-ssl.pem</br>
+4. 在 pve1（源节点）上执行远程迁移</br>
+qm remote-migrate &#x3c;源VMID&#x3e; &#x3c;目标VMID&#x3e; &#x5c;</br>
+&#x27;host=&#x3c;pve2的IP&#x3e;,apitoken=PVEAPIToken=root@pam!&#x3c;令牌ID&#x3e;=&#x3c;令牌密钥&#x3e;,fingerprint=&#x3c;pve2的指纹&#x3e;&#x27; &#x5c;</br>
+--target-storage &#x3c;pve2上的存储名称&#x3e; &#x5c;</br>
+--target-bridge &#x3c;pve2上的网桥&#x3e; &#x5c;</br>
+--online</br>
+</br>
+--online 参数表示在线迁移，vm1 不用关机，停机时间会非常短。</br>
+如果 vm1 正在运行且磁盘在本地存储上，这个命令会自动把磁盘数据一并传过去。</br>
+</br>
+【注意：】</br>
+防火墙配置：pve1连接的是pve2的TCP8006端口</br>
+
+
+</details>
+    </details></td><td>PVE migration</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>PVE vzdump</summary>
+pvenode task list --source active #查看正在运行的任务，不加参数表示已经完成的任务，有结束时间的。
+pvenode task log UPID:pve36:000F8EF3:156E48275:6ABCBE19:vzdump::root@pam: #查看vzdump的任务进度
+    </details></td><td>PVE vzdump</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>BPS 备份限速</summary>
+    </details></td><td>PBS 备份限速</td></tr>
+        <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
