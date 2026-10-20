@@ -224,6 +224,24 @@ ip route show cache 172.30.224.100</br>
 ip route flush cache 172.30.224.100</br>
     </details></td><td>ip route</td></tr>
         <!-- 分割线 -->
+    <tr><td><details><summary>ip GRE</summary>
+ip tunnel add GRE1 mode gre local 172.25.57.5 remote 172.25.57.54 dev eth0 key 100
+ip tunnel add GRE2 mode gre local 172.25.57.5 remote 172.25.57.54 dev eth0 key 200
+dev 和 key是可以忽略的。(可以通过ip -d link list 查看，dev如不指定会动态设置，指定后就不会动态设置了？ key值100 位于：ikey 0.0.1.44 okey 0.0.1.44 )
+当两条隧道拥有完全相同的 local/remote IP 地址对时，单靠 IP 头无法区分数据包属于哪条隧道。GRE Key 就是解决这个问题的“索引号”。
+但是经验证，是可以建立的，并且可以正常通讯
+GRE 协议头中 Key 字段的长度为Unsinged int 32 ， 但部分网络设备厂商可能会在实现时缩小可用范围。
+    </details></td><td>ip GRE</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->

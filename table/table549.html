@@ -59,7 +59,7 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td style="white-space:pre-wrap;"><details><summary>H3C无线漫游优化相关</summary>
+    <tr><td style="white-space:pre-wrap;"><details><summary>H3C 无线漫游配置</summary>
 1. 开启 802.11r 快速漫游 (FT)
 802.11r（Fast BSS Transition）在 H3C 上被称为 FT。开启它能让通过 802.1X认证的终端在 AP 间漫游时，跳过重新进行 RADIUS 握手的步骤。
 注意： 配置 ft enable 之前，必须先通过 undo service-template enable 临时禁用该服务模板。
@@ -121,7 +121,41 @@ option client reject enable rssi 25
         <!-- 分割线 -->
     <tr><td style="white-space:pre-warp;"><details><summary>H3C无线信号管理</summary>
 配置信号强度
-配置信道
+
+
+<b>配置信道</b>
+ radio 2</br>
+ channel 149</br>
+[WX2560X_B1F1-wlan-ap-APNAME01-radio-2]type ?</br>
+  dot11a   802.11a #仅支持 5GHz，采用 OFDM 技术，最高速率 54 Mbps。这是最基础的模式，主要用于兼容极老的设备。</br>
+  dot11ac  802.11ac #WIFI 4 引入了 MIMO（多天线）和 40MHz 信道绑定，速率大幅提升，最高可达 600 Mbps（需终端支持）。这是 5GHz 频段上实现高速连接的基础模式。</br>
+  dot11an  802.11n(5GHz) #WIFI 5 仅支持 5GHz，引入更宽的信道（最高160MHz）、更高阶调制（256-QAM）和下行 MU-MIMO，速率可达 Gbps 级别。它专注于 5GHz 频段的性能提升。</br>
+  dot11ax  802.11ax #WIFI 6 同时支持 2.4/5GHz，核心是提升多设备并发效率。引入 OFDMA（正交频分多址）和完整的上下行 MU-MIMO，虽然峰值速率更高（9.6 Gbps），但实际优势在于高密度场景下的稳定性和低延迟。</br>
+</br>
+ radio 3</br>
+  channel 11</br>
+[WX2560X-wlan-ap-APNAME01-radio-3]type ?</br>
+  dot11b    802.11b #WIFI 1 最基础的模式，最高速率仅 11 Mbps。如今已非常老旧，仅用于兼容极早期的设备</br>
+  dot11g    802.11g #WIFI 3 速率提升至 54 Mbps，并向下兼容 802.11b 设备。相比 b 模式，能提供更实用的基础速率。</br>
+  dot11gax  802.11gax #WIFI 4 引入了 MIMO（多天线）技术，速率有质的飞跃，最高可达 600 Mbps（需终端与AP同时支持）。这是过去很长一段时间内 2.4GHz 的主流模式。</br>
+  dot11gn   802.11n(2.4GHz) #WIFI 6 这是 H3C 对 Wi-Fi 6 在 2.4GHz 频段的命名。核心优势不在于单设备峰值速率，而在于通过 OFDMA 等技术，提升多设备并发时的效率和稳定性。</br>
+
+
+
+<b>radio模块-波束成形技术</b>：</br>
+mu-txbf enable #开启多用户发送波束成形（Multi-User Tx Beamforming）功能</br>
+#必须先开 su-txbf：mu-txbf 只有在单用户波束成形已经开启的前提下才会生效。</br>
+</br>
+su-txbf enable #让 AP 将无线信号能量集中“瞄准”单个客户端的技术，目的是提升该客户端接收到的信号质量。</br>
+#它比较适合客户端分布范围广、网络环境质量差、信号衰减严重的场景，用于增强远端或弱信号位置的连接质量。</br>
+#需要留意的兼容性风险</br>
+#部分苹果电脑（特别是较老版本）对 Wi-Fi 6 的兼容性存在问题，对 su-txbf 功能支持得不好，曾出现连接 Wi-Fi 6 AP 时丢包的现象，当时是通过关闭 su-txbf 来解决的。</br>
+
+<b>查看一个客户端的连接信息</b></br>
+<WX2560X_B1F1>display wlan client mac-address 78be-81e5-e3d6 verbose</br>
+<WX2560X_B1F1>display wlan client status mac-address  78be-81e5-e3d6</br>
+</br>
+</br>
     </details></td><td>H3C 无线信号相关</td></tr>
     <tr><td style="white-space:pre-warp;"><details><summary>H3C的AP自动接入和固件升级【WEBUI】</summary>
 Wireless Configuration -- AP ManagementAP -- Global Settings
@@ -186,8 +220,57 @@ AP上线后，会同时与两台AC建立主/备隧道。
 
     </details></td><td>AC控制器 许可备份</td></tr>
         <!-- 分割线 -->
-    <tr><td style="white-space:pre-warp;"><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td style="white-space:pre-warp;"><details><summary>H3C 无线模板</summary>
+#打印机无线</br>
+wlan service-template wprinter</br>
+ ssid WPrinter</br>
+ vlan 100</br>
+ client forwarding-location ap vlan 100</br>
+ akm mode psk</br>
+ preshared-key pass-phrase cipher xxxxxx</br>
+ cipher-suite ccmp</br>
+ cipher-suite tkip</br>
+ security-ie rsn</br>
+ security-ie wpa</br>
+ service-template enable</br>
+</br>
+</br>
+</br>
+</br>
+#MAC认证无线</br>
+wlan service-template iot2</br>
+ ssid iot2</br>
+ client forwarding-location ap vlan 10</br>
+ client forwarding-location ap vlan 101</br>
+ client forwarding-location ap vlan 140</br>
+ akm mode psk</br>
+ preshared-key pass-phrase cipher xxxxxx</br>
+ cipher-suite ccmp</br>
+ cipher-suite tkip</br>
+ security-ie rsn</br>
+ security-ie wpa</br>
+ client-security authentication-mode mac</br>
+ mac-authentication domain feilian</br>
+ service-template enable</br>
+</br>
+wlan service-template st01</br>
+ ssid SSID01</br>
+ vlan 14</br>
+ client forwarding-location ap vlan 14</br>
+ user-isolation enable</br>
+ akm mode dot1x</br>
+ cipher-suite ccmp</br>
+ cipher-suite tkip</br>
+ security-ie rsn</br>
+ security-ie wpa</br>
+ client-security authentication-mode dot1x</br>
+ dot1x domain feilian</br>
+ ft enable</br>
+ service-template enable</br>
+</br>
+
+
+    </details></td><td>H3C 无线模板</td></tr>
         <!-- 分割线 -->
     <tr><td style="white-space:pre-warp;"><details><summary></summary>
     </details></td><td></td></tr>

@@ -365,16 +365,19 @@ qm remote-migrate &#x3c;源VMID&#x3e; &#x3c;目标VMID&#x3e; &#x5c;</br>
 </details>
     </details></td><td>PVE migration</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>PVE vzdump</summary>
+    <tr><td><details><summary>PVE 任务/日志</summary>
 pvenode task list --source active #查看正在运行的任务，不加参数表示已经完成的任务，有结束时间的。
 pvenode task log UPID:pve36:000F8EF3:156E48275:6ABCBE19:vzdump::root@pam: #查看vzdump的任务进度
-    </details></td><td>PVE vzdump</td></tr>
+    </details></td><td>PVE 任务/日志</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>BPS 备份限速</summary>
     </details></td><td>PBS 备份限速</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details><summary>PBS 日志/任务</summary>
+cat /var/log/proxmox-backup/tasks/active #查看目前的执行中的任务</br>
+proxmox-backup-manager task list #查看目前的执行中的任务</br>
+proxmox-backup-manager task list --all --limit 50 #查看已经执行的所有任务（默认limit值为50,如需更多信息，需要指定limit值）</br>
+    </details></td><td>PBS 日志/任务</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>

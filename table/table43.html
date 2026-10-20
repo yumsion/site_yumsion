@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t43</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 43 bash nginx</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>nginx.conf URI 过滤</summary>
+http {</br>
+    map $uri $is_allowed {</br>
+        default 0;</br>
+        ~^/agc/  1;</br>
+        ~^/cdeg/ 1;</br>
+    }</br>
+</br>
+    server {</br>
+        listen 80;</br>
+        server_name example.com;</br>
+</br>
+        location / {</br>
+            if ($is_allowed = 0) {</br>
+                return 403;</br>
+            }</br>
+</br>
+            proxy_pass http://backend_server;</br>
+            proxy_set_header Host $host;</br>
+            proxy_set_header X-Real-IP $remote_addr;</br>
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</br>
+            proxy_set_header X-Forwarded-Proto $scheme;</br>
+        }</br>
+    }</br>
+}</br>
+</br>
+map 用正则 ~^/agc/ 匹配 URI 前缀。map 是「按需触发」的，只有当你真正引用了 $is_allowed 这个变量时，Nginx 才会去计算它。</br>
+命中白名单 $is_allowed=1，否则为 0，返回 403。</br>
+新增白名单只需在 map 里加一行，不用改 location。</br>
+注意：if 在 location 中一般被认为是「邪恶的」，但这里只做 return，是官方推荐的少数安全用法之一。</br>
+
+    </details></td><td>nginx.conf URI 过滤</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx.conf 日志</summary>
+server {</br>
+    listen 80;</br>
+    server_name example.com;</br>
+</br>
+    location = /favicon.ico {</br>
+        alias /var/www/static/favicon.ico;</br>
+        access_log off; #避免 favicon 请求刷满日志。</br>
+        log_not_found off; #文件不存在时也不记 404 日志。</br>
+        expires 30d; #让浏览器缓存 30 天，减少重复请求。</br>
+    }</br>
+}</br>
+</br>
+</br>
+stream {</br>
+&#x09;#定义一个日志格式</br>
+&#x09;log_format proxy_log1 &#x27;$remote_addr [$time_local] &#x27;</br>
+&#x09;&#x09;&#x27;protocol=$protocol status=$status &#x27;</br>
+&#x09;&#x09;&#x27;bytes_sent=$bytes_sent bytes_received=$bytes_received &#x27;</br>
+&#x09;&#x09;&#x27;session_time=$session_time &#x27;</br>
+&#x09;&#x09;&#x27;sni_name=&#x22;$ssl_preread_server_name$server_name&#x22; &#x27;  # 记录域名</br>
+&#x09;&#x09;&#x27;upstream=&#x22;$upstream_addr&#x22;&#x27;;</br>
+</br>
+&#x09;#-引用一个日志格式</br>
+&#x09;access_log /var/log/nginx/stream_access.log proxy_log1;</br>
+&#x09;error_log /var/log/nginx/stream_error.log info;</br>
+</br>
+}</br>
+</br>
+</br>
+http {</br>
+&#x09;log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &#x22;$request&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;$status $body_bytes_sent &#x22;$http_referer&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;&#x22;$http_user_agent&#x22; &#x22;$http_x_forwarded_for&#x22;&#x27;;</br>
+</br>
+&#x09;log_format detailed &#x27;$remote_addr - [$time_local] &#x27;</br>
+&#x09;&#x09;&#x27;&#x22;$http_referer&#x22; &#x22;$http_user_agent&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;host=&#x22;$host&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;method=&#x22;$request_method&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;uri=&#x22;$request_uri&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;args=&#x22;$args&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;upstream=&#x22;$upstream_addr&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;upstream_status=&#x22;$upstream_status&#x22; &#x27;</br>
+&#x09;&#x09;&#x27;rt=$request_time &#x27;</br>
+&#x09;&#x09;&#x27;urt=$upstream_response_time&#x27;;</br>
+</br>
+&#x09;server {</br>
+access_log /var/log/nginx/access_11223.log detailed;</br>
+error_log /var/log/nginx/error_11223.log info;</br>
+&#x09;}</br>
+
+    </details></td><td>nginx.conf 日志</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx.conf 正则表达式</summary>
+location ~ ^/ui/assets/.*&#x5c;.((js)|(css)|(woff)|(svg))$ {}</br>
+</br>
+    </details></td><td>nginx.conf 正则表达式</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx 启动</summary>
+nginx 命令</br>
+nginx -t -c /etc/nginx/nginx.conf #检查指定的配置文件是否有配置错误（注意：端口被占用等无法通过这个发现，需要手动查看是否有占用）</br>
+nginx -p /usr/local/nginx1.15.0 #设置文件prefix，即配置中的~或者fastCGI中的$document_root</br>
+#nginx使用log触发防火墙</br>
+./bin/nginx/sbin/nginx -p ./nginx -c nginx.conf 2&#x3e;&#x26;1 |awk &#x27;/&#x5c;[error&#x5c;]/{print &#x22;&#x5c;nawk start : &#x22; $0; if(/cgi-bin|&#x5c;&#x3c;login&#x5c;&#x3e;|&#x5c;.cgi&#x5c;&#x3e;|&#x5c;.git&#x5c;&#x3e;|&#x5c;.env&#x5c;&#x3e;|&#x5c;.yml&#x5c;&#x3e;|.aspx|&#x5c;.&#x5c;.&#x5c;/&#x5c;.&#x5c;.&#x5c;/|(client intended to send too large bod)/){print &#x22;trigger happen ---&#x22;;match($0,&#x22;client: ([0-9]+.[0-9]+.[0-9]+.[0-9]+),&#x22;,ip);print &#x22;this ip will be block &#x22; ip[1];if(ip[1]!=last_ip){print ip[1] &#x3e; &#x22;/home/share/mkfifo01&#x22; ;last_ip=ip[1];} ;} ; }&#x27;</br>
+</br>
+</br>
+setcap cap_net_bind_service=+eip /usr/local/nginx/sbin/nginx</br>
+setcap -r nginx#取消1024以下端口bind许可</br>
+</br>
+chown nginx /home/nginx/nginx/client_body_temp #大量数据post时用到该文件夹</br>
+</br>
+</br>
+nginx.conf</br>
+user nginx #使用root用户运行时，完成配置后设置降权运行用户</br>
+group nginx #使用root用户运行时，完成配置后设置降权运行用户组</br>
+client_max_body_size 20m; #限制上传的大小，此外php也有限制的地方</br>
+daemon off; ＃关闭daemon</br>
+</br>
+</br>
+</br>
+    </details></td><td>nginx 启动</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx.conf 文件目录</summary>
+nginx.conf 文件目录</br>
+#设置autoindex自动目录生成</br>
+location ~/zdownload{</br>
+&#x09;autoindex on#</br>
+&#x09;autoindex_localtime on#</br>
+}</br>
+#设置autoindex自动目录生成 UTF-8支持</br>
+location /pub{</br>
+&#x09;alias /home/pub/;</br>
+&#x09;charset utf-8;</br>
+&#x09;autoindex on;</br>
+}</br>
+</br>
+#功能更好的autoindex替换插件，需要下载并在nginx编译前添加--add-module=参数</br>
+location ~/zdownload{</br>
+&#x09;fancyindex on#</br>
+}</br>
+# 添加密码认证</br>
+location / {</br>
+&#x09;auth_basic &#x22;nginx basic http test for jb51.net&#x22;;</br>
+&#x09;auth_basic_user_file conf/htpasswd;</br>
+&#x09;autoindex on;</br>
+}</br>
+</br>
+printf &#x22;user01:$(openssl passwd 123456)&#x5c;n&#x22; &#x3e;&#x3e; conf/htpasswd</br>
+#生成密码文件，无需htpasswd组件</br>
+</br>
+</br>
+    </details></td><td>nginx.conf 文件目录</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx.conf php-fpm配置</summary>
+nginx.conf php-fpm配置</br>
+# 许可index.php的默认选择，避免故障 directory index of &#x22;xxx&#x22; is forbidden</br>
+# Add index.php to the list if you are using PHP</br>
+index index.html index.htm index.nginx-debian.html index.php;</br>
+</br>
+#以php结尾的文件</br>
+location ~ &#x5c;.php$ {</br>
+&#x09;root html;</br>
+&#x09;fastcgi_pass unix:/home/nginx/php-fpm7.sock;</br>
+&#x09;fastcgi_index index.php;</br>
+&#x09;fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</br>
+&#x09;include fastcgi_params;</br>
+}</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+    </details></td><td>nginx.conf php-fpm配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx.conf proxy</summary>
+nginx.conf proxy</br>
+server {</br>
+&#x09;listen 10001;</br>
+&#x09;#正向代理，类似socat端口转发但更高级</br>
+&#x09;error_log /dev/shm/error_bypass.log info;</br>
+&#x09;location / {</br>
+&#x09;&#x09;proxy_pass http://$http_host$request_uri;</br>
+&#x09;}</br>
+}</br>
+</br>
+#location配置proxy_pass</br>
+#在nginx中配置proxy_pass代理转发时，如果在proxy_pass后面的url加/，表示绝对根路径；如果没有/，表示相对路径，把匹配的路径部分也给代理走。</br>
+#假设下面四种情况分别用 http://192.168.1.1/proxy/test.html 进行访问。</br>
+#第一种：</br>
+location /proxy/ {</br>
+&#x09;proxy_pass http://127.0.0.1/;</br>
+&#x09;#proxy pass中，仅有斜杠,取消proxy的url前缀，但如果被调用的页面有返回主页，</br>
+&#x09;#如URL&#x22;/&#x22;,则直接跳转到了http://192.168.1.1/,而非http://192.168.1.1/proxy/</br>
+}</br>
+#代理到URL：http://127.0.0.1/test.html</br>
+</br>
+#第二种（相对于第一种，最后少一个 / ）</br>
+location /proxy/ {</br>
+&#x09;proxy_pass http://127.0.0.1;</br>
+&#x09;#proxy pass中无斜杠，ULR全部传递</br>
+}</br>
+#代理到URL：http://127.0.0.1/proxy/test.html</br>
+</br>
+#第三种：</br>
+location /proxy/ {</br>
+&#x09;proxy_pass http://127.0.0.1/aaa/;</br>
+&#x09;#proxy pass的/后有后缀，则使用字符串直接追加运算</br>
+}</br>
+#代理到URL：http://127.0.0.1/aaa/test.html</br>
+</br>
+#第四种（相对于第三种，最后少一个 / ）</br>
+location /proxy/ {</br>
+&#x09;proxy_pass http://127.0.0.1/aaa;</br>
+&#x09;#proxy pass的/后有后缀，则使用字符串直接追加运算</br>
+}</br>
+#代理到URL：http://127.0.0.1/aaatest.html</br>
+</br>
+</br>
+#更多的时候客户端请求会经过层层代理，我们需要通过$http_x_forwarded_for来进行限制，可以这样写</br>
+set $allow false;</br>
+if ($http_x_forwarded_for = &#x22;211.144.204.2&#x22;) {</br>
+set $allow true;</br>
+}</br>
+if ($http_x_forwarded_for ~ &#x22;108.2.66.[89]&#x22;) {</br>
+set $allow true;</br>
+}</br>
+if ($allow = false) { return 404; }</br>
+</br>
+#nginx proxy返回的网页内容中的文字替换</br>
+server {</br>
+listen 80;</br>
+</br>
+location /robot/ {</br>
+# 启用sub_filter</br>
+sub_filter_once off;</br>
+sub_filter_types *;</br>
+sub_filter &#x27;src=&#x22;/&#x27; &#x27;src=&#x22;./&#x27;;</br>
+sub_filter &#x27;href=&#x22;/&#x27; &#x27;href=&#x22;./&#x27;;</br>
+sub_filter &#x27;url(/&#x27; &#x27;url(./&#x27;;</br>
+sub_filter &#x27;&#x22;/ui/&#x27; &#x27;url(&#x22;./ui/&#x27;;</br>
+sub_filter &#x27;&#x22;/app/&#x27; &#x27;url(&#x22;./app/&#x27;;</br>
+</br>
+#以下避免&#x22;NET::ERR_INCOMPLETE_CHUNKED_ENCODING&#x22; 错误</br>
+proxy_buffer_size 128k;</br>
+proxy_buffers 4 256k;</br>
+proxy_busy_buffers_size 256k;</br>
+proxy_buffering off;</br>
+</br>
+proxy_connect_timeout 600;</br>
+proxy_send_timeout 600;</br>
+proxy_read_timeout 600;</br>
+</br>
+proxy_ignore_client_abort on;</br>
+#以上避免&#x22;NET::ERR_INCOMPLETE_CHUNKED_ENCODING&#x22; 错误</br>
+</br>
+proxy_pass http://172.16.31.33:8080/;</br>
+#proxy pass中，仅有斜杠,取消proxy的url前缀，但如果被调用的页面有返回主页，</br>
+#如URL&#x22;/&#x22;,则直接跳转到了http://192.168.1.1/,而非http://192.168.1.1/proxy/</br>
+}</br>
+} #server</br>
+</br>
+#nginx proxy 对特殊路径返回404</br>
+# 先匹配不允许的情况</br>
+location ~* /proxy/blocked-path {</br>
+&#x09;return 404;</br>
+}</br>
+</br>
+# 然后匹配允许的情况</br>
+location /proxy/ {</br>
+&#x09;proxy_pass http://backend_server;</br>
+# 其他代理设置...</br>
+}</br>
+</br>
+#nginx proxy 对部分路径返回404 ， 使用map的方法：</br>
+map $http_user_agent $is_allowed {</br>
+default 0;</br>
+&#x09;&#x22;~*allowed.*&#x22; 1;</br>
+}</br>
+</br>
+server {</br>
+&#x09;location /proxy/ {</br>
+&#x09;&#x09;if ($is_allowed = 0) {</br>
+&#x09;&#x09;return 404;</br>
+&#x09;}</br>
+</br>
+&#x09;proxy_pass http://backend_server;</br>
+&#x09;&#x09;# 其他代理设置...</br>
+&#x09;}</br>
+}</br>
+</br>
+#基于白名单的代理IP与真实IP获取方案</br>
+http {</br>
+&#x09;# 可信代理IP列表</br>
+&#x09;geo $trusted_proxies {</br>
+&#x09;&#x09;default 0;</br>
+&#x09;&#x09;192.168.1.0/24 1;</br>
+&#x09;&#x09;10.0.0.0/8 1;</br>
+&#x09;&#x09;# 添加其他可信代理IP</br>
+&#x09;}</br>
+</br>
+&#x09;# 提取真实IP的逻辑</br>
+&#x09;map $trusted_proxies$http_x_forwarded_for $real_client_ip {</br>
+&#x09;# 如果来自可信代理且有XFF头，取最后一个IP</br>
+&#x09;&#x22;1~.&#x22; $http_x_forwarded_for;</br>
+&#x09;# 否则使用直接连接的IP</br>
+&#x09;default $remote_addr;</br>
+}</br>
+</br>
+server {</br>
+&#x09;listen 80;</br>
+&#x09;server_name jumpserver.example.com;</br>
+</br>
+&#x09;location / {</br>
+&#x09;&#x09;proxy_pass http://jumpserver_backend;</br>
+</br>
+&#x09;&#x09;# 始终传递真实IP（无论是否来自代理）</br>
+&#x09;&#x09;proxy_set_header X-Real-IP $real_client_ip;</br>
+</br>
+&#x09;&#x09;# 安全传递XFF头（防止注入）</br>
+&#x09;&#x09;proxy_set_header X-Forwarded-For $real_client_ip;</br>
+</br>
+&#x09;&#x09;# 其他代理设置...</br>
+&#x09;}</br>
+}</br>
+</br>
+</br>
+#X FORWARD FOR 与真实IP</br>
+http {</br>
+# 定义可信代理IP白名单</br>
+geo $trusted_proxy {</br>
+default 0;</br>
+10.0.0.0/8 1; # 内网IP段</br>
+172.16.0.0/12 1; # 内网IP段</br>
+192.168.0.0/16 1; # 内网IP段</br>
+203.0.113.1 1; # 特定可信代理IP</br>
+203.0.113.2 1; # 特定可信代理IP</br>
+}</br>
+</br>
+# 映射可信代理IP</br>
+map $trusted_proxy $proxy_remote_addr {</br>
+0 $remote_addr; # 非可信代理，使用remote_addr</br>
+1 $real_remote_addr; # 可信代理，使用处理后的real_remote_addr</br>
+}</br>
+</br>
+# 处理X-Forwarded-For头</br>
+map $http_x_forwarded_for $real_remote_addr {</br>
+# 匹配最后一个IP（最后一个逗号后的内容）</br>
+~*[,&#x5c; ]([^,&#x5c; ]+)$ $1;</br>
+</br>
+# 如果没有X-Forwarded-For头，使用remote_addr</br>
+default $remote_addr;</br>
+}</br>
+</br>
+server {</br>
+listen 80;</br>
+server_name example.com;</br>
+</br>
+# 设置真实客户端IP到变量中</br>
+set_real_ip_from 10.0.0.0/8;</br>
+set_real_ip_from 172.16.0.0/12;</br>
+set_real_ip_from 192.168.0.0/16;</br>
+set_real_ip_from 203.0.113.1;</br>
+set_real_ip_from 203.0.113.2;</br>
+</br>
+real_ip_header X-Forwarded-For;</br>
+real_ip_recursive on;</br>
+</br>
+location / {</br>
+# 使用处理后的客户端IP</br>
+add_header X-Real-IP $proxy_remote_addr;</br>
+</br>
+# 其他配置...</br>
+proxy_pass http://backend;</br>
+proxy_set_header Host $host;</br>
+proxy_set_header X-Real-IP $proxy_remote_addr;</br>
+proxy_set_header X-Forwarded-For $proxy_remote_addr;</br>
+proxy_set_header X-Forwarded-Proto $scheme;</br>
+}</br>
+</br>
+# 用于调试的location</br>
+location /debug-ip {</br>
+add_header Content-Type text/plain;</br>
+return 200 &#x22;Remote Addr: $remote_addr&#x5c;nX-Forwarded-For: $http_x_forwarded_for&#x5c;nReal Remote Addr: $real_remote_addr&#x5c;nTrusted Proxy: $trusted_proxy&#x5c;nFinal IP: $proxy_remote_addr&#x5c;n&#x22;;</br>
+}</br>
+}</br>
+}</br>
+</br>
+</br>
+nginx 对部分域名进行proxy并进行proxy的域名的记录</br>
+http {</br>
+# 定义名为 proxy_log 的格式</br>
+# $host: 用户请求的域名</br>
+# $remote_addr: 访客 IP</br>
+# $upstream_addr: 实际转发到的后端地址</br>
+# $upstream_response_time: 后端响应时间</br>
+log_format proxy_log &#x27;[$time_local] $remote_addr - $host to: $upstream_addr &#x27;</br>
+&#x27;status: $status ups_status: $upstream_status &#x27;</br>
+&#x27;rt: $upstream_response_time &#x22;${request}&#x22;&#x27;;</br>
+</br>
+# 1. 定义映射关系</br>
+map $http_host $backend_address {</br>
+hostnames; # 必须开启，否则无法识别星号通配符</br>
+default &#x22;&#x22;;</br>
+</br>
+a.b.com &#x22;127.0.0.1:8001&#x22;;</br>
+*.b.com &#x22;127.0.0.1:8002&#x22;; # 匹配所有 b.com 的子域名（不含 a.b.com，因为上面有精确匹配）</br>
+b.com &#x22;127.0.0.1:8002&#x22;; # 如果主域名也要指向同一个后端，需单独列出</br>
+c.com &#x22;127.0.0.1:8003&#x22;;</br>
+}</br>
+</br>
+# 2. 统一的代理 Server 块</br>
+server {</br>
+listen 80;</br>
+# server_name 也要包含通配符，否则请求进不来这个块</br>
+server_name a.b.com b.com *.b.com c.com;</br>
+# 添加解析器：8.8.8.8 是 Google 的，114.114.114.114 是国内常用的</br>
+# ipv6=off 可以避免一些不必要的 IPv6 解析延迟报错</br>
+resolver 8.8.8.8 114.114.114.114 valid=300s ipv6=off;</br>
+resolver_timeout 5s;</br>
+access_log /var/log/nginx/proxy_access.log proxy_log;</br>
+error_log /var/log/nginx/proxy_error.log;</br>
+location / {</br>
+# 安全检查</br>
+if ($backend_address = &#x22;&#x22;) {</br>
+return 444;</br>
+}</br>
+</br>
+proxy_pass http://$backend_address;</br>
+</br>
+# 传递必要的 Header</br>
+proxy_set_header Host $host;</br>
+proxy_set_header X-Real-IP $remote_addr;</br>
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</br>
+proxy_set_header X-Forwarded-Proto $scheme;</br>
+}</br>
+}</br>
+</br>
+# 3. 默认拦截块（兜底）</br>
+server {</br>
+listen 80 default_server;</br>
+server_name _;</br>
+return 444;</br>
+}</br>
+}</br>
+</br>
+#源地址中使用CIDR</br>
+在 Nginx 的 map 指令中，默认情况下是不支持 CIDR（如 /24）格式的。</br>
+&#x09;map $remote_addr $upstream05 {</br>
+&#x09;192.168.140.0/24 $upstream04;</br>
+&#x09;172.16.6.9 $upstream04;</br>
+&#x09;default $upstream01;</br>
+}</br>
+</br>
+Nginx 的 map 指令在处理第一个参数（匹配源）时，默认将其视为字符串或正则表达式。</br>
+当你写 192.168.140.0/24 时，Nginx 会把它当成一个普通的字符串去匹配。</br>
+由于 $remote_addr 的值是具体的 IP（如 192.168.140.14），它和字符串 &#x22;192.168.140.0/24&#x22; 显然不相等。</br>
+因此，匹配失败，逻辑直接滑向了 default。</br>
+</br>
+如果你想在 map 中使用 CIDR 格式，你必须显式地使用 geo 模块，或者在 map 中使用正则表达式。</br>
+方案 A：使用 geo 指令（最推荐，性能最好）</br>
+geo 专门用于将 IP 地址映射为变量，且天然支持 CIDR 格式。</br>
+</br>
+stream {</br>
+# 1. 先用 geo 定义 IP 归属组</br>
+geo $client_group {</br>
+192.168.140.0/24  internal_network;</br>
+172.16.6.9/32    internal_network;</br>
+default           external_network;</br>
+}</br>
+</br>
+    # 2. 根据分组来选择对应的 upstream</br>
+map $client_group $upstream05 {</br>
+internal_network $upstream04;</br>
+default $upstream01;</br>
+}</br>
+</br>
+# ... 其余配置</br>
+}</br>
+</br>
+</br>
+    </details></td><td>nginx.conf proxy</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx.conf http模块通用配置</summary>
+http {</br>
+&#x09;types_hash_max_size 4096; #could not build optimal types_hash, you should increase either types_hash_max_size: 1024</br>
+&#x09;server{</br>
+&#x09;&#x09;listen 127.0.0.1:10079;# listen port bind to 127.0.0.1</br>
+&#x09;&#x09;charset utf-8;</br>
+&#x09;&#x09;location / {</br>
+&#x09;&#x09;&#x09;root /home/nginx/html; #根目录</br>
+&#x09;&#x09;&#x09;index index.html index.htm index.php;</br>
+&#x09;&#x09;}</br>
+&#x09;}</br>
+}</br>
+</br>
+#https页面内容重定向到http页面</br>
+#https网页中的a标签指向一个http连接，打开后还是https格式，需要在nginx中进行伪静态配置</br>
+server {</br>
+&#x09;listen 80;</br>
+&#x09;server_name example.com;</br>
+&#x09;return 301 http://$host$request_uri;</br>
+}</br>
+</br>
+在Nginx中返回网页内容</br>
+server {</br>
+listen 80;</br>
+server_name example.com;</br>
+</br>
+location / {</br>
+return 200 &#x27;&#x3c;html&#x3e;&#x3c;body&#x3e;&#x3c;h1&#x3e;Hello World&#x3c;/h1&#x3e;&#x3c;/body&#x3e;&#x3c;/html&#x3e;&#x27;;</br>
+}</br>
+}</br>
+</br>
+使用http协议禁止页面缓存</br>
+location / {</br>
+add_header Cache-Control &#x22;no-cache, no-store, must-revalidate&#x22;;</br>
+add_header Pragma &#x22;no-cache&#x22;;</br>
+add_header Expires 0;</br>
+}</br>
+</br>
+</br>
+</br>
+</br>
+
+    </details></td><td>nginx.conf http模块通用配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx.conf stream模块通用配置</summary>
+nginx.conf stream模块通用配置</br>
+stream {</br>
+&#x09;resolver 114.114.114.114;</br>
+&#x09;resolver 8.8.8.8 ipv6=off valid=600s; #禁用上游的ipv6解析，防止网络不可达的后台log告警问题</br>
+&#x09;server {</br>
+&#x09;&#x09;listen 443;</br>
+&#x09;&#x09;ssl_preread on;</br>
+&#x09;&#x09;proxy_connect_timeout 5s;</br>
+&#x09;&#x09;proxy_pass $ssl_preread_server_name:$server_port;</br>
+&#x09;}</br>
+}</br>
+</br>
+根据源地址代理端口转发</br>
+stream {</br>
+map_hash_max_size 2048;</br>
+map $remote_addr $upstream02 {</br>
+&#x22;172.16.16.30&#x22; smtp.163.com:25;</br>
+default 127.0.0.1:80;</br>
+}</br>
+server {</br>
+listen 172.16.6.9:25;</br>
+proxy_connect_timeout 5s;</br>
+proxy_pass $upstream02;</br>
+# proxy_pass $ssl_preread_server_name:$server_port;</br>
+}</br>
+}</br>
+</br>
+stream {</br>
+map_hash_max_size 2048;</br>
+resolver 8.8.8.8 ipv6=off valid=600s;</br>
+log_format proxy_log1 &#x27;$remote_addr [$time_local] &#x27;</br>
+&#x09;&#x09;&#x27;protocol=$protocol status=$status &#x27;</br>
+&#x09;&#x09;&#x27;bytes_sent=$bytes_sent bytes_received=$bytes_received &#x27;</br>
+&#x09;&#x09;&#x27;session_time=$session_time &#x27;</br>
+&#x09;&#x09;&#x27;sni_name=&#x22;$ssl_preread_server_name$server_name&#x22; &#x27;  # 记录域名</br>
+&#x09;&#x09;&#x27;upstream=&#x22;$upstream_addr&#x22;&#x27;;</br>
+</br>
+access_log /var/log/nginx/stream_access.log proxy_log1;</br>
+error_log /var/log/nginx/stream_error.log info;</br>
+</br>
+</br>
+ map $ssl_preread_server_name  $upstream {</br>
+&#x09; #&#x22;&#x22;        ssh.example.com:22;</br>
+&#x09; &#x22;www.baidu.com&#x22; $ssl_preread_server_name:443;</br>
+&#x09; &#x22;~.*&#x5c;.synology.com&#x22; $ssl_preread_server_name:443;</br>
+&#x09; &#x22;~.*&#x5c;.synology.cn&#x22; $ssl_preread_server_name:443;</br>
+&#x09; &#x22;~.*&#x5c;.baidu.com$&#x22; $ssl_preread_server_name:443;</br>
+&#x09;&#x22;~.*&#x5c;.google.com$&#x22; $ssl_preread_server_name:443;</br>
+&#x09; &#x22;eaccess-asia-2.decathlon.net&#x22; eaccess-aia-2.decathlon.net:443;</br>
+&#x09; &#x22;global.sns.cs.quickconnect.to&#x22; global.sns.cs.quickconnect.to:443;</br>
+&#x09; &#x22;idpdecathlon.oxylane.com&#x22; idpdecathlon.oxylane.com:443;</br>
+&#x09; &#x22;cape-asia.decathlon.net&#x22; cape-asia.decathlon.net:443;</br>
+&#x09; &#x22;link-as.decathlon.net&#x22; link-as.decathlon.net:443;</br>
+&#x09; &#x22;oapi.dingtalk.com&#x22; oapi.dingtalk.com:443;</br>
+&#x09; &#x22;abc.ik3cloud.com&#x22; abc.ik3cloud.com:443;</br>
+&#x09; &#x22;open.feishu.cn&#x22; open.feishu.cn:443;</br>
+&#x09; &#x22;project.51qqt.com&#x22; project.51qqt.com:443;</br>
+&#x09; &#x22;app.51qqt.com&#x22; app.51qqt.com:443;</br>
+&#x09; &#x22;oa.abc.cn&#x22; oa.abc.cn:80;</br>
+&#x09; &#x22;www.feishu.cn&#x22; www.feishu.cn:443;</br>
+&#x09; &#x22;~.*&#x5c;.exmail.qq.com&#x22; $ssl_preread_server_name:443;</br>
+&#x09;&#x22;gitee.com&#x22; gitee.com:443;</br>
+&#x09;&#x22;~.*&#x5c;.gitee.com$&#x22; $ssl_preread_server_name:443;</br>
+&#x09;default   www.nohost.com:443;</br>
+}</br>
+</br>
+map $ssl_preread_server_name  $upstream03 {</br>
+&#x22;oa.abc.cn&#x22; oa.abc.cn:80;</br>
+default   127.0.0.1:800;</br>
+}</br>
+map $ssl_preread_server_name  $upstream01 {</br>
+&#x22;smtp.163.com&#x22; smtp.163.com:465;</br>
+&#x22;smtp.exmail.qq.com&#x22; $ssl_preread_server_name:465;</br>
+&#x22;smtp.feishu.cn&#x22; $ssl_preread_server_name:465;</br>
+default smtp-v6.exmail.qq.com:465;</br>
+}</br>
+map $ssl_preread_server_name  $upstream04 {</br>
+#&#x22;~.*&#x5c;.exmail&#x5c;.qq&#x5c;.com&#x22; $ssl_preread_server_name:465;</br>
+default smtp.feishu.cn:465;</br>
+}</br>
+map $ssl_preread_server_name  $upstream06 {</br>
+#&#x22;~.*&#x5c;.exmail&#x5c;.qq&#x5c;.com&#x22; $ssl_preread_server_name:465;</br>
+default smtp.feishu.cn:465;</br>
+}</br>
+map $remote_addr $upstream05 {</br>
+&#x22;172.1.31.6&#x22; $upstream04;</br>
+&#x22;172.1.2.3&#x22; $upstream04;</br>
+&#x22;10.0.2.9&#x22; $upstream06;</br>
+default $upstream01;</br>
+}</br>
+</br>
+map $remote_addr $upstream02 {</br>
+&#x22;172.16.6.30&#x22; smtp.163.com:25;</br>
+&#x22;172.18.3.2&#x22; smtp.163.com:25;</br>
+&#x22;172.16.1.13&#x22; smtp.163.com:25;</br>
+&#x22;192.168.18.239&#x22; smtp.163.com:25;</br>
+default  127.0.0.1:80;</br>
+}</br>
+</br>
+server {</br>
+listen&#x09;172.16.6.9:443 ;</br>
+ssl_preread on;</br>
+proxy_connect_timeout 5s;</br>
+proxy_pass $upstream;</br>
+}</br>
+&#x09;#SMTP SSL</br>
+server {</br>
+listen       172.16.6.9:465;</br>
+ssl_preread on;</br>
+proxy_connect_timeout 5s;</br>
+proxy_pass $upstream05;</br>
+}</br>
+&#x09;#SMTP</br>
+server {</br>
+listen       172.16.6.9:25;</br>
+proxy_connect_timeout 5s;</br>
+proxy_pass $upstream02;</br>
+}</br>
+}</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+    </details></td><td>nginx.conf stream模块通用配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>nginx INSTALL</summary>
+nginx INSTALL</br>
+./configure &#x5c;</br>
+--user=www &#x5c;</br>
+--group=www &#x5c;</br>
+--prefix=/usr/local/nginx &#x5c;</br>
+--with-http_ssl_module &#x5c;</br>
+--with-http_stub_status_module &#x5c;</br>
+--with-http_realip_module &#x5c;</br>
+--with-threads &#x5c;</br>
+--with-stream &#x5c;</br>
+--with-stream_ssl_preread_module &#x5c;</br>
+--with-stream_ssl_module</br>
+</br>
+</br>
+或</br>
+</br>
+--prefix=/user/bin/nginx --error-log-path=stderr --with-compat --with-debug &#x5c;</br>
+--with-file-aio --with-http_addition_module --with-http_auth_request_module &#x5c;</br>
+--with-http_dav_module --with-http_degradation_module --with-http_flv_module &#x5c;</br>
+--with-http_geoip_module --with-http_gunzip_module --with-http_gzip_static_module &#x5c;</br>
+--with-http_mp4_module --with-http_realip_module --with-http_secure_link_module &#x5c;</br>
+--with-http_slice_module --with-http_ssl_module --with-http_stub_status_module &#x5c;</br>
+--with-http_sub_module --with-http_v2_module --with-mail --with-mail_ssl_module &#x5c;</br>
+--with-pcre-jit --with-stream --with-stream_geoip_module --with-stream_realip_module &#x5c;</br>
+--with-stream_ssl_module --with-stream_ssl_preread_module --with-threads</br>
+</br>
+</br>
+nginx -V #show compile parameter</br>
+</br>
+</br>
+</br>
+    </details></td><td>nginx INSTALL</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

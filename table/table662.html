@@ -38,7 +38,7 @@
           您的浏览器不支持 SVG
         </object>
       </div>
-      <h1>table 622 产品 火山引擎/字节跳动</h1>
+      <h1>table 622 产品 飞书/抖音/火山引擎/字节跳动</h1>
     </div>
 
     <!-- 筛选区域：输入框 + 重置按钮 -->
@@ -67,7 +67,7 @@ ipconfig /release #飞连永远获取不到IP地址，显示169网段的IP，使
     </details></td><td>飞连</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>飞书群webhook机器人 send.sh</summary>
-#!/bin/bash</br>export LC_TIME=POSIX</br>DURL=&#x27;https://open.feishu.cn/open-apis/bot/v2/hook/88a9....&#x27;</br>curl $DURL -H &#x27;Content-Type: application/json&#x27; -d &#x27;{ &#x22;msg_type&#x22;: &#x22;post&#x22;, &#x22;content&#x22;: { &#x22;post&#x22;: { &#x22;zh-CN&#x22;: { &#x22;title&#x22;: &#x22;AMG918080-dahuaicc&#x22;, &#x22;content&#x22;: [ [ { &#x22;tag&#x22;: &#x22;text&#x22;, &#x22;text&#x22;: &#x27;&#x22;$(jq . --raw-input --slurp &#x3c;&#x3c;&#x3c; &#x22;$1&#x22; )&#x22;&#x27; } ] ] } } } }&#x27;</br>
+#!/bin/bash</br>export LC_TIME=POSIX</br>TITLE=&#x22;$2&#x22;</br>TITLE=&#x22;${TITLE:-AMG9_YUM_MSG}&#x22;</br>DURL=&#x27;https://open.feishu.cn/open-apis/bot/v2/hook/&#x3c;KEYID&#x3e;&#x27;</br>curl $DURL  -H &#x27;Content-Type: application/json&#x27;  -d &#x27;{ &#x22;msg_type&#x22;: &#x22;post&#x22;, &#x22;content&#x22;: { &#x22;post&#x22;: { &#x22;zh-CN&#x22;: { &#x22;title&#x22;: &#x22;&#x27;&#x22;$TITLE&#x22;&#x27;&#x22;, &#x22;content&#x22;: [ [ { &#x22;tag&#x22;: &#x22;text&#x22;, &#x22;text&#x22;: &#x27;&#x22;$(jq . --raw-input --</br>slurp &#x3c;&#x3c;&#x3c; &#x22;$1&#x22; )&#x22;&#x27; } ] ] } } } }&#x27;</br>
     </details></td><td>飞书 群webhook机器人</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>帮助文档</summary>
