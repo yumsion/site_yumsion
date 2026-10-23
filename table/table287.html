@@ -59,13 +59,32 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details><summary>ffplay rtsp</summary>
+    <tr><td><details><summary>ffplay/ffmpeg rtsp</summary>
 ffplay  -rtsp_transport tcp   &#x27;rtsp://&#x3c;USERNAME&#x3e;:&#x3c;PASSWD&#x3e;@&#x3c;SERVER_IP&#x3e;:554/cam/realmonitor?channel=6&#x26;subtype=1&#x27;</br>
 #注意：</br>
 #-rtsp_transport tcp 指定使用TCP,默认使用UDP,需要确认协议正确。</br>
 #PASSWD中不能使用#符号，否则验证永远失败，或转换成URI的HEX格式%23</br>
 
-    </details></td><td>ffplay rtsp</td></tr>
+ffmpeg -rtsp_transport tcp -i &#x27;rtsp://&#x3c;USERNAME&#x3e;:&#x3c;PASSWD&#x3e;@&#x3c;SERVER_IP&#x3e;:554/cam/realmonitor?channel=6&#x26;subtype=1&#x27; -c copy -f mp4 output.mp4</br>
+-c copy：不重新编码，直接封装，CPU 占用极低。</br>
+-movflags +faststart #注意：如果中途强制中断，mp4 可能损坏。可加该参数</br>
+-t 60 #定时录制（录 60 秒后自动停止）</br>
+#不能直接播放，可以保存到文件，播放使用ffplay</br>
+</br>
+</br>
+#查看流信息（不保存，先探测），用于确认编码格式（H.264/H.265）、分辨率、帧率、是否有音频等</br>
+ffprobe -rtsp_transport tcp -v error -show_streams -show_format &#x27;rtsp://&#x3c;USERNAME&#x3e;:&#x3c;PASSWD&#x3e;@&#x3c;SERVER_IP&#x3e;:554/cam/realmonitor?channel=6&#x26;subtype=1&#x27;</br>
+#截取图片【大华摄像头】
+ffmpeg  -rtsp_transport tcp   -i &#x27;rtsp://username:passwd@172.18.2.3:554/cam/realmonitor?channel=70&#x26;subtype=0&#x27; -frames:v 1 -q:v 2 -update 1 ipc254_c70_$(date +%Y%m%d_%H%M%S).jpg</br>
+subtype=0 #主码流，1表示辅码流
+-frames:v 1：告诉 ffmpeg 只抓取 1 帧视频画面就停止。</br>
+-q:v 2：控制输出图片的质量（针对 jpg）。数值范围通常是 2-31，数值越小质量越高，2 已经是很好的画质了。</br>
+snapshot%03d.jpg #文件保存格式，可尾缀png等，或-update 1 这个参数会告诉 FFmpeg，你要覆盖写入的是同一个文件，而不是一个序列。</br>
+</br>
+</br>
+
+
+    </details></td><td>ffplay/ffmpeg rtsp</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t556</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 556 产品 qnap/威联通</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>系统文件</summary>
+/etc/init.d/rsyncd.sh #启动脚本，sever mode是这里填写的
+<details><summary>/etc/init.d/init_disk.sh #只读保护</summary>
+#不能直接配置wait_RR脚本，因为该脚本是mount只读保护的，直接在执行脚本中进行复制。下次启动自动进行复制。
+/etc/init.d/init_disk.sh mount_flash_config
+vim /tmp/nasconfig_tmp/autorun.sh
+/etc/init.d/init_disk.sh umount_flash_config
+
+#修正后的wait_RR脚本
+while [ $RR_RUNNING = 1 ]; do
+/bin/ps | /bin/grep /usr/bin | /bin/grep "rsync "
+if [ $? != 0 ]; then
+RR_RUNNING=0
+fi
+if [ -f /usr/bin/qsync ]; then
+/usr/bin/qsync -busy
+if [ 1 = $? ]; then
+RR_RUNNING=1
+fi
+fi
+#NEW =============
+ZRSYNCZ_NUM=$(/bin/ps | /bin/grep zrsyncz | wc | awk '{print $1}')
+if [ $ZRSYNCZ_NUM -gt 2 ]; then
+RR_RUNNING=1
+fi
+#NEW =============
+if [ 1 = $RR_RUNNING ]; then
+sleep 10
+fi
+done
+
+</details>
+
+/share/CACHEDEV1_DATA/ #共享文件的根目录或filestation5的主目录位置
+/share/homes/@Recently-Snapshot/ #查看homes文件夹的快照历史
+/share/homes/user01 #个人文件夹默认位置
+/share #HBS建立的文件夹的根目录位置
+/share #SMB共享文件夹的实际位置
+/etc/smb.conf #SMB的配置文件
+    </details></td><td>系统文件</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;" ><summary>HBS3 Rsyncd</summary>
+HBS3是rsync的d的服务，但是不能使用NAS内置的用户和密码登录，会一直报错
+rsync --daemon --no-detach --verbose --sever-mode=0 --log-file=./rsync.log --config=rsyncd.conf
+#HBS的rsync作为服务器，无法通过UI进行允许多用户的配置。
+HBS的rsync是异化的，NAS的用户认证有其它解密方式，会永远auth failed，需要设置特意化参数sever mode（笔误？）才能使用密码文件
+#注意，使用传统的配置文件，不要使用HBS生成的，否则会导致无需密码即可登录
+第二天还是不能密码认证。检测inotifywait，根本不检测密码文件。
+修改rsyncd.conf也无效，注释所有密码文件，登录成功。之后取消注释，竟然可以正常读取密码文件了。
+--qnap-bwlimit #该参数导致阿里云的传输未知原因从成功变成失败，本地的正常。
+
+
+<details><summary>可以的一个配置</summary>
+/usr/bin/rsync --daemon --verbose --sever-mode=0 --log-file=/share/CACHEDEV1_DATA/homes/itadmin/rsync.log --config=/share/CACHEDEV1_DATA/homes/itadmin/rsyncd.conf --qnap-bwlimit
+
+vim /share/CACHEDEV1_DATA/homes/itadmin/rsyncd.conf
+
+gid = administrators
+hosts allow = *
+port = 873
+max connections =4
+strict modes = false
+uid = admin
+secrets file = /share/CACHEDEV1_DATA/homes/itadmin/rsyncd_secrets
+pid file = /share/CACHEDEV1_DATA/homes/itadmin/rsyncd.pid
+
+[share01]
+path = /share/homes/SRM_server/backup
+comment = backup magene work data
+auth users = user01
+secrets file = /share/CACHEDEV1_DATA/homes/itadmin/rsyncd_secrets
+strict modes = false
+read only = false
+uid = SRM_server
+hosts allow = *
+
+
+vim /share/CACHEDEV1_DATA/homes/itadmin/rsyncd_secrets
+user01:password01
+
+</details>
+
+
+<details><summary>rsyncd导致的无法自动关机问题的处理</summary>
+
+#/etc/init.d/poweroff 脚本使用的时间获取函数
+[admin@NASMAGENEIT itadmin]# /sbin/power_management -p
+shutdown_next_time = 2023:08:22:07:00
+shutdown_remaining_time = -36601
+shutdown_alert_time = 600
+boot_next_time = 2023:08:21:19:00
+boot_remaining_time = -79801
+boot_alert_time = 600
+
+
+#/etc/init.d/wait_RR 对rsync进行检测，如果该处有rsync，则会终止重启行为。
+while [ $RR_RUNNING = 1 ]; do
+/bin/ps | /bin/grep /usr/bin | /bin/grep "rsync "
+if [ $? != 0 ]; then
+RR_RUNNING=0
+fi
+if [ -f /usr/bin/qsync ]; then
+/usr/bin/qsync -busy
+if [ 1 = $? ]; then
+RR_RUNNING=1
+fi
+fi
+if [ 1 = $RR_RUNNING ]; then
+sleep 10
+fi
+done
+
+建议直接复制rsync到一个新的的程序名称，并作为daemon运行，防止该检测脚本的工作导致无法关机。
+测试使用异名运行的daemon是否在同步的时候调用的是rsync子程序，否则可能导致rsync运行时关机，导致数据备份失败。
+</details>
+
+
+
+
+    </details></td><td>HBS3 Rsyncd</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;" ><summary>快照</summary>
+快照 存储周期 控制台--存储与快照总管--快照--存储池1--DataVol1--点击 快照计划--快照计划--快照保留策略--2周
+homes文件夹的部分子文夹使用file Station5看不到快照，但是可以通过ssh或主文件夹下的@Recently-Snapshot获取到快照
+
+    </details></td><td>快照</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;" ><summary>升级</summary>
+控制台 -- 系统 -- 固件更新 -- 固件更新 -- 固件更新设置 #关闭固件更新检测
+主菜单（单个横线） -- App center -- 设置 -- 更新 #关闭app更新
+    </details></td><td>升级</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;" ><summary>其他</summary>
+配置 --- 网络和服务 --- SNMP #开启SNMP
+控制面板 --- privilege --- share folders #删除默认共享，否则建立一个文件夹就建立一个共享
+新硬盘插入后 --- storage and snapshort --- storage --- storage and snapshort --- storage pool 1 manager --- manage --- configure spare disk #RAID6 更换硬盘槽
+quFTP升级到最新版，否则有些客户端（如AC1000）永远ftp测试失败 
+
+    </details></td><td>其他</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;" ><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

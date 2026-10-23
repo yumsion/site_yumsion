@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t441</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 441 bash arch linux</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>arch install</summary>
+
+</br>
+<b>arch_install_quick.sh</b></br>
+#下载文夹并生成db文件,如没有db文件,将会导致后期引用出现问题</br>
+</br>
+#Arch iso的UEFI安装需要关闭BIOS的Security boot，否则如PVE将不会启动ISO且无任何提示</br>
+</br>
+CACHEDIR=&#x27;/mnt/var/cache/pacman/pkg&#x27;</br>
+DBDIR=&#x27;/mnt/var/cache/pacman/pkg/dbdir&#x27;</br>
+mkdir -p &#x22;$DBDIR&#x22;</br>
+pacman -Syw --cachedir $CACHEDIR --dbpath &#x22;$DBDIR&#x22; base linux linux-firmware base-devel gvim screen iftop gcc make automake iotop sysstat jq expect bind dhcp lsof smartmontools rclone socat nmap tcpdump git inetutils pkgconf net-snmp zip unzip p7zip linux-headers ntp rsync dnscrypt-proxy mdadm cpupower dhcp dhclient base-devel openvpn wget aria2 at openssh openssl autogen autoconf cmake patch fakeroot openvswitch libpam-google-authenticator ntfs-3g grub efibootmgr nftables dmidecode parted meson bpf clang wdiff gvim sqlite</br>
+</br>
+#以上生成了可直接使用的文件的安装包和db文件</br>
+#上述文件可以解压到指定目录有继续执行以下操作</br>
+</br>
+</br>
+ssh-copy-id root@.... 创建公钥并用于后期复制到真实机器</br>
+</br>
+</br>
+</br>
+</br>
+vim /etc/pacman.conf</br>
+[core]</br>
+#Include = /etc/pacman.d/mirrorlist</br>
+Server = file:///mnt/var/cache/pacman/pkg/dbdir/sync</br>
+</br>
+#[extra-testing]</br>
+#Include = /etc/pacman.d/mirrorlist</br>
+</br>
+[extra]</br>
+#Include = /etc/pacman.d/mirrorlist</br>
+Server = file:///mnt/var/cache/pacman/pkg/dbdir/sync</br>
+#</br>
+</br>
+</br>
+</br>
+pacman-key --init</br>
+pacman-key --populate</br>
+pacman -Sy</br>
+pacstrap -K /mnt base ....</br>
+</br>
+</br>
+genfstab -U /mnt &#x3e;&#x3e; /mnt/etc/fstab</br>
+</br>
+cp .ssh/authorized_keys /mnt/root/.ssh/authorized_keys</br>
+echo &#x27;KEY&#x27; &#x3e;&#x3e; /mnt/root/.ssh/authorized_keys</br>
+</br>
+arch-chroot /mnt</br>
+</br>
+</br>
+ln -sf /usr/share/zoneinfo/Region/City /etc/localtime</br>
+</br>
+VIM_RC=&#x27;set mouse=</br>
+set paste</br>
+set matchpairs=&#x27;</br>
+echo &#x22;$VIM_RC&#x22; &#x3e;&#x3e; /usr/share/vim/vim91/defaults.vim</br>
+</br>
+echo &#x27;LANG=en_US.UTF-8&#x27; &#x3e; /etc/locale.conf</br>
+或</br>
+localectl set-locale LANG=en_US.UTF-8</br>
+</br>
+unset LANG</br>
+source /etc/profile.d/locale.sh</br>
+</br>
+</br>
+localectl list-keymaps</br>
+echo &#x27;KEYMAP=us&#x27; &#x3e; /etc/vconsole.conf</br>
+</br>
+</br>
+mkinitcpio -P</br>
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB</br>
+grub-mkconfig -o /boot/grub/grub.cfg</br>
+</br>
+</br>
+</br>
+</br>
+passwd</br>
+</br>
+pacman -S openssh</br>
+systemctl enable sshd</br>
+systemctl start sshd</br>
+</br>
+</br>
+#systemd</br>
+echo &#x27;[Unit]</br>
+Description=on boot script</br>
+After=rc-local.service</br>
+</br>
+[Service]</br>
+ExecStartPre=/usr/bin/sleep 5</br>
+ExecStart=/bin/bash /home/systemd/onBoot.sh</br>
+Type=forking</br>
+[Install]</br>
+WantedBy=multi-user.target &#x27; &#x3e; /usr/lib/systemd/system/onBoot.service</br>
+</br>
+systemctl daemon-reload</br>
+systemctl enable onBoot.service</br>
+</br>
+mkdir /home/systemd</br>
+chown 700 /home/systemd</br>
+</br>
+</br>
+NIC_NAME=ens18</br>
+IP_ADDR=&#x27;192.168.100.35/24&#x27;</br>
+echo &#x22;echo boot &#x26;</br>
+ip link set dev $NIC_NAME up</br>
+ip address add $IP_ADDR dev $NIC_NAME&#x22; &#x3e; /home/systemd/onBoot.sh</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+使用光盘的grub修复grub，初步测试成功</br>
+mount --bind 以下dir到mnt目录下</br>
+/sbin</br>
+/bin</br>
+/usr</br>
+/lib</br>
+复制以下文件到mnt目录下</br>
+/etc/default/grub</br>
+/etc/grub.d/</br>
+执行arch-chroot并安装grub</br>
+</br>
+</br>
+
+
+
+    </details></td><td>arch install</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>arch pacman</summary>
+Remove or reset all the keys installed in your system by removing the /etc/pacman.d/gnupg directory</br>
+rerunning pacman-key --init followed by pacman-key --populate to re-add the default keys</br>
+pacman -Sy &#x26;&#x26; pacman -S archlinux-keyring #顽固性密钥不对也不能更新的问题</br>
+
+#添加清华源</br>
+#【注意：】系统时间不对会造成密钥签名时间冲突，需要校正时间对</br>
+vim /etc/pacman.d/mirrorlist</br>
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch</br>
+</br>
+pacstrap -U /mnt /mnt/var/cache/pacman/pkg/base-3-2-any.pkg.tar.zst #使用pacstrap手动安装程序包</br>
+</br>
+使用离线安装包的pacstrap -U /mnt 的warning: Public keyring not found;故障</br>
+root@archiso ~ # pacstrap -U /mnt /mnt/var/cache/pacman/pkg/base-3-2-any.pkg.tar.zst</br>
+==&#x3e; Creating install root at /mnt</br>
+==&#x3e; Installing packages to /mnt</br>
+loading packages...</br>
+warning: Public keyring not found; have you run &#x27;pacman-key --init&#x27;?</br>
+error: keyring is not writable</br>
+error: required key missing from keyring</br>
+error: &#x27;/mnt/var/cache/pacman/pkg/base-3-2-any.pkg.tar.zst&#x27;: could not find or read file</br>
+==&#x3e; ERROR: Failed to install packages to new root</br>
+</br>
+# 初始化 pacman-key</br>
+pacman-key --init</br>
+pacman-key --populate archlinux</br>
+# 使用 --needed 和跳过签名检查</br>
+pacstrap -i -U /mnt /mnt/var/cache/pacman/pkg/base-3-2-any.pkg.tar.zst --ignore check</br>
+或</br>
+# 临时禁用签名验证</br>
+pacstrap -i -U /mnt /mnt/var/cache/pacman/pkg/base-3-2-any.pkg.tar.zst --noconfirm --needed</br>
+</br>
+</br>
+</br>
+https://arch-archive.tuna.tsinghua.edu.cn/ ＃清华大学历史版本的源</br>
+https://archive.archlinux.org/repos/ #历史版本的源</br>
+
+
+
+    </details></td><td>arch pacman</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>
