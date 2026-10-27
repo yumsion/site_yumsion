@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t558</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 558 cmd 帐号或用户</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>用户通知</summary>
+<b>按照用户通知：</b></br># RDP-Shutdown-Notify.ps1</br># 循环运行：每分钟检查一次 RDP 登录用户，向未通知过的用户发送关机提醒</br># 终止时间：2026-10-28 17:00</br># 已通知用户仅保存在内存变量 $notified 中，不使用文件</br></br>$Message  = &#x22;系统即将于20261028 09:00 关机。&#x22;</br>$EndTime  = Get-Date &#x22;2026-10-28 17:00:00&#x22;</br></br># 内存中的已通知用户列表（脚本运行期间有效）</br>$notified = @()</br></br>Write-Host &#x22;脚本启动，终止时间：$EndTime&#x22; -ForegroundColor Cyan</br></br>while ((Get-Date) -lt $EndTime) {</br></br>    # 获取当前 RDP 登录用户</br>    $rdpUsers = @()</br>    $quserOutput = quser 2&#x3e;$null</br>    if ($quserOutput) {</br>        $rdpUsers = $quserOutput | Select-Object -Skip 1 | ForEach-Object {</br>            $parts = $_ -split &#x27;&#x5c;s+&#x27;, 3</br>            if ($parts.Count -ge 3 -and $parts[2] -match &#x27;rdp&#x27;) {</br>                $parts[1]</br>            }</br>        } | Where-Object { $_ } | Select-Object -Unique</br>    }</br></br>    # 对未通知过的用户发送消息</br>    foreach ($user in $rdpUsers) {</br>        if ($notified -notcontains $user) {</br>            msg $user $Message 2&#x3e;$null</br>            if ($LASTEXITCODE -eq 0) {</br>                $notified += $user</br>                Write-Host &#x22;$(Get-Date -Format &#x27;yyyy-MM-dd HH:mm:ss&#x27;) 已通知用户：$user&#x22; -ForegroundColor Green</br>            } else {</br>                Write-Host &#x22;$(Get-Date -Format &#x27;yyyy-MM-dd HH:mm:ss&#x27;) 通知失败：$user&#x22; -ForegroundColor Yellow</br>            }</br>        }</br>    }</br></br>    # 等待 1 分钟后再检查（临近终止时间时缩短睡眠）</br>    $remain = ($EndTime - (Get-Date)).TotalSeconds</br>    if ($remain -gt 0) {</br>        Start-Sleep -Seconds ([Math]::Min(60, [int]$remain))</br>    }</br>}</br></br>Write-Host &#x22;$(Get-Date -Format &#x27;yyyy-MM-dd HH:mm:ss&#x27;) 已到达终止时间，脚本退出。&#x22; -ForegroundColor Cyan</br></br></br>
+<b>按Session ID + 登录时间 + 用户名 通知，避免同一用户名多人登陆，退出导致的session id 重复问题</b></br></br># RDP-Shutdown-Notify.ps1</br># 循环运行：每分钟检查一次 RDP 会话，向未通知过的会话发送关机提醒</br># 终止时间：2026-10-28 17:00</br># 去重键：Session ID + 登录时间 + 用户名（三者完全一致才视为已通知）</br></br>$Message  = &#x22;系统即将于20261028 09:00 关机。&#x22;</br>$EndTime  = Get-Date &#x22;2026-10-28 17:00:00&#x22;</br></br># 内存中已通知会话的键集合</br>$notifiedKeys = @()</br></br>Write-Host &#x22;脚本启动，终止时间：$EndTime&#x22; -ForegroundColor Cyan</br></br>while ((Get-Date) -lt $EndTime) {</br></br>    # 解析 quser 输出，提取 RDP 会话信息</br>    # quser 列（用户名可能带前导 &#x3e; 表示当前会话）：</br>    #   用户名  会话名  ID  状态  空闲时间  登录时间</br>    # 注意：列之间可能有多空格，登录时间本身含空格，需按固定列位解析</br>    $rdpSessions = @()</br>    $quserOutput = quser 2&#x3e;$null</br>    if ($quserOutput) {</br>        $rdpSessions = $quserOutput | Select-Object -Skip 1 | ForEach-Object {</br>            $line = $_.TrimEnd()</br>            # 用户名：第一段（去掉前导 &#x3e;）</br>            $user = ($line -split &#x27;&#x5c;s+&#x27;)[0].TrimStart(&#x27;&#x3e;&#x27;)</br>            # 会话名：需判断是否 rdp 会话</br>            if ($line -match &#x27;&#x5c;s+rdp&#x27;) {</br>                # 用正则提取各字段：用户名 会话名 ID 状态 空闲时间 登录时间</br>                if ($line -match &#x27;^&#x5c;s*&#x3e;?&#x5c;s*(&#x5c;S+)&#x5c;s+(&#x5c;S+)&#x5c;s+(&#x5c;d+)&#x5c;s+(&#x5c;S+)&#x5c;s+(&#x5c;S+)&#x5c;s+(.+)$&#x27;) {</br>                    $sessionUser = $matches[1]</br>                    $sessionName = $matches[2]</br>                    $sessionId   = [int]$matches[3]</br>                    $state       = $matches[4]</br>                    $idleTime    = $matches[5]</br>                    $logonTime   = $matches[6].Trim()</br>                    [PSCustomObject]@{</br>                        User      = $sessionUser</br>                        SessionId = $sessionId</br>                        LogonTime = $logonTime</br>                        Key       = &#x22;$sessionId|$logonTime|$sessionUser&#x22;</br>                    }</br>                }</br>            }</br>        }</br>    }</br></br>    # 对未通知过的会话发送消息</br>    foreach ($session in $rdpSessions) {</br>        if ($notifiedKeys -notcontains $session.Key) {</br>            msg $session.SessionId $Message 2&#x3e;$null</br>            if ($LASTEXITCODE -eq 0) {</br>                $notifiedKeys += $session.Key</br>                Write-Host &#x22;$(Get-Date -Format &#x27;yyyy-MM-dd HH:mm:ss&#x27;) 已通知：SessionID=$($session.SessionId) 用户=$($session.User) 登录时间=$($session.LogonTime)&#x22; -ForegroundColor Green</br>            } else {</br>                Write-Host &#x22;$(Get-Date -Format &#x27;yyyy-MM-dd HH:mm:ss&#x27;) 通知失败：SessionID=$($session.SessionId) 用户=$($session.User)&#x22; -ForegroundColor Yellow</br>            }</br>        }</br>    }</br></br>    $remain = ($EndTime - (Get-Date)).TotalSeconds</br>    if ($remain -gt 0) {</br>        Start-Sleep -Seconds ([Math]::Min(60, [int]$remain))</br>    }</br>}</br></br>Write-Host &#x22;$(Get-Date -Format &#x27;yyyy-MM-dd HH:mm:ss&#x27;) 已到达终止时间，脚本退出。&#x22; -ForegroundColor Cyan</br></br>
+    </details></td><td>用户通知</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>用户和组管理</summary>
+#创建用户，配置用户组和设置密码</br>
+net user user01 /add /active:yes</br>
+net localgroup user01 group01 /delete</br>
+net user #get all users infomation</br>
+net user user01 #get infomation of user01</br>
+Net User user01 * #set password by prompt</br>
+net user user01 &#x22;new_password01&#x22; #引号中空表示清除密码</br>
+</br>
+net user /add /domain user01 * /fullname:&#x22;full_name01&#x22; /passwordreq:yes /time:M-F,08:00-17:00 /homedir:&#x22;&#x5c;&#x5c;lazyadmin.local&#x5c;home&#x5c;user01&#x22; /scriptpath:&#x22;&#x5c;&#x5c;lazyadmin.local&#x5c;netlogon&#x5c;welcome.bat&#x22;</br>
+#Username: testusr</br>
+#Password: prompt</br>
+#Full name: Test User</br>
+#Password required: yes</br>
+#Allowed to login between: Monday to Friday between 08:00 and 17:00</br>
+#Home folder directory: &#x5c;&#x5c;lazyadmin.local&#x5c;home&#x5c;testusr</br>
+#Script path: &#x5c;&#x5c;lazyadmin.local&#x5c;netlogon&#x5c;welcome.bat</br>
+</br>
+</br>
+</br>
+Net User user01 /expires:21/09/2022 # Set expire date for local user</br>
+</br>
+Net User lazyadmin /time:M,08:00-17:00;W,08:00-13:00;F,08:00-17:00</br>
+#Set login times for multi time blocks</br>
+</br>
+</br>
+net user lazyadmin /passwordchg:no</br>
+#The user can’t change the password</br>
+#The parameter passwordreg is used to specify it a user account must have a password. If this is set to no, then the user can remove their password, making the device vulnerable</br>
+</br>
+net user lazyadmin /passwordreg:yes</br>
+The parameter passwordreg is used to specify it a user account must have a password. If this is set to no, then the user can remove their password, making the device vulnerable</br>
+</br>
+Get-LocalUser #查看所有用户</br>
+Get-LocalUser -name user01 | format-list * #查看详细信息</br>
+</br>
+</br>
+$USERNAME=&#x22;user62&#x22;</br>
+$PASSWD=&#x22;hfejjs11232322&#x22;</br>
+New-LocalUser -Name &#x22;$USERNAME&#x22; -Password (ConvertTo-SecureString &#x22;$PASSWD&#x22; -AsPlainText -Force) -FullName &#x22;$USERNAME&#x22; -Description &#x22;NULL&#x22; -AccountNeverExpires -PasswordNeverExpires</br>
+Add-LocalGroupMember -Group &#x22;Remote Desktop Users&#x22; -Member &#x22;$USERNAME&#x22;</br>
+</br>
+#清空用户密码</br>
+Set-LocalUser -Name &#x22;用户名&#x22; -Password ([securestring]::new())</br>
+</br>
+#修改用户名称后用户的HOME目录的方法</br>
+Rename-LocalUser -Name &#x22;旧用户名&#x22; -NewName &#x22;新用户名&#x22;</br>
+#开启regedti</br>
+HKEY_LOCAL_MACHINE&#x5c;SOFTWARE&#x5c;Microsoft&#x5c;Windows NT&#x5c;CurrentVersion&#x5c;ProfileList</br>
+修改对应的用户文件夹位置</br>
+</br>
+修改对应的文件夹的名字（需要使用启动盘，使用powershell和GUI都会失败，非授权问题，获取对应权限也会失败）</br>
+
+    </details></td><td>用户和组管理</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>
