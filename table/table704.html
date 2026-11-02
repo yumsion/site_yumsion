@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t704</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 704</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>autoit 按键</summary>
+{UP} 向上键
+{ENTER} 回车键
+!f  ALT+f
+^f  Ctrl+f
++f  Shift+f
+#f  Win+f
+    </details></td><td>autoit 按键</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>controlClick</summary>
+;注意，值大小写敏感
+;点击运行窗口的确定按钮</br>
+;注意，可能无法点击，已确认筛选条件是正确的，能够获取到控件，但是无法使用click命令点击</br>
+controlClick("运行","","Button2")</br>
+ControlClick(&#x22;窗口标题&#x22;, &#x22;窗口文本&#x22;, &#x22;控件ID&#x22;, &#x22;按钮&#x22;[, 点击次数[, 相对X坐标[, 相对Y坐标]]])</br>
+ControlClick($hWnd, &#x22;&#x22;, ControlGetFocus($hWnd))</br>
+ControlClick(&#x22;&#x22;, &#x22;ExampleFormSubmitted&#x22;, &#x22;[CLASS:Button; TEXT:OK; Instance:1;]&#x22;)</br>
+
+</br>
+    </details></td><td>autoit 按钮控制</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>controlsettext()</summary>
+;向运行窗口的输入框中输入文本cmd</br>
+controlsettext("运行","","edit1","cmd")</br>
+    </details></td><td>autoit 文本输入</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>send()</summary>
+;注意，默认输入法配置为为英文，中文输入法可能导致输入内容出现问题</br>
+;当前窗口中输入指定字符，大括号为键盘按钮宏</br>
+send("Hello from Notepad.{ENTER}")</br>
+;Shift+方向键上，2次，片选</br>
+send("+{UP 2}")</br>
+;方向键向上2次</br>
+send("+{UP 2}")</br>
+;修改 AutoIt 的全局运行选项,每发送一个字符后等待的毫秒数，此处设为 400 毫秒</br>
+    </details></td><td>autoit 文本输入</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>SendKeepActive()</summary>
+;锁定目标窗口，Send() 期间强制保持指定窗口为活动窗口</br>
+SendKeepActive($hWindow)</br>
+;</br>
+Local $sString = &#x22;2*4*8*16=&#x22;</br>
+Sleep(1000)</br>
+Send($sString)</br>
+;之后必须用 SendKeepActive(&#x22;&#x22;) 解除指定窗口为活动窗口</br>
+SendKeepActive(&#x22;&#x22;)</br>
+    </details></td><td>autoit 文本输入</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>AutoItSetOption()</summary>
+AutoItSetOption(&#x22;SendKeyDelay&#x22;, 400) #配置全局案件输入延时</br>
+    </details></td><td>autoit AutoItSetOption</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>winwait/winwaitactive</summary>
+;等待窗口class值为Notepad的窗口出现</br>
+winwait("[CLASS:Notepad]")</br>
+winwaitactive("[CLASS:Notepad]")</br>
+;对窗口类名（Class） 使用正则表达式匹配</br>
+;捕获组，表示三种类名任选其一匹配</br>
+;(?i) —— 正则内联标志，忽略大小写（case-insensitive）</br>
+Local $sClass = &#x22;[REGEXPCLASS:(?i)(SciCalc|CalcFrame|ApplicationFrameWindow)]&#x22;</br>
+Local $sClass = &#x22;[REGEXPTITLE:(?i)(SciCalc|CalcFrame|ApplicationFrameWindow)]&#x22;</br>
+;等待窗口激活(注意，这个是要求窗口被选中，不选中不匹配，可以删除active,使用 WinWait 来处理非窗口内容)</br>
+Local $hWindow = WinWaitActive($sClass)</br>
+</br>
+<b>;等待激活时间限制</b></br>
+Local $hWindow = WinWaitActive($sClass, &#x22;&#x22;, 10)  ; 最多等 10 秒</br>
+If $hWindow = 0 Then</br>
+    MsgBox(16, &#x22;错误&#x22;, &#x22;计算器窗口未在 10 秒内激活&#x22;)</br>
+    Exit</br>
+EndIf</br>
+</br>
+    </details></td><td>autoit 窗口等待</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>PixelGetColor()</summary>
+<b>#获取颜色，进行按钮是否可用的判断</b></br>
+$color01=0x00ff00</br>
+while $iColor = PixelGetColor(10, 100) &#x3c;&#x3e; $color01</br>
+&#x09;sleep(1000)</br>
+wend</br>
+以 16 进制显示颜色
+PixelGetColor 返回的是颜色的十进制表示，直接用 MsgBox 显示会是一长串数字。要显示为常见的 16 进制格式（如 FF0000），需要配合 Hex 函数，并指定至少 6 位宽度以补齐前导零。
+Local $iColor = PixelGetColor(100, 200)
+Local $sHexColor = Hex($iColor, 6) ; 转换为6位16进制字符串
+MsgBox(0, &#x22;颜色&#x22;, &#x22;十六进制: 0x&#x22; &#x26; $sHexColor)
+
+
+
+    </details></td><td>autoit 屏幕颜色</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>while</summary>
+$color01=0x00ff00</br>
+while $iColor = PixelGetColor(10, 100) &#x3c;&#x3e; $color01</br>
+&#x09;sleep(1000)</br>
+wend</br>
+    </details></td><td>autoit 循环控制</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>if</summary>
+if $ww01=0 then</br>
+...</br>
+elseif $ww02=0 then
+...
+else
+...
+endif</br>
+    </details></td><td>autoit 循环控制</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>switch</summary>
+Switch $aMsg[1]
+	Case $hGUI1
+	; The event comes from the GUI1
+
+	; Switch from event ID
+	Switch $aMsg[0]
+		Case $GUI_EVENT_CLOSE
+			ExitLoop
+		Case $idButton1
+			MsgBox($MB_SYSTEMMODAL, "", "Button1 clicked.")
+	EndSwitch
+	Case $hGUI2
+	; The event comes from the GUI2
+
+	; Switch from event ID
+	Switch $aMsg[0]
+		Case $GUI_EVENT_CLOSE
+			GUIDelete($hGUI2)
+		Case $idButton2
+			MsgBox($MB_SYSTEMMODAL, "", "Button2 clicked.")
+	EndSwitch
+EndSwitch
+
+</details></td><td>autoit 循环控制</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>run()/winclose()</summary>
+;运行程序
+run("notepad.exe")</br>
+;关闭指定窗口
+WinClose($hWindow)</br>
+;退出</br>
+exit</br>
+    </details></td><td>autoit 程序运行</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>sleep()</summary>
+sleep(300) ;延迟300ms</br>
+    </details></td><td>autoit 延时</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>controlGetHandle()</summary>
+local $cgh01=controlGetHandle($ww01,"[CLASS:Static;INSTANCE:2;TEXT:安装完毕]") #注意，该函数没有超时选项，需要自己进行处理
+if @error then
+....
+endif
+    </details></td><td>autoit 控件获取</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>WinGetHandle()</summary>
+$wgh01=WinGetHandle(AutoItWinGetTitle()</br>
+WinGetHandle(&#x22;[CLASS:Notepad]&#x22;)</br>
+WinGetHandle(&#x27;classname=Progman&#x27;)</br>
+WinGetHandle(&#x22;[ACTIVE]&#x22;)</br>
+WinGetHandle(&#x22;&#x22;) ; Same as: &#x22;[active]&#x22;.</br>
+    </details></td><td>autoit 窗口获取</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>#指令</summary>
+#RequireAdmin 获取管理员权限
+    </details></td><td>autoit #指令</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>msgbox()</summary>
+msgbox(16,"title01","msg01")
+    </details></td><td>autoit 交互消息</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>MouseClick()</summary>
+Opt(&#x22;MouseCoordMode&#x22;, 1) ; 1 = 屏幕绝对坐标
+MouseClick(&#x22;left&#x22;, 500, 300)
+MouseClick(&#x22;left&#x22;, 500, 300, 1, 0)
+按钮：&#x22;left&#x22;（左键）、&#x22;right&#x22;（右键）、&#x22;middle&#x22;（中键）。
+X 坐标：屏幕左上角为 (0, 0)。
+Y 坐标：向下为正。
+点击次数：默认 1 次。
+速度：0 表示瞬间移动（最快），数值越大鼠标移动越慢。
+
+    </details></td><td>autoit 鼠标点击</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>WinGetPos()</summary>
+【注意：】window DPI 缩放会导致计算出现问题，与window info 中获取到的值不同，需要使用手动验证的方式
+Local $aPos = WinGetPos($hFeishu)
+If Not @error Then
+    Local $iWinX = $aPos[0] ; 窗口左上角 X
+    Local $iWinY = $aPos[1] ; 窗口左上角 Y
+    Local $iWinW = $aPos[2] ; 窗口宽度
+    Local $iWinH = $aPos[3] ; 窗口高度
+EndIf
+
+
+    </details></td><td>autoit 鼠标点击</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>controlGetText()</summary>
+local $cgt01=controlGetText($ww01,"","[CLASS:Class01;INSTANCE:2]")
+    </details></td><td>autoit 按钮控制</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>winactivate()</summary>
+winactivate($ww01) ; 窗口前置，用于文字或键盘输入
+    </details></td><td>autoit 文本输入</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>PixelSearch()</summary>
+PixelSearch 函数自带 shade-variation 参数，允许你指定红、绿、蓝各通道允许的偏差范围（0-255）。
+你可以只搜索目标像素这一个点，从而实现类似 PixelGetColor 的容差判断
+Local $iTargetColor = 0xFF0000;&#x09;目标红色
+Local $iShade = 30;&#x09;&#x09;&#x09;允许的偏差范围
+
+; 搜索 (100,200) 到 (100,200) 这个单点
+Local $aCoord = PixelSearch(100, 200, 100, 200, $iTargetColor, $iShade)
+
+If Not @error Then
+&#x09;; 颜色在容差范围内，$aCoord[0], $aCoord[1] 就是坐标
+&#x09;MsgBox(0, &#x22;&#x22;, &#x22;颜色匹配（在容差范围内）&#x22;)
+Else
+&#x09;MsgBox(0, &#x22;&#x22;, &#x22;颜色不匹配&#x22;)
+EndIf
+
+    </details></td><td>autoit 屏幕颜色</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>MouseMove()</summary>
+MouseMove(100,200,10) #鼠标移动到指定位置,速度10（0-100）
+    </details></td><td>autoit 鼠标点击</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

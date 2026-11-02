@@ -108,17 +108,18 @@ A-Z 【跨文件mark】
 
     </details></td><td>vim 快速跳转</td></tr>
         <!-- 分割线 -->
-        <tr><td><details><summary>vim 查找搜索和替换</summary>
-/\u3000 #使用unicode搜索全角空格 或（/[\uFF00-\uFFEF\u3000-\u303F\uFF01-\uFF5E] 搜索所有全角字符）
-\cabc #忽略大小写搜索abc
-:%s/\([a-c]\)/\1-/g #%　文全局替换 / ()　引用替换需要跳脱 / \1　引用替换 / g　行全局</br>
-* / # #快速查找光标所在处单词</br>
-:let n=0 | g/index_\zs\d\+/s//\=n/|let n+=1 #使用变量，全局替换，逐步执行</br>
-:let n=0 | g/opIndex/s#\=printf("abc %X",n)/ |let n+=1 #substitude竟然支持printf</br>
-:s/\n\n/\r/g #vi的行处理有些不一致的地方查找使用n，替换使用r否则替换会变成\x00</br>
-:let @a=0 | s/#/\='abc_'.(@a+setreg('a',@a+1))/g #命令模式行内substitute换序列序号</br>
-:'<,'>s/\%V2/b/g #仅替换选区内，而非全行或全段</br>
-:g/ABC/d #删除含有匹配字符的行</br>
+        <tr><td><details style="white-space:pre-wrap;"><summary>vim 查找搜索和替换</summary>
+/&#x5c;u3000 #使用unicode搜索全角空格 或（/[&#x5c;uFF00-&#x5c;uFFEF&#x5c;u3000-&#x5c;u303F&#x5c;uFF01-&#x5c;uFF5E] 搜索所有全角字符）
+&#x5c;cabc #忽略大小写搜索abc
+:%s/&#x5c;([a-c]&#x5c;)/&#x5c;1-/g #%　文全局替换 / ()　引用替换需要跳脱 / &#x5c;1　引用替换 / g　行全局
+* / # #快速查找光标所在处单词
+:let n=0 | g/index_&#x5c;zs&#x5c;d&#x5c;+/s//&#x5c;=n/|let n+=1 #使用变量，全局替换，逐步执行
+:let n=0 | g/opIndex/s#&#x5c;=printf(&#x22;abc %X&#x22;,n)/ |let n+=1 #substitude竟然支持printf
+:s/&#x5c;n&#x5c;n/&#x5c;r/g #vi的行处理有些不一致的地方查找使用n，替换使用r否则替换会变成&#x5c;x00
+:let @a=0 | s/#/&#x5c;=&#x27;abc_&#x27;.(@a+setreg(&#x27;a&#x27;,@a+1))/g #命令模式行内substitute换序列序号
+:&#x27;&#x3c;,&#x27;&#x3e;s/&#x5c;%V2/b/g #仅替换选区内，而非全行或全段
+:g/ABC/d #删除含有匹配字符的行
+
     </details></td><td>vim 查找和替换</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>vim 复制和粘贴操作</summary>
@@ -185,13 +186,12 @@ Ctrl+r = 3*4 或 Ctrl+r =printf("%x",3) #编辑模式下，使用=号寄存器�
 </details></td><td>vim 剪切板或寄存器操作</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>vim 读取外部命令结果</summary>
-:read ! for((i01=0;i01&lt;10;i++)) ; do printf "<b>&#;%d</b>" i01 ; done #引用外部命令时，<b>%</b>是关键字</br>
-:!Ctrl+r Ctrl+l #执行光标所在行</br>
-v选中，:!bash，执行并插入结果,执行选中的代码</br>
-:!/bin/bash % #使用bash运行该文件，%表示该文件</br>
-:'<,'> !/bin/bash #将目前内容输送到bash中运行，返回运行结果到输送区域</br>
-:'<,'> w !/bin/bash</br>#将选中文本输送到bash中运行，保留原始内容</br>
-
+:read ! for((i01=0;i01&lt;10;i++)) ; do printf "<b>&#;%d</b>" i01 ; done #引用外部命令时，<b>%</b>是关键字
+:!Ctrl+r Ctrl+l #执行光标所在行
+v选中，:!bash，执行并插入结果,执行选中的代码
+:!/bin/bash % #使用bash运行该文件，%表示该文件
+:&#x27;&#x3c;,&#x27;&#x3e; !/bin/bash #将目前内容输送到bash中运行，返回运行结果到输送区域
+:&#x27;&#x3c;,&#x27;&#x3e; w !/bin/bash&#x3c;/br&#x3e;#将选中文本输送到bash中运行，保留原始内容
     </details></td><td>vim 扩展配置</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>vim c语言</summary>
@@ -213,12 +213,11 @@ tselect #tag select菜单模式进行tag选择
 :filetype plugin indent on #启用新脚本的indent ，如vim plugin 格式化html，需要重新加载打开文件（:edit）,否则不生效
     </details></td><td>vim 扩展配置</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary>vim 宏</summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>vim 宏</summary>
 qcq #录制宏，宏内容存到寄存器c，q结束录制</br>
 "cp #寄存器c中的内容粘贴到光标后</br>
 @c #从寄存器中调用宏，宏内容位于寄存器c中</br>
-::'<,'>normal @q #选中的行执行宏
-
+::&#x27;&#x3c;,&#x27;&#x3e;normal @q #选中的行执行宏
     </details></td><td>vim 宏</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary>vim 分屏</summary>
@@ -278,7 +277,6 @@ zf 使用Shift+v行选后，折叠选中的多行
 
     </details></td><td>vim 显示</td></tr>
         <!-- 分割线 -->
-
     <tr><td><details><summary>vim 显示</summary>
 <b>:s/&lt;ctrl+v x&gt;00//g</b> #将不可见字符^@(0x00)全部删除(此外还有u,U等长unicode格式)</br>
 <b>:help digraph-table</b> #显示不可见字符列表</br>
@@ -354,6 +352,14 @@ set nowrapscan</br>
 set matchpairs=</br>
 set mouse=</br>
 set paste</br>
+
+" 禁止生成备份文件（后缀为 ~ 的文件）</br>
+set nobackup</br>
+set nowritebackup</br>
+
+" 禁止生成撤销文件（后缀为 .un~ 的文件）</br>
+set noundofile</br>
+
 function! GetVimsessionFilename()</br>
 if expand('%:p') != ''</br>
 " 使用当前文件的相同目录，添加 .viminfo 后缀</br>

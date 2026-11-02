@@ -127,7 +127,7 @@ pid file = /share/CACHEDEV1_DATA/homes/itadmin/rsyncd.pid
 
 [share01]
 path = /share/homes/SRM_server/backup
-comment = backup magene work data
+comment = backup work data
 auth users = user01
 secrets file = /share/CACHEDEV1_DATA/homes/itadmin/rsyncd_secrets
 strict modes = false
@@ -145,7 +145,7 @@ user01:password01
 <details><summary>rsyncd导致的无法自动关机问题的处理</summary>
 
 #/etc/init.d/poweroff 脚本使用的时间获取函数
-[admin@NASMAGENEIT itadmin]# /sbin/power_management -p
+[admin@NAS itadmin]# /sbin/power_management -p
 shutdown_next_time = 2023:08:22:07:00
 shutdown_remaining_time = -36601
 shutdown_alert_time = 600

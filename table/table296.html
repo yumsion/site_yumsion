@@ -295,6 +295,163 @@ localedef 是 Linux 系统中用于编译和生成 locale 数据的命令，定�
 从 /usr/share/i18n/charmaps/UTF-8.gz 读取 UTF-8 字符编码映射。</br>
 将上述信息编译成二进制格式，生成locale文件并注册到系统</br>
 </details>
+#网络工具</br>
+pacman -S mtr </br>
+pacman -S iftop</br>
+pacman -S rustnet #流量实时监控和连接记录工具&#x09;安装 rustnet</br>
+pacman -S iperf3</br>
+pacman -S nmap</br>
+pacman -S tcpdump</br>
+pacman -S socat</br>
+pacman -S inetutils #安装telnet等必要软件</br>
+pacman -S net-snmp</br>
+pacman -S termshark</br>
+pacman -Ss linss aircrack-ng #安装无线扫描和破解工具</br>
+pacman -S wpa_supplicant dhcp dhclient</br>
+pacman -S openvpn</br>
+pacman -S vnstat&#x09;安装 流量统计工具</br>
+pacman -S iptraf-ng iftop&#x09;</br>
+pacman -S rp-pppoe&#x09;pppoe客户端和服务器</br>
+pacman -S ethtool&#x09;#Utility for controlling network drivers and hardware
+#编译工具或环境</br>
+pacman -S linux-header #linux 头文件库</br>
+pacman -S gcc </br>
+pacman -S automake</br>
+pacman -S git</br>
+pacman -S pkgconf #Couldn#t find pkg.m4 from pkg-config.</br>
+pacman -S help2man #libtool bootstrap编译需要</br>
+pacman -S base base-devel #安装编译类基础工具</br>
+pacman -S linux-headers #linux 头文件库</br>
+pacman -S cmake</br>
+pacman -S autogen autoconf #已经包含在base-devel中</br>
+pacman -S patch #源码补丁安装使用</br>
+pacman -S fakeroot ＃makepkg需要该包</br>
+pacman -S openvswitch</br>
+pacman -S python-pip ＃安装后单用户update好像无效，设置$PATH？</br>
+pacman -S meson #安装ninja和meson工具，如iputils的编译&#x09;安装 编译工具</br>
+pacman -S clang #LLVM相关程序需要,如BPF编程,target=bpf&#x09;arch-linux</br>
+pacman -S bpf #安装bpftool工具&#x09;arch-linux</br>
+#系统监控工具</br>
+pacman -S inotify-tools</br>
+pacman -S lsof</br>
+pacman -S cpupower #cpu频率控制</br>
+#自动化工具</br>
+pamman -S expect</br>
+#防火墙工具</br>
+pacman -S knockd</br>
+pacman -S nftables #安装nft</br>
+#字符处理</br>
+pacman -S jq</br>
+#文件下载/共享</br>
+pacman -S wget aria2</br>
+pacman -S rsync</br>
+pacman -S rsnapshot #具有版本控制的rsync备份工具&#x09;安装rsnapshot</br>
+pacman -S rclone</br>
+pacman -S nfs-utils #安装nfs server 会自动安装rpcidmap等</br>
+git clone https://gitlab.gnome.org/GNOME/libxml2 #libxml2，使用prefix指定安装位置</br>
+#压缩工具</br>
+pacman -S zip unzip p7zip</br>
+www.pcre.org #下载安装pcre2，系统自带的没有头文件</br>
+#加密/认证工具</br>
+pacman -S google-authentication ＃这个含有libpam的验证，命令行解析可以使用ga-cmd</br>
+pacman -S openssh openssl</br>
+pacman -S fuse3 #fuse与fuse3有冲突，按照需求安装，不安装则rclone等无法使用mount子命令&#x09;用户mount</br>
+pacman -S parted #手动分区工具，如ext4的扩容使用&#x09;安装 手动分区工具</br>
+#时间工具</br>
+pacman -S ntp #ntpdate</br>
+pacman -S at</br>
+#域名工具</br>
+pacman -S dnscrypt-proxy #防劫持的DNS工具，参照table339</br>
+#磁盘工具</br>
+pacman -S mdadm</br>
+pacman -S ntfs-3g</br>
+pacman -S grub efibootmgr</br>
+#电源管理</br>
+pacman -S wol #安装wol</br>
+#X11</br>
+pacman -S xdotool</br>
+pacman -S lightdm lightdm-gtk-greeter:&#x09;安装 lightdm自动startxfce4组件</br>
+pacman -S fcitx5-im fcitx5-chinese-addons #新版fcitx输入法</br>
+#安全工具</br>
+pacman -S apparmor #Mandatory Access Control (MAC) using Linux Security Module (LSM)</br>
+#通讯工具
+pacman -S postfix mailx</br>
+pacman -S mosquitto</br>
+pacman -S fping #ping 命令长检测无法获取timeout和总量统计，使用这个&#x09;安装fping</br>
+pacman -S dmidecode #硬件参数查看工具&#x09;硬件工具</br>
+pacman -S npm #安装nodejs等组件，可以用于pupputeer等运行&#x09;安装 nodejs</br>
+pacman -S wdiff #display word differences between text files ,区别与行对比工具&#x09;安装wdiff</br>
+pacman -S gvim #这个版本支持+clipborad&#x09;安装 vim</br>
+pacman -S sqlite #安装sqlite数据库,用于简易数据管理&#x09;安装 sqlite</br>
+pacman -S android-tools #adb 工具的安装,便于直接控制安卓&#x09;安装 android工具</br>
+pacman -S llvm llvm-lib libxml2 ＃eBPF需要的组件&#x09;安装llvm</br>
+pacman -S keepalived #VRRP配置&#x09;安装 VRRP</br>
+pacman -S deno #chrome扩展使用的包生成器</br>
+</br>
+#smartd硬盘监控</br>
+pcman -S smartmontools</br>
+systemctl start smartd</br>
+systemctl enable smartd</br>
+</br>
+pacman -R thunar-volman #删除自动挂载程序</br>
+</br>
+</br>
+</br>
+</br>
+#X</br>
+libvncserver freerdp remmina</br>
+tigervnc</br>
+ffmpeg</br>
+okular #pdf阅读器</br>
+blender</br>
+</br>
+</br>
+禁止合盖suspend #table51&#x09;电源 suspend</br>
+网卡的 backlog 值设置和企业级环境下RSS（Receive Side Scaling，接收端缩放）的配置。避免CPU导致的丢包&#x09;初始化 系统参数</br>
+</br>
+安装vimium插件，可以使用xdotool控制浏览器&#x09;浏览器自动化</br>
+vim /etc/sysctl.conf</br>
+vm.swappiness=10&#x09;配置虚拟内存的使用</br>
+</br>
+高速网卡开启RDMA减少CPU的负载，增加传输速度&#x09;配置RDMA</br>
+vim /etc/shells #修改默认shell次序&#x09;修改shell次序</br>
+chmod 0555 /usr/bin/pkexec #删除某些发行版中低版本pkexec的S位&#x09;polkit漏洞预防</br>
+</br>
+</br>
+挂载分区时，将atime和relatime改为noatime</br>
+/etc/hostname设定(下划线 成不支持)和/etc/hosts的127设置 避免firefox等网络解析本机名导致的莫名慢速</br>
+127.0.0.1 yourhostname</br>
+</br>
+vim .bashrc</br>
+alias rm=&#x27;echo &#x22;This is rm command , would you sure?&#x22; &#x26;&#x26; read -p &#x22;y/n:&#x22; read01 &#x26;&#x26; if [ &#x22;$read01&#x22; != &#x22;y&#x22; ] ; then echo Nothing happen... ; false ; fi &#x26;&#x26; rm&#x27;</br>
+</br>
+echo 0 &#x3e;/proc/sys/vm/swappiness&#x09;最大限度关闭交换分区</br>
+vim /etc/fstab</br>
+tmpfs /tmp tmpfs defaults,noatime 0 0&#x09;/tmp分区挂载到内存中</br>
+tmpfs /tmp tmpfs defaults,noatime,nosuid,size=100m 0 0</br>
+tmpfs /var/tmp tmpfs defaults,noatime,nosuid,size=30m 0 0</br>
+tmpfs /var/log tmpfs defaults,noatime,nosuid,mode=0755,size=100m 0 0</br>
+tmpfs /var/run tmpfs defaults,noatime,nosuid,mode=0755,size=2m 0 0</br>
+tmpfs /var/spool/mqueue tmpfs defaults,noatime,nosuid,mode=0700,gid=12,size=30m 0 0</br>
+</br>
+#设置hosts与dns resolv的优先级</br>
+vim /etc/nsswitch.conf</br>
+hosts: files mymachines resolve [!UNAVAIL=return] myhostname dns</br>
+</br>
+查看并设置journald的用量</br>
+vim /etc/systemd/journald.conf</br>
+SystemMaxUse=1G</br>
+RuntimeMaxUse=100M</br>
+</br>
+boot file</br>
+xmodmap -e &#x22;clear Lock&#x22; -e &#x22;keycode 0x42 = Escape&#x22;&#x09;将CAPLOCK映射成ESC</br>
+</br>
+laptop mode个 nmi watchdog</br>
+file name is html_origin.txt echo 1 &#x3e; /proc/sys/vm/laptop_mode #使用笔记本模式减少硬盘苏醒</br>
+echo 0 &#x3e; /proc/sys/kernel/nmi_watchdog #关闭内核监视模块</br>
+</br>
+</br>
+
     </details></td><td>linux 软件安装</td></tr>
         <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary>linux 网络参数</summary>
@@ -310,6 +467,24 @@ sysctl -w net.core.netdev_max_backlog=50000
 
     </details></td>linux 网络参数<td></td></tr>
         <!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
       </tbody>
     </table>
     <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
