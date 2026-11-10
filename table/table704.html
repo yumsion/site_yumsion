@@ -71,7 +71,7 @@
     <tr><td><details><summary>controlClick</summary>
 ;注意，值大小写敏感
 ;点击运行窗口的确定按钮</br>
-;注意，可能无法点击，已确认筛选条件是正确的，能够获取到控件，但是无法使用click命令点击</br>
+;注意，可能无法点击，已确认筛选条件是正确的，能够获取到控件，但是无法使用click命令点击;2026年11月03日 原因可能找到了，对应的窗口的ID可能发生了变化，导致无法点击，重新获取窗口ID</br>
 controlClick("运行","","Button2")</br>
 ControlClick(&#x22;窗口标题&#x22;, &#x22;窗口文本&#x22;, &#x22;控件ID&#x22;, &#x22;按钮&#x22;[, 点击次数[, 相对X坐标[, 相对Y坐标]]])</br>
 ControlClick($hWnd, &#x22;&#x22;, ControlGetFocus($hWnd))</br>
@@ -282,13 +282,135 @@ EndIf
 MouseMove(100,200,10) #鼠标移动到指定位置,速度10（0-100）
     </details></td><td>autoit 鼠标点击</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>FileExists()</summary>
+#注意，也可测试文件夹是否存在
+#成功：返回 1（表示存在）。
+#失败：返回 0（表示不存在）。
+
+If FileExists(&#x22;C:&#x5c;你的文件路径&#x5c;目标文件.txt&#x22;) Then
+    MsgBox(0, &#x22;结果&#x22;, &#x22;文件存在&#x22;)
+Else
+    MsgBox(0, &#x22;结果&#x22;, &#x22;文件不存在&#x22;)
+End If
+
+    </details></td><td>autoit 文件相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>_FileListToArray() #遍历参数说明：
+#include &#x3c;File.au3&#x3e;
+#include &#x3c;Array.au3&#x3e; ; 用于 _ArrayDisplay 展示结果
+
+; 获取桌面所有文件和文件夹的名称
+Local $aList = _FileListToArray(@DesktopDir, &#x22;*&#x22;)
+If Not @error Then
+    _ArrayDisplay($aList, &#x22;文件夹内容&#x22;)
+EndIf
+
+
+
+$sFilePath：文件夹路径。
+$sFilter（可选）：筛选通配符，如 "*.txt"，默认 "*"。
+$iFlag（可选）：指定返回类型。0/$FLTA_FILESFOLDERS 为文件和文件夹（默认），1/$FLTA_FILES 仅文件，2/$FLTA_FOLDERS 仅文件夹。
+$bReturnPath（可选）：设为 True 时返回完整路径，默认 False 仅返回名称。
+返回值：成功时返回一个一维数组，$aArray[0] 是数量，$aArray[1] 开始是具体的名称。文件/文件夹名的数组</summary>
+    </details></td><td>autoit 文件相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>StringRegExp()文本正则表达式匹配</summary>
+在 AutoIt 中进行文本正则匹配，核心函数是 StringRegExp。它使用 PCRE（Perl 兼容正则表达式）语法
+StringRegExp(&#x22;待处理文本&#x22;, &#x22;正则模式&#x22; [, 标志位])
+从文本 &#x22;Gnarly Monster hits you for 18 damage.&#x22; 中提取数字 18：
+#include &#x3c;Array.au3&#x3e;
+Local $sText = &#x22;Gnarly Monster hits you for 18 damage.&#x22;
+; 模式: ([0-9]{1,3}) 表示捕获1到3位数字
+Local $aResult = StringRegExp($sText, &#x27;([0-9]{1,3})&#x27;, 1)
+
+If Not @error Then
+    MsgBox(0, &#x22;结果&#x22;, $aResult[0]) ; 显示 18
+EndIf
+
+这里 () 是捕获组，标志 1 会让函数返回这个组里的内容。
+
+处理多行文本（跨行匹配）
+; (?s) 开启 DotAll 模式，让 . 能匹配换行
+$aResult = StringRegExp($sHTML, &#x27;(?s)Keyword(.*?)NeedRegExp&#x27;, 1)
+
+忽略大小写
+StringRegExp($text, &#x27;(?i)error&#x27;, 0) ; 能匹配 Error, ERROR, error
+
+; 只想要数字，不想让前面的前缀占用数组索引
+StringRegExp(&#x22;ID:123&#x22;, &#x27;(?:ID:)(&#x5c;d+)&#x27;, 1) ; 结果仅返回 123
+
+
+
+    </details></td><td>autoit 文本匹配</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>StringInStr()普通子串查找</summary>
+Local $sText = &#x22;Hello AutoIt World&#x22;
+
+If StringInStr($sText, &#x22;AutoIt&#x22;) Then
+    MsgBox(0, &#x22;&#x22;, &#x22;包含 AutoIt&#x22;)
+EndIf
+返回值是位置（从 1 开始），未找到返回 0。所以直接当布尔用即可。
+; 忽略大小写（默认 0 区分大小写，1 不区分）
+StringInStr($sText, &#x22;autoit&#x22;, 1)
+
+; 从第 N 个字符开始找
+StringInStr($sText, &#x22;o&#x22;, 0, 1, 6)
+
+; 查找字符出现次数（第 5 参数为出现次数，配合循环）
+
+    </details></td><td>autoit 文本匹配</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>BitAND()/BitXOR/BitNOT/BitShift/BitRotate</summary>
+BitAND（按位与）
+; 检查数字 5 (0101b) 的第 0 位是否为 1
+If BitAND(5, 1) Then
+    MsgBox(0, &#x22;&#x22;, &#x22;第 0 位是 1&#x22;) ; 会执行
+EndIf
+
+; 官方示例：13 (1101b) AND 7 (0111b) = 5 (0101b)
+Local $iResult = BitAND(13, 7) ; 返回 5
+
+BitOR（按位或）
+; 组合标志：1 (控制台) + 4 (事件日志)
+Local $iFlags = BitOR(1, 4) ; 结果为 5
+
+BitXOR（按位异或）
+常用于翻转（切换）某一位。对应位不同则为 1，相同则为 0。
+; 翻转最低位
+Local $iResult = BitXOR(5, 1) ; 5(0101) XOR 1(0001) = 4(0100)
+
+BitNOT（按位取反）
+将所有 0 变 1，1 变 0（注意 32 位有符号整数的表现）。
+Local $iResult = BitNOT(0) ; 结果为 -1 (在 32 位有符号整数下)
+
+
+BitShift（位移）
+BitShift(value, shift)，其中 shift 为正数向右移，负数向左移。
+Local $iLeft = BitShift(1, -3)  ; 1 左移 3 位，结果为 8
+Local $iRight = BitShift(16, 2) ; 16 右移 2 位，结果为 4
+
+BitRotate（循环位移）
+位数限制：原生函数仅支持 32 位运算。如果处理 64 位整数，需要自己写算法（例如利用 DllStructCreate(&#x22;int64&#x22;) 拆解计算），论坛有现成的 _BitAND64 等自定义函数可供参考。
+有符号整数：AutoIt 内部按有符号整数处理。如果你用 BitNOT(0) 得到 -1 或看到高位结果看似“错误”，这是正常的显示表现，只要你不混用数学运算，位操作本身是正确的。
+
+    </details></td><td>autoit 位运算</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>Opt("WinDetectHiddenText", 1) ; 开启隐藏文本检测</summary>
+Opt(&#x22;WinDetectHiddenText&#x22;, 1) ; 开启隐藏文本检测
+Local $sAllText = WinGetText(&#x22;窗口标题&#x22;) ; 获取窗口内所有文本（含隐藏）
+
+    </details></td><td>autoit 控件</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
       </tbody>

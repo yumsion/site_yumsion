@@ -73,7 +73,7 @@ nft add rule table ip table01 chain01 iif "tun0" ct state != { established, rela
 nft flush table ip table01 chain01 tcp dport 10000-10005 accept #端口号范围</br>
     </details></td><td>nft tcp相关</td></tr>
         <!-- 分割线 -->
-    <tr><td><details>nftable创建表，链，策略<summary></summary>
+    <tr><td><details><summary>nftable创建表，链，策略</summary>
 nft flush ruleset #清空所有nftables内容</br>
 nft flush table ip table_ip #清空指定的表</br>
 nft flush chain ip table_ip chain01 #清空指定的chain</br>
@@ -105,7 +105,25 @@ nft add rule ip table_ip chain_prerouting iif eth0 tcp dport { 80, 443 } dnat 19
 nft add rule ip table_ip chain_prerouting dnat tcp dport map { 1000 : 1.1.1.1, 2000 : 2.2.2.2, 3000 : 3.3.3.3} : tcp dport map { 1000 : 1234, 2000 : 2345, 3000 : 3456 }</br>
     </details></td><td>nftable DNAT</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>基于用户限制网络</summary>
+nft add rule ip table_ip chain02 meta skuid nginx counter drop #用户网络限制
+
+
+    </details></td><td>nftable meta集</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
       </tbody>

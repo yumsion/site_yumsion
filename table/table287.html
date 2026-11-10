@@ -86,8 +86,12 @@ snapshot%03d.jpg #文件保存格式，可尾缀png等，或-update 1 这个参�
 
     </details></td><td>ffplay/ffmpeg rtsp</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details style="white-space:pre-wrap;"><summary>ffmpeg 视频修复</summary>
+ffmpeg -i 你的文件.mp4 -c copy -movflags +faststart 修复后.mp4 #修复因下载中断导致的 moov atom 缺失或索引错乱
+ffmpeg -fflags +genpts -i 你的文件.mp4 -c copy 修复后.mp4 #重新生成时间戳
+#丢弃损坏包并转码-fflags +discardcorrupt：直接丢弃检测到的损坏数据包，不让它卡住编码进程。 -err_detect ignore_err：忽略解码过程中的错误继续处理。
+ffmpeg -fflags +discardcorrupt -err_detect ignore_err -i 你的文件.mp4 -c:v libx264 -crf 23 -c:a aac 修复后.mp4
+    </details></td><td>ffmpeg 视频修复</td></tr>
         <!-- 分割线 -->
     <tr><td><details><summary></summary>
     </details></td><td></td></tr>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t339</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 339 bash named</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>bind install</summary>
+zypper install bind
+
+pacman -S bind
+
+    </details></td><td>bind install</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named.conf 通用配置</summary>
+named.conf
+options {
+&#x09;#The directory statement defines the name server s working directory
+&#x09;#设置 BIND 的工作目录。所有相对路径（如区域文件路径、named 生成的日志/缓存文件）都相对于这个目录解析。
+&#x09;directory &#x22;/var/named&#x22;;
+&#x09;#上游DNS服务器
+&#x09;#使用转发器，注销本行会导致BIND 会走正常的递归解析（从根服务器开始迭代查询）。
+&#x09;#forwarders { 192.0.2.1; 192.0.2.2; };
+&#x09;#优先问转发器，失败再自己递归；only 表示只问转发器、不自己递归。
+&#x09;#forward first;
+&#x09;#BIND 只在 192.168.31.9 这个 IP 的 53 端口上监听 DNS 请求。
+&#x09;listen-on port 53 { 192.168.31.9; };
+&#x09;#禁用 IPv6 监听，BIND 不在任何 IPv6 地址上接受 DNS 查询。
+&#x09;listen-on-v6 { none; };
+&#x09;#限制只有本机能查询。注释后使用默认值 any（允许所有来源查询）。若要限制查询来源，应改为 allow-query { 你的网段; }; 并在 view 或 zone 级别配合使用。
+&#x09;#allow-query { 127.0.0.1; };
+&#x09;#关闭 DNS NOTIFY 通知。当主服务器区域数据变更时，默认会向从服务器发送 NOTIFY 消息促使其立即同步。设为 no 表示不发送。适用于没有从服务器、或想手动控制同步的场景。
+&#x09;notify no;
+&#x09;#表示 BIND 最多使用物理内存总量的 10% 作为缓存。
+&#x09;max-cache-size 10%;
+};
+
+# 定义根区域。. 代表 DNS 命名空间的根，是解析任何域名
+# 区域类型为 hint（提示区）。这是专门给根区域用的特殊类型，它告诉 BIND：“这个文件不是权威数据，而是一份根服务器地址的线索文件”。
+# BIND 读取它来获得根服务器的 NS 名称和 IP，然后从这些根服务器开始迭代查询。
+# root.hint 内容提供 13 个根服务器的名字和 IP。
+zone &#x22;.&#x22; in {
+&#x09;type hint;
+&#x09;file &#x22;root.hint&#x22;;
+};
+
+#IN — Internet，即我们日常用的 IPv4/IPv6 DNS（A、AAAA、MX、CNAME 等记录都属于这一类）。
+#CH — Chaos，用于查询服务器版本等特殊用途（如 version.bind）。
+#HS — Hesiod，历史遗留，几乎不用。
+#在 zone 语句里写 IN，表示“这个区域属于 Internet 类别”。由于 IN 是 BIND 的默认类别，所以绝大多数配置里省略它，效果完全一样。
+
+zone &#x22;localhost&#x22; in {
+&#x09;type master;
+&#x09;file &#x22;localhost.zone&#x22;;
+};
+
+zone &#x22;0.0.127.in-addr.arpa&#x22; in {
+&#x09;type master;
+&#x09;file &#x22;127.0.0.zone&#x22;;
+};
+
+zone &#x22;shitizen.vicp.cc&#x22; in {
+&#x09;type master;
+&#x09;file &#x22;shitizen.vicp.cc.zone&#x22;;
+};
+
+    </details></td><td>named.conf 通用配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named.conf zone forward</summary>
+named.conf zone forward
+zone &#x22;google.com&#x22; in {
+type forward;
+forwarders { 127.0.0.1; };
+forward first; };
+
+    </details></td><td>named.conf zone forward</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named.conf view 根据源IP地址进行解析</summary>
+#named配置根据源IP地址进行解析
+#BIND 9支持视图功能，可以根据客户端IP地址返回不同的解析结果：
+#一旦使用了 view 语句，所有的 zone 定义都必须放在 view 语句块内部，不能再放在全局 options 之后
+acl &#x22;internal&#x22; {
+&#x09;192.168.1.0/24;
+&#x09;10.0.0.0/8;
+};
+
+view &#x22;internal-view&#x22; {
+&#x09;match-clients { &#x22;internal&#x22;; };
+&#x09;recursion yes;
+
+&#x09;zone &#x22;example.com&#x22; {
+&#x09;&#x09;type master;
+&#x09;&#x09;file &#x22;/etc/bind/internal/example.com.zone&#x22;;
+&#x09;};
+};
+
+view &#x22;external-view&#x22; {
+&#x09;#view 语句的顺序至关重要：BIND 会按顺序检查 view 。
+&#x09;match-clients { any; };
+&#x09;recursion no;
+
+&#x09;zone &#x22;example.com&#x22; {
+&#x09;&#x09;type master;
+&#x09;&#x09;file &#x22;/etc/bind/external/example.com.zone&#x22;;
+&#x09;};
+};
+
+    </details></td><td>named.conf view</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named 命令参数</summary>
+named -g -u named #前端运行named并强制将log输出到stderr中
+named-checkconf #检查conf配置文件是否正确
+named-checkzone gemini.google.com /var/named/gemini.google.com.zone #检查zone文件是否有问题
+named -4 #仅使用IPv4服务,避免出现IPv6的network unreachable resolving问题
+    </details></td><td>named 命令参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named.conf rndc</summary>
+使用rndc刷新 reload named的配置和对应程序使用方法
+手动配置 rndc
+rndc reload：重新载入配置
+rndc reload chatgpt.com：重载某一个域名
+rndc flush：当你修改了转发配置，由于 BIND 缓存了之前的错误解析（或污染记录），你需要刷新缓存才能立即看到效果。
+rndc status：查看当前转发器的运行状态。
+
+配置方法：
+只需运行 rndc-confgen -a，它会自动生成 /etc/rndc.key。之后你在 named.conf 中确保有以下引用即可：
+
+include "/etc/rndc.key";
+controls {
+inet 127.0.0.1 allow { localhost; } keys { "rndc-key"; };
+};
+    </details></td><td>named.conf rndc</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named.conf 缓存 缓存时间和内存控制</summary>
+named缓存时间和内存控制
+options {
+# 设置缓存最大容量
+# 可以使用具体的数值（字节），也可以使用百分比
+max-cache-size 512M;
+
+# 如果你想让它占用总内存的 50%
+# max-cache-size 50%;
+
+# 清理缓存的阈值（可选）
+# 当缓存达到 max-cache-size 时，BIND 会开始丢弃旧记录
+};
+参数说明
+单位：支持 K (Kilobytes), M (Megabytes), G (Gigabytes)。
+0 或 unlimited：表示不设限制（不推荐，除非内存极大）。
+影响：增加缓存可以提高重复查询的响应速度，减少对 google.com 等转发域名的递归压力。
+
+进阶优化：控制缓存的“寿命” (TTL)
+仅仅增加缓存数量是不够的，如果记录的 TTL（生存时间）太短，缓存很快就会失效。你可以强制设置最大缓存时间：
+
+options {
+# 记录在缓存中保存的最长时间（秒）
+# 即使原始 DNS 说可以存 1 天，BIND 也会在 7200 秒后清理
+max-cache-ttl 7200;
+如果你想实现“保底”（强制延长缓存）
+如果你觉得有些域名（比如 Gemini 的 API 地址）刷新太快，想让它们在缓存里多待一会儿，你需要的是另一个参数：min-cache-ttl。
+# 强制所有记录至少缓存 1 小时
+min-cache-ttl 3600; #配置了 min-cache-ttl 3600 后：即使 google.com 只给 60 秒的 TTL，你的 BIND 也会强行把它留住 3600 秒。经测试，ttl范围是0到90，否则配置文件报错
+
+# 负面缓存时间（解析失败/不存在的域名保存多久）
+# 建议设短一点，防止 chatgpt.com 临时解析失败后卡很久
+max-ncache-ttl 300;
+};
+
+rndc dumpdb -cache
+
+    </details></td><td>named.conf 缓存</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named.conf log</summary>
+named的logchannel定义和分类保存到channel中
+logging {
+# 错误日志通道（用于各类错误）
+channel error_log {
+file &#x22;/var/log/named/error.log&#x22; versions 5 size 100m;
+severity dynamic;
+print-time yes;
+print-severity yes;
+print-category yes;
+};
+
+# 查询日志通道
+channel query_log {
+file &#x22;/var/log/named/query.log&#x22; versions 5 size 100m;
+severity info;
+print-time yes;
+print-severity yes;
+print-category yes;
+};
+
+# 通用日志通道（其他所有日志）
+channel default_log {
+file &#x22;/var/log/named/named.log&#x22; versions 5 size 100m;
+severity dynamic;
+print-time yes;
+print-severity yes;
+print-category yes;
+};
+
+# 分配日志类别
+category default {
+default_log; # 通用日志
+};
+
+category queries {
+query_log; # 查询日志单独存放
+};
+
+category network {
+error_log; # 网络错误 → error_log
+};
+
+category resolver {
+error_log; # 解析错误 → error_log
+};
+
+category client {
+error_log; # 客户端错误 → error_log
+};
+
+category dnssec {
+error_log; # DNSSEC 错误 → error_log
+};
+
+# 不感兴趣的类别可以直接丢弃
+category lame-servers {
+null;
+};
+};
+
+
+各 Category 说明
+Category 包含的内容 建议输出
+-----------------------------------------------
+default 所有未明确指定的日志 通用日志文件
+queries DNS 查询记录 独立的查询日志
+network 网络错误（包括你遇到的 unreachable） 错误日志文件
+resolver 解析器错误（递归查询问题） 错误日志文件
+client 客户端请求错误 错误日志文件
+database 数据库操作错误 错误日志文件
+security 安全相关错误 错误日志文件
+dnssec DNSSEC 验证错误 错误日志文件
+
+    </details></td><td>named.conf log</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>gen_zone_file.sh</summary>
+ZONE_NAME=&#x22;$1&#x22;
+[[ -z &#x22;${ZONE_NAME:-}&#x22; ]]  &#x26;&#x26;  echo &#x27;ZONE NAME MISSING , IT SHOULD LIKE agc.com&#x27; &#x26;&#x26; exit 1
+echo &#x22;; $ZONE_NAME 域名解析文件
+&#x5c;$TTL 3600
+@       IN      SOA     mgdns46.$ZONE_NAME. admin.$ZONE_NAME. (
+                $(date +%Y%m%d)01      ; 序列号 (YYYYMMDDnn)
+                3600            ; 刷新间隔
+                1800            ; 重试间隔
+                604800          ; 过期时间
+                86400           ; 最小 TTL
+)
+
+; 名称服务器记录
+@       IN      NS      mgdns46.$ZONE_NAME.
+
+; 可选：添加 NS 记录的 A 记录（如果不使用外部 NS）
+; ns1     IN      A       你的服务器IP
+
+mgdns46 IN      A 172.16.31.46
+; 自定义 A 记录
+;ads     IN      A       1.1.2.23
+* IN      A       192.168.6.6
+
+; CNAME 记录
+;sss     IN      CNAME   ads.abc.com.
+&#x22;
+
+read -p &#x27;IS RESULT CORRECT?(N/y)&#x27; r
+[[ &#x22;$r&#x22; != &#x22;y&#x22;  ]]  &#x26;&#x26;  echo &#x27;NOTHING HAPPEN&#x27; &#x26;&#x26; exit 1
+
+echo &#x22;; $ZONE_NAME 域名解析文件
+&#x5c;$TTL 3600
+@       IN      SOA     mgdns46.$ZONE_NAME. admin.$ZONE_NAME. (
+                $(date +%Y%m%d)01      ; 序列号 (YYYYMMDDnn)
+                3600            ; 刷新间隔
+                1800            ; 重试间隔
+                604800          ; 过期时间
+                86400           ; 最小 TTL
+)
+
+; 名称服务器记录
+@       IN      NS      mgdns46.$ZONE_NAME.
+
+; 可选：添加 NS 记录的 A 记录（如果不使用外部 NS）
+; ns1     IN      A       你的服务器IP
+
+mgdns46 IN      A 172.16.31.46
+; 自定义 A 记录
+;ads     IN      A       1.1.2.23
+* IN      A       192.168.6.6
+
+; CNAME 记录
+;sss     IN      CNAME   ads.abc
+
+    </details></td><td>named zone</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>named.conf 强制所有域名解析到指定的IP地址上</summary>
+vime /etc/named.conf
+options {
+    directory &#x22;/var/named&#x22;;
+    pid-file &#x22;/run/named/named.pid&#x22;;
+
+    // Uncomment these to enable IPv6 connections support
+    // IPv4 will still work:
+    //  listen-on-v6 { any; };
+    // Add this for no IPv4:
+    //  listen-on { none; };
+    recursion no;
+    allow-recursion { none; };
+    allow-transfer { none; };
+    allow-query { any; };
+    allow-update { none; };
+
+    version none;
+    hostname none;
+    server-id none;
+};
+
+zone &#x22;.&#x22; IN {
+    type master;
+    file &#x22;fakeroot.zone&#x22;;
+};
+zone &#x22;localhost&#x22; IN {
+    type master;
+    file &#x22;localhost.zone&#x22;;
+};
+
+zone &#x22;0.0.127.in-addr.arpa&#x22; IN {
+    type master;
+    file &#x22;127.0.0.zone&#x22;;
+};
+
+zone &#x22;1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa&#x22; {
+    type master;
+    file &#x22;localhost.ip6.zone&#x22;;
+};
+
+vim /var/named/fakeroot.zone
+@                               1D IN SOA   fakeroot. root.fakeroot. (
+                                    42    ; serial (yyyymmdd##)
+                                    3H    ; refresh
+                                    15M   ; retry
+                                    1W    ; expiry
+                                    1D )  ; minimum ttl
+
+                                1D  IN  NS      ns.fakeroot.
+
+*                      1D  IN  A       1.2.3.4
+
+    </details></td><td>named.conf fakeroot</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>
