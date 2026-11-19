@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t138</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 138 软件 git</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>git diff 对比内容变动</summary>
+    <ol>
+<li>git diff	#比较工作区和暂存区</li>
+<li>git diff --cached	#比较暂存区和仓库</li>
+<li>git diff --staged	#比较暂存区和仓</li>
+<li>git diff HEAD	#比较工作区和仓库</li>
+<li>git diff 120304c..3748d7e	#比较2次提交</li>
+<li>git diff main origin/main	#比较2个分支</li>
+<li>git diff main origin/main -- file01	#仅比较指定文件的差异</li>
+    </ol>
+    </details></td><td>git diff</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>git reset #堆栈式删除提交</summary>
+    <ol>
+<li>git reset --mixed HEAD~1	#默认选项，删除最后一次提交，不同步工作区（保留工作区的内容）</li>
+<li>git reset --soft HEAD~1	#删除最后一次提交，不同步暂存区（保留暂存区的内容）</li>
+<li>git reset --hard HEAD~1	#删除最后一次提交，同步工作区和暂存区（删除工作区和暂存区的内容）</li>
+    </ol>
+    </details></td><td>git reset</td></tr>
+        <!-- 分割线 -->
+    <tr><td>git pull = git fetch + git merge</td><td>git pull</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>git常用链接地址</summary>
+<a href="https://gitcode.com/gh_mirrors/" target="_blank">https://gitcode.com/gh_mirrors/ <i>《国际仓库加速计划》通过 mirror 镜像仓库服务来同步国际开源项目</i></a>
+    </details></td><td>git 链接地址</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>使用git创建本地仓库</summary>
+$ git init ./folder01
+$ cd folder01
+$ git remote add origin ssh://@
+$ git config core.sparsecheckout true
+$ echo &#x22;path1/&#x22; &#x3e;&#x3e; .git/info/sparse-checkout
+$ echo &#x22;path2/&#x22; &#x3e;&#x3e; .git/info/sparse-checkout
+$ git pull origin master
+
+第一条命令git init ，先建立一个空的版本库，用实际的目录名替代。
+第二条命令cd ，进入创建的新的版本库的目录。
+第三条命令git remote add origin ssh://@，添加远程库的地址。
+第四条命令git config core.sparsecheckout true，打开sparse checkout功能。
+第五第六条命令echo &#x22;path1/&#x22; &#x3e;&#x3e; .git/info/sparse-checkout，添加2个目录到checkout的列表。路径是版本库下的相对路径，也可以用文本编辑器编辑这个文件。
+第七条命令git pull origin master，拉取远程的 master 分支，也可以拉其他分支。
+
+如果只拉取最近一次的变更，忽略以前的变更记录，在拉取时可以加参数depth，如git pull --depth=1 origin master （浅克隆）
+
+    </details></td><td>git 本地仓库</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>git submodule</summary>
+#update
+git submodule update --init#等于以下两条命令
+git submodule init
+git submodule update
+
+# 添加一个submodules
+git submodule add https://github.com/midas-journal/midas-journal-843 PointInCircle
+
+# git pull 更新submodule
+git pull --recurse-submodules origin branch01
+    </details></td><td>git submodule</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>git状态查看</summary>
+vim .gitignore #添加不跟踪的文件的配置
+git rm -r --cache build #删除一个文件夹的跟踪cache
+git status #git目前更改对比状态
+git remote -v #查看远端信息
+git remote -v show origin #
+git log #查看提交log
+# 使用git reflog查询本版切换记录
+git reflog
+
+git checkout HEAD -- Core/Src/main.c # 重置文件,git reset命令好像被这个代替
+    </details></td><td>git 状态</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>git pull/push</summary>
+# 项目太大导致的pull失败问题
+git config --global core.compression 0
+##不要用=号,否则error: invalid key: core.compression=0
+git clone --depth=1 URL
+git fetch --unshallow
+git pull --all
+fatal: The remote end hung up unexpectedly1.95 GiB | 772.00 KiB/s
+fatal: early EOF
+fatal: index-pack failed
+# 先尝试拉取最近 500 条提交
+git fetch --depth=500
+# 如果 500 条还不够，继续增加深度，比如到 2000
+git fetch --depth=2000
+# 重复上述过程，直到你觉得历史够用，或者最终尝试获取全部
+git fetch --unshallow
+
+
+# 添加和提交代码
+git add app_main
+git status
+git commit -m "commit01"
+git rm --cached app_main #untracked
+
+#commit
+.git/COMMIT_EDITMSG # git comment -m或者该文件来指定comment
+
+
+#合并提交
+git config --global core.editor vim #配置编辑器
+git rebase -i HEAD~8 ＃合并最近的8个
+git push --force-with-lease origin main #强制提交到远程合并
+
+git 2.54新版本，rebase替代命令，钩子操作
+git history reword —— 一键修改提交信息
+以前修改提交信息，需要这样操作（繁琐到崩溃）：
+# 1. 进入交互式rebase
+git rebase -i HEAD~3  # 假设要改前3个提交
+# 2. 把要改的提交标记为edit
+# 3. 修改提交信息
+git commit --amend
+# 4. 继续完成rebase
+git rebase --continue
+# 5. 若有冲突，还要手动解决
+现在，只用一行命令，直接搞定：git history reword &#x3c;commit-id&#x3e;
+
+配置化 Git Hook，告别 .git/hooks 束缚这是团队协作党最爱的更新！以前 Git Hook 只能放在每个仓库的 .git/hooks 目录下，无法同步、无法共享，堪称“团队协作的绊脚石”。比如想给所有仓库统一配置 pre-commit 钩子（代码校验、密钥扫描），只能手动复制脚本到每个仓库，繁琐又容易出错；就算用软链接，也无法灵活开关、无法配置多个钩子。Git 2.54 彻底解决这个痛点，支持在配置文件中定义 Git Hook，不用再局限于 .git/hooks 目录，灵活度直接拉满！
+# 1. 全局配置（所有仓库生效，写在 ~/.gitconfig）
+[hook &#x22;linter&#x22;]
+   event = pre-commit  # 触发事件（pre-commit、pre-push等）
+   command = ~/bin/lint-check  # 要执行的命令
+
+# 2. 仓库局部配置（仅当前仓库生效，写在 .git/config）
+[hook &#x22;secret-scan&#x22;]
+   event = pre-commit
+   command = ~/bin/secret-detector
+
+# 3. 系统级配置（所有用户生效，写在 /etc/gitconfig）
+[hook &#x22;code-format&#x22;]
+   event = pre-commit
+   command = ~/bin/code-format
+3个炸裂优势，彻底解放双手多钩子共存：同一个事件（比如 pre-commit）可以配置多个钩子，按配置顺序执行，比如先跑代码校验，再跑密钥扫描，不用手动整合脚本；灵活开关：不想用某个钩子，不用删除配置，只需添加 hook.linter.enabled=false，临时关闭，后续可随时开启；
+轻松查看：用 git hook list &#x3c;event&#x3e; 就能查看某个事件的所有钩子，以及它们的配置层级，一目了然：$ git hook list pre-commit
+global    linter  ~/bin/lint-check
+local    secret-scan    ~/bin/secret-detector
+重点：传统 .git/hooks 目录的脚本依然兼容，旧项目零成本迁移，不用担心升级后钩子失效。
+
+
+
+
+
+#分支管理
+git push origin branch01:branch02 # 更新
+git push --all # 全部分支都推送
+git config receive.denyCurrentBranch ignore # 允许你向一个非裸仓库（non-bare repository）的当前检出分支执行 git push，且不显示任何警告信息。
+git branch --delete branch01#删除一个分支
+git branch -D branch01 #强制删除一个分支
+git clone git@abc.git#clone远端master
+git branch --all #查看所有的branch，包含远端的。
+git checkout -t origin/shell_script #克隆远端一个分支到本地并切换到这个分支
+
+
+
+
+#版本控制
+#回退到一个干净的版本
+git revert -n 1111111
+git reset --hard
+
+# 本版回退方法,会重置暂存区和工作区
+git reset --hard a92b2eb
+
+
+    </details></td><td>git pull/push</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>git config相关</summary>
+#设置全局参数，用于commit时添加身份信息，该信息保存到默认的~/.git目录下
+git config --global user.name "name01"
+git config --global user.email "a@b.com"
+
+git config --list #查看目前所有的config配置
+HOME=dir01 git config --list #$HOME/.gitconfig是默认的存储位置，使用独立的配置文件进行git处理
+git config core.sshCommand "ssh -i ~/.ssh/github_custom -F /dev/null" #配置指定的ssh密钥文件
+
+vim .git/config
+[core]
+sshCommand = "ssh -i ~/.ssh/id_ed25519_singledog -F /dev/null"
+
+
+
+
+# 使用sshd的socket5代理
+git config --global http.proxy "socks5://1.2.3.4:10000"
+
+
+    </details></td><td>git config相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>git 分支</summary>
+git branch
+git branch test
+git checkout test
+git branch -m test newName01
+git branch -d newName01
+
+
+    </details></td><td>git 分支</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>git worktree</summary>
+git worktree list # 查看worktree
+git worktree add folder01 master # 创建worktree
+git worktree remove folder01 # 删除worktree
+git worktree prune # 删除树枝
+    </details></td><td>git worktree</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>本地git仓库搭建</summary>
+git init --bare abc.git
+#建立一个空仓库，--bare是建立空仓库，有master主线
+#测试表明.git这个suffix可以不用
+#测试--bare参数的init不会在url下建立.git，而是将该URL作为.git进行填充
+使用其它机器运行如下命令即可借用ssh进行clone
+git clone ssh://yum@127.0.0.1:10022/dev/shm/abc.git
+#clone后，remote都是有值的。
+#端口号需要在url中指定。
+#非常规端口号要加入协议类型，如ssh://，否则10022可能不被识别
+#git还支持其它协议，如git http[s] ftp[s]，指定方式如上
+#使用git clone ssh://....后，原始git文件夹没了！
+#测试在ext4上正常，tmpfs(/dev/shm/abc.git)下一次克隆，文件夹就丢失了
+
+
+创建用于进行git的用户，user01,可以配置shell为专用的git-shell，防止任何非必要交互
+#git server端修改权限，允许对目前的bracn的push操作（该权限默认为refuse）
+git config receive.denyCurrentBranch warn
+
+#git client端配置remote并上传
+git remote add origin user01@server01:/a/b/c.git
+##要添加.git，否则导致文件夹中的内容出现.git的内容
+git push origin master
+
+
+#完整的服务器分离仓库初始化流程
+# 1. 定义路径
+WORK_DIR="/home/nginx/nginx/html_blink_wang"
+GIT_DIR="/home/nginx/nginx/html_blink_wang.git"
+# 2. 创建工作目录
+mkdir -p $WORK_DIR
+# 3. 初始化分离仓库（在工作目录内执行）
+cd $WORK_DIR
+git init --separate-git-dir=$GIT_DIR
+# 4. 设置工作目录路径
+git config core.worktree $WORK_DIR
+# 5. （可选）设置接收分支
+git config receive.denyCurrentBranch ignore
+#已经完成初始化的git如何分离GIT DIR和work tree？
+# 1. 进入工作目录
+cd /home/nginx/nginx/html_blink_wang
+# 2. 移动.git到新位置
+mv .git /home/nginx/nginx/html_blink_wang.git
+# 3. 告诉Git新的Git Dir位置
+echo "gitdir: /home/nginx/nginx/html_blink_wang.git" &gt; .git
+# 4. 配置工作目录路径
+git config core.worktree /home/nginx/nginx/html_blink_wang
+# 5. 验证是否正常
+git status
+
+    </details></td><td>git 本地仓库</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>git github</summary>
+ssh -T git@github.com #添加公钥后测试是否可以通过ssh连接github进行推送
+git remote add origin git@github.com:xxxx/xxxx.git
+git push -u origin master
+#本地的master分支推送到远程仓库的对应分支。
+#如果使用的是main分支，则命令为 git push -u origin main
+
+
+    </details></td><td>git github</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

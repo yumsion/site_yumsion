@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t254</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 254 LINUX apt dpkg debian</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>debian 13 网络配置 修改dhcp为静态IP地址</summary>
+<b>修改dhcp为静态IP地址</b></br>
+<b>方式1</b> ls /etc/netplan/</br>
+<b>方式2</b> systemctl status NetworkManager</br>
+<b>方式3</b> ls /etc/systemd/network/ 有 .network 文件则说明系统在使用 systemd-networkd</br>
+<b>方式4</b> cat /etc/network/interfaces</br>
+vim /etc/network/interfaces</br>
+-- iface eth0 inet dhcp</br>
+++</br>
+iface eth0 inet static</br>
+    address 192.168.1.100</br>
+    netmask 255.255.255.0</br>
+    gateway 192.168.1.1</br>
+    dns-nameservers 8.8.8.8 1.1.1.1</br>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>debian13 init</summary>
+#清华源</br>
+https://mirrors.tuna.tsinghua.edu.cn/help/debian/</br>
+</br>
+#查看源格式</br>
+#传统格式</br>
+ls /etc/apt/sources.list</br>
+#DEB822 格式</br>
+ls /etc/apt/sources.list.d/debian.sources</br>
+</br>
+#传统格式</br>
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释</br>
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie main contrib non-free non-free-firmware</br>
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie main contrib non-free non-free-firmware</br>
+</br>
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-updates main contrib non-free non-free-firmware</br>
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-updates main contrib non-free non-free-firmware</br>
+</br>
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-backports main contrib non-free non-free-firmware</br>
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-backports main contrib non-free non-free-firmware</br>
+</br>
+# 以下安全更新软件源为官方源配置</br>
+deb https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware</br>
+# deb-src https://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware</br>
+</br>
+#升级软件包</br>
+apt update</br>
+apt upgrade</br>
+</br>
+
+    </details></td><td>init</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>software install</summary>
+apt-get install libpcap-dev #gcc -lpcap 需要该库
+    </details></td><td>init software</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

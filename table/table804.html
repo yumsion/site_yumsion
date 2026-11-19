@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t804</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 804 知识 企业管理/公司管理</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>工作职能表</summary>
+<table>
+<tr><td>职能名称</td><td>职能描述</td><td>涉及软件</td></tr>
+<tr><td>打印机相关</td><td>打印机故障处理/维修，打印机文档维护，打印机墨盒更换</td><td>无</td></tr>
+<tr><td>电脑资产管理员</td><td>管理电脑资产，能快速获取到目前的电脑资产情况</td><td>itop</td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td></tr>
+</table>
+    </details></td><td>工作职能表</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>库存管理</summary>
+<table>
+<tr><td>1</td><td>库存管理构成</td><td style="white-space:pre-wrap;">
+人员	仓库管理员（出入库登记/物料核对）
+账本	出入库统计表/重复出入库统计表（统计表，能区分第一次出入库和重复出入库，直接获取购买到货总量数量和剩余总量）
+区域	到货封存区域、重复出入库区域
+监控	出入库视频监控，避免扯皮和出现无人盗窃等。
+物品架	对物品进行规则化摆放
+扫码抢	快速条码识别和入库
+</td></tr>
+</table>
+    </details></td><td>库存管理</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>资产管理</summary>
+<table>
+<tr><td>1</td><td>资产管理-电脑管理-软件安装管理</td><td style="white-space:pre-wrap;">
+软件安装监控工具	监控公司电脑安装了哪些软件，是否有违禁软件，如何触发违禁软件告警，如何控制软件安装权限。
+电脑资产管理		管理电脑数量，型号，配置，分配人员，状态（正常/故障/报废/拆解），位置，编号，序列号，购买日期，购买商，购买价格。
+电脑型号分发分配表	哪种职能分配哪种电脑。
+</td></tr>
+<tr><td>2</td><td>资产管理-软件授权管理</td><td style="white-space:pre-wrap;">
+</td></tr>
+</table>
+    </details></td><td>资产管理</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>域名和网站管理</summary>
+<table>
+<tr><td>1</td><td>123级域名管理</td><td>进行表格统计，用于漏扫和功能复查调用</td></tr>
+<tr><td>2</td><td>域名清单</td><td>资产管理使用，续费使用</td></tr>
+<tr><td></td><td></td><td></td></tr>
+</table>
+    </details></td><td>域名和网站管理</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

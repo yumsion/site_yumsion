@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <link rel="stylesheet" href="../css/table_css.css">
+    <title>YUMSION Table Index</title>
+    <style>
+        /* ===== 重置和基础样式（限定在 .index-page 内） ===== */
+        .index-page * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .index-page {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        /* ===== 卡片容器 ===== */
+        .index-page .card {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15), 0 4px 18px rgba(0,0,0,0.05);
+            padding: 24px 20px 32px;
+            transition: padding 0.2s;
+        }
+
+        /* ===== 标题 ===== */
+        .index-page h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: #0b1e33;
+            margin: 0 0 8px 0;
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .index-page h1 small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #4a5b6e;
+            margin-left: auto;
+            background: #f1f4f9;
+            padding: 4px 14px;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== 筛选栏 ===== */
+        .index-page .filter-bar {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 16px 20px;
+            background: #f1f5f9;
+            padding: 18px 20px;
+            border-radius: 20px;
+            margin: 20px 0 24px 0;
+            transition: all 0.2s;
+        }
+        .index-page .filter-group {
+            flex: 1 1 180px;
+            min-width: 140px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .index-page .filter-group label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #2c3e50;
+            opacity: 0.8;
+        }
+        .index-page .filter-group select,
+        .index-page .filter-group input {
+            background: white;
+            border-radius: 14px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            font-weight: 450;
+            color: #0a1a2b;
+            width: 100%;
+            transition: 0.15s;
+            appearance: auto;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .index-page .filter-group select:focus,
+        .index-page .filter-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .index-page .filter-group select {
+            cursor: pointer;
+        }
+        .index-page .filter-group input::placeholder {
+            color: #9aa9bb;
+            font-weight: 350;
+        }
+        .index-page .filter-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 0 1 auto;
+            margin-left: auto;
+            padding-top: 6px;
+        }
+        .index-page .btn-reset {
+            background: white;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1f2a3f;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            white-space: nowrap;
+        }
+        .index-page .btn-reset:hover {
+            background: #f1f5f9;
+            border-color: #b0bed0;
+        }
+        .index-page .btn-reset:active {
+            background: #e2e8f0;
+        }
+
+        /* ===== 表格容器 ===== */
+        .index-page .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 8px 0 8px 0;
+            border-radius: 18px;
+            border: 1px solid #e9edf4;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .index-page table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            min-width: 400px;
+        }
+        .index-page th {
+            background: #f8fafc;
+            color: #1f2a3f;
+            font-weight: 600;
+            padding: 16px 14px;
+            text-align: left;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .index-page td {
+            padding: 14px 14px;
+            vertical-align: middle;
+            word-break: break-word;
+        }
+        .index-page tr:last-child td {
+            border-bottom: none;
+        }
+        .index-page tr:hover td {
+            background-color: #c0c0c0;
+        }
+        .index-page .col-category {
+            font-weight: 500;
+            color: #0b2a44;
+        }
+        .index-page .col-project {
+            color: #1e3a5f;
+        }
+        .index-page .col-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted rgba(37, 99, 235, 0.3);
+            word-break: break-all;
+        }
+        .index-page .col-link a:hover {
+            color: #1d4ed8;
+            border-bottom-color: #1d4ed8;
+        }
+        .index-page .empty-row td {
+            text-align: center;
+            color: #6b7b8f;
+            padding: 36px 14px;
+            font-style: italic;
+            background: #fafcff;
+        }
+        .index-page .badge-count {
+            background: #eef2f7;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-left: 6px;
+        }
+        .index-page .table-footer-info {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #5f7287;
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+
+        /* ===== 手机响应式 ===== */
+        @media (max-width: 640px) {
+            .index-page .card {
+                padding: 16px 12px 24px;
+                border-radius: 20px;
+            }
+            .index-page h1 {
+                font-size: 1.6rem;
+                padding-bottom: 8px;
+            }
+            .index-page h1 small {
+                font-size: 0.75rem;
+                padding: 2px 12px;
+                margin-left: 0;
+                width: auto;
+            }
+            .index-page .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+                padding: 16px;
+                border-radius: 16px;
+            }
+            .index-page .filter-group {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+            .index-page .filter-actions {
+                margin-left: 0;
+                justify-content: flex-end;
+                padding-top: 4px;
+            }
+            .index-page .btn-reset {
+                padding: 8px 18px;
+                font-size: 0.85rem;
+                width: 100%;
+                text-align: center;
+            }
+            .index-page table {
+                font-size: 0.85rem;
+                min-width: 340px;
+            }
+            .index-page th,
+            .index-page td {
+                padding: 1px 1px;
+            }
+            /* 导航栏移动端 */
+            .index-page .nav-toggle {
+                display: flex;
+            }
+            .index-page .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: white;
+                padding: 12px 0;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                gap: 4px;
+            }
+            .index-page .nav-menu.open {
+                display: flex;
+            }
+            .index-page .nav-container {
+                position: relative;
+            }
+            .index-page .nav-menu li {
+                width: 100%;
+            }
+            .index-page .nav-link {
+                padding: 10px 20px;
+                border-radius: 0;
+            }
+        }
+        @media (max-width: 420px) {
+            .index-page table {
+                font-size: 0.8rem;
+                min-width: 280px;
+            }
+            .index-page th,
+            .index-page td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body class="index-page">
+    <!-- ===== 导航栏 ===== -->
+    <nav id="topNav" class="top-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" class="nav-logo">🏠 主页</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html" class="nav-link">首页</a></li>
+                <li><a href="index.html" class="nav-link active">表格</a></li>
+                <li><a href="#about" class="nav-link">关于</a></li>
+                <li><a href="#contact" class="nav-link">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="card">
+        <h1>
+            <span>📋 YUMSION table index</span>
+            <small>感谢deepseek生成，让我的小拙手也能做出网页</small>
+        </h1>
+
+        <!-- 筛选栏：下拉 + 输入过滤（仅分类/项目） -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="categoryFilter">分类</label>
+                <select id="categoryFilter">
+                    <option value="all">全部分类</option>
+                    <!-- 由 js 动态填充 -->
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="projectFilter">项目</label>
+                <select id="projectFilter">
+                    <option value="all">全部项目</option>
+                    <!-- 由 js 动态填充 -->
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="keywordInput">🔍 输入筛选（分类/项目）</label>
+                <input type="text" id="keywordInput" placeholder="输入关键词…" autocomplete="off">
+            </div>
+            <div class="filter-actions">
+                <button class="btn-reset" id="resetFilters">重置</button>
+            </div>
+        </div>
+
+        <!-- 表格 -->
+        <div class="table-wrap">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>分类</th>
+                        <th>项目</th>
+                        <th>链接地址</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 由 JavaScript 动态渲染 -->
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer-info">
+            <span>📊 共 <span id="rowCount">0</span> 条</span>
+            <span>· 下拉菜单自动从表格列提取</span>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ---- 原始表格数据 (仅包含分类、项目、链接) ----
+
+        const tableData = [
+            { category: 'bash', project: 'sed', link: 'table26.html' },
+            { category: 'cmd', project: 'IIS/sqlserver', link: 'table29.html' },
+            { category: 'bash', project: 'ip/iproute2', link: 'table37.html' },
+            { category: 'bash', project: 'nginx', link: 'table43.html' },
+            { category: 'cmd', project: '网络相关', link: 'table46.html' },
+            { category: 'bash', project: 'grub/grub2', link: 'table85.html' },
+            { category: 'bash', project: 'openvpn', link: 'table99.html' },
+            { category: '软件', project: 'vim', link: 'table98.html' },
+            { category: 'bash', project: 'raid/mdadmin/disk/btrfs', link: 'table132.html' },
+            { category: '软件', project: 'blender', link: 'table137.html' },
+            { category: '软件', project: 'git', link: 'table138.html' },
+            { category: 'bash', project: 'nftable/iptables', link: 'table154.html' },
+            { category: 'bash', project: 'curl', link: 'table156.html' },
+            { category: 'bash', project: 'zabbix', link: 'table161.html' },
+            { category: 'bash', project: 'openssl', link: 'table168.html' },
+            { category: 'bash', project: 'screen', link: 'table175.html' },
+            { category: 'bash', project: 'vsftp/ftp/tftp', link: 'table181.html' },
+            { category: 'bash', project: 'wol', link: 'table194.html' },
+            { category: 'bash', project: '硬件相关/ethtool', link: 'table196.html' },
+            { category: 'bash', project: 'vnc相关', link: 'table199.html' },
+            { category: 'bash', project: 'snmp', link: 'table218.html' },
+            { category: 'bash', project: 'ntp chrony 时间同步', link: 'table232.html' },
+            { category: 'bash', project: 'rsync', link: 'table260.html' },
+            { category: 'bash', project: 'expect', link: 'table282.html' },
+            { category: 'bash', project: 'ffmpeg', link: 'table287.html' },
+            { category: 'bash', project: 'openvswitch', link: 'table283.html' },
+            { category: 'cmd', project: '新主机', link: 'table290.html' },
+            { category: '软件', project: 'mysql_mariadb', link: 'table291.html' },
+            { category: 'bash', project: 'chromium/chrome', link: 'table293.html' },
+            { category: 'LINUX', project: '新主机', link: 'table296.html' },
+            { category: 'bash', project: 'named/dig', link: 'table339.html' },
+            { category: 'bash', project: 'diff', link: 'table370.html' },
+            { category: 'bash', project: 'arch linux', link: 'table441.html' },
+            { category: 'LINUX', project: 'apt dpkg debian', link: 'table458.html' },
+            { category: 'cmd', project: '进程相关', link: 'table472.html' },
+            { category: 'H3C', project: '端口相关', link: 'table536.html' },
+            { category: 'H3C', project: 'SNMP', link: 'table538.html' },
+            { category: 'bash', project: 'postfix/main', link: 'table544.html' },
+            { category: 'H3C', project: 'H3C无线相关', link: 'table549.html' },
+            { category: '产品', project: 'qnap/威联通', link: 'table556.html' },
+            { category: 'cmd', project: '帐号或用户', link: 'table558.html' },
+            { category: 'cmd', project: '远程桌面相关', link: 'table571.html' },
+            { category: '产品', project: 'proxmox/PVE', link: 'table573.html' },
+            { category: '知识', project: '端口号', link: 'table581.html' },
+            { category: '产品', project: '深信服', link: 'table585.html' },
+            { category: '产品', project: '大华产品', link: 'table588.html' },
+            { category: 'H3C', project: 'H3C ACL', link: 'table591.html' },
+            { category: 'cmd', project: '电源相关', link: 'table602.html' },
+            { category: 'cmd', project: '系统相关/软件管理', link: 'table624.html' },
+            { category: '知识', project: '软件设计和开发', link: 'table626.html' },
+            { category: 'bash', project: 'k8s', link: 'table645.html' },
+            { category: '知识', project: '产品 飞书/抖音/火山引擎/字节跳动', link: 'table662.html' },
+            { category: '知识', project: '网络设备', link: 'table651.html' },
+            { category: '知识', project: '合同管理', link: 'table700.html' },
+            { category: '产品', project: '金山/wps相关', link: 'table701.html' },
+            { category: 'bash', project: 'auditd', link: 'table702.html' },
+            { category: '知识', project: 'RegEx/正则表达式', link: 'table703.html' },
+            { category: 'cmd', project: 'autoit', link: 'table704.html' },
+            { category: 'H3C', project: 'NAT', link: 'table705.html' },
+            { category: '知识', project: '建筑建造', link: 'table800.html' },
+            { category: '知识', project: '人员管理', link: 'table801.html' },
+            { category: 'HTML', project: '网页安全', link: 'table802.html' },
+            { category: 'C语言', project: 'C语言代码规范', link: 'table803.html' },
+            { category: '知识', project: '企业管理/公司管理', link: 'table804.html' },
+            { category: '知识', project: '网络机房建设', link: 'table805.html' },
+            { category: '知识', project: 'CPU相关', link: 'table806.html' },
+            { category: '产品', project: '光模块/光转电/网卡兼容性表格', link: 'table900.html' },
+            { category: '产品', project: '阿里相关', link: 'table901.html' },
+            { category: '产品', project: '信息收集/告警通知', link: 'table902.html' },
+        ];
+
+        // DOM 引用
+        const tbody = document.getElementById('tableBody');
+        const categorySelect = document.getElementById('categoryFilter');
+        const projectSelect = document.getElementById('projectFilter');
+        const keywordInput = document.getElementById('keywordInput');
+        const resetBtn = document.getElementById('resetFilters');
+        const rowCountSpan = document.getElementById('rowCount');
+
+        // ---- 工具：从数据中提取唯一值 ----
+        function getUniqueValues(data, key) {
+            const set = new Set();
+            data.forEach(item => {
+                if (item[key] && typeof item[key] === 'string') {
+                    set.add(item[key]);
+                }
+            });
+            return Array.from(set).sort();
+        }
+
+        // ---- 填充下拉菜单 ----
+        function populateSelect(selectElement, values, allLabel) {
+            selectElement.innerHTML = '';
+            const allOption = document.createElement('option');
+            allOption.value = 'all';
+            allOption.textContent = allLabel;
+            selectElement.appendChild(allOption);
+
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                selectElement.appendChild(opt);
+            });
+        }
+
+        // ---- 初始化下拉菜单 ----
+        function initFilters() {
+            const categories = getUniqueValues(tableData, 'category');
+            const projects = getUniqueValues(tableData, 'project');
+            populateSelect(categorySelect, categories, '全部分类');
+            populateSelect(projectSelect, projects, '全部项目');
+        }
+
+        // ---- 渲染表格 ----
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="3">没有匹配的记录</td></tr>`;
+                rowCountSpan.textContent = '0';
+                return;
+            }
+            let html = '';
+            data.forEach(item => {
+                const category = escapeHtml(item.category);
+                const project = escapeHtml(item.project);
+                const link = escapeHtml(item.link);
+                html += `<tr>
+                    <td class="col-category">${category}</td>
+                    <td class="col-project">${project}</td>
+                    <td class="col-link"><a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+            rowCountSpan.textContent = data.length;
+        }
+
+        // ---- 防 XSS ----
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // ---- 核心过滤 ----
+        function filterData() {
+            const categoryVal = categorySelect.value;
+            const projectVal = projectSelect.value;
+            const keyword = keywordInput.value.trim().toLowerCase();
+
+            const filtered = tableData.filter(item => {
+                if (categoryVal !== 'all' && item.category !== categoryVal) {
+                    return false;
+                }
+                if (projectVal !== 'all' && item.project !== projectVal) {
+                    return false;
+                }
+                if (keyword !== '') {
+                    const inCategory = item.category.toLowerCase().includes(keyword);
+                    const inProject = item.project.toLowerCase().includes(keyword);
+                    if (!inCategory && !inProject) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            renderTable(filtered);
+        }
+
+        // ---- 重置 ----
+        function resetFilters() {
+            categorySelect.value = 'all';
+            projectSelect.value = 'all';
+            keywordInput.value = '';
+            filterData();
+        }
+
+        // ---- 导航栏切换（移动端） ----
+        function initNavToggle() {
+            const toggle = document.getElementById('navToggle');
+            const menu = document.getElementById('navMenu');
+            if (toggle && menu) {
+                toggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    menu.classList.toggle('open');
+                });
+                // 点击菜单项后关闭菜单
+                menu.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function() {
+                        toggle.classList.remove('active');
+                        menu.classList.remove('open');
+                    });
+                });
+            }
+        }
+
+        // ---- 绑定事件 ----
+        categorySelect.addEventListener('change', filterData);
+        projectSelect.addEventListener('change', filterData);
+        keywordInput.addEventListener('input', filterData);
+        resetBtn.addEventListener('click', resetFilters);
+
+        // ---- 初始化 ----
+        initFilters();
+        renderTable(tableData);
+        initNavToggle();
+
+        //console.log('✅ Table Index 已启动 · 下拉菜单由表格列自动生成');
+    })();
+    </script>
+</body>
+</html>

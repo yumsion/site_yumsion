@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t703</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 703 知识 RegEx/正则表达式</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>Perl 兼容正则表达式（Perl Compatible Regular Expressions，简称 PCRE）</summary>
+字符类</br>
+&#x5c;d 数字</br>
+&#x5c;D 非数字</br>
+&#x5c;w 单词字符(字母/数字/下划线) </br>
+&#x5c;W 非单词字符</br>
+&#x5c;s 空白字符</br>
+&#x5c;S 非空白字符</br>
+</br>
+重复</br>
+{3,5} 重复，最少3次，最多5次</br>
++ 重复，至少1次</br>
+* 重复，0次或以上</br>
+? 重复，0次或1次</br>
+.* 贪婪匹配（默认）</br>
+.*? 懒惰匹配（Lazy）</br>
+.*+ 占有匹配（Possessive）尽可能多地匹配且绝对不回溯</br>
+</br>
+</br>
+边界匹配，占位符</br>
+^ 行开头</br>
+$ 行尾巴</br>
+&#x5c;b 单词边界</br>
+&#x5c;B 非单词边界</br>
+</br>
+</br>
+称预查/零宽断言</br>
+(?= pattern) 正向先行断言，后面是pattern</br>
+(?! pattern) 负向先行断言，后面不跟pattern</br>
+(?&#x3c;= pattern) 正向后行断言，前面必须是 pattern</br>
+(?&#x3c;! pattern) 负向后行断言，前面不能是 pattern</br>
+</br>
+</br>
+捕获组与非捕获组</br>
+(pattern) 捕获组 保存匹配的文本，后续可用 &#x5c;1, &#x5c;2 引用或在代码中提取。</br>
+(?:pattern) 非捕获组,仅作逻辑分组（如组合数量词），不保存文本，提升匹配性能。</br>
+(?&#x3c;name&#x3e;pattern) 命名捕获组,为捕获组命名，通过名字提取，如 (?&#x3c;year&#x3e;&#x5c;d{4})-(?&#x3c;month&#x3e;&#x5c;d{2})</br>
+(?&#x3e;pattern) 原子组,匹配成功后抛弃该组内的回溯点，功能类似于占有匹配。</br>
+</br>
+
+    </details></td><td>PCRE</td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

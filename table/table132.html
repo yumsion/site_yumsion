@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t132</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 132 bash raid/mdadmin/disk/btrfs </h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>btrfs raid1</summary>
+pacman -S btrfs-progs</br>
+mkfs.btrfs -m raid1 -d raid1 /dev/sdb /dev/sdc /dev/sdd -L mydata</br>
+或</br>
+mkfs.btrfs -m raid1 -d raid1 &#x5c;</br>
+  /dev/disk/by-id/ata-你的8T硬盘ID &#x5c;</br>
+  /dev/disk/by-id/ata-你的第一块4T硬盘ID &#x5c;</br>
+  /dev/disk/by-id/ata-你的第二块4T硬盘ID &#x5c;</br>
+  -L mydata</br>
+</br>
+-m raid1：将元数据（Metadata）设置为 RAID 1（双副本存放，极为重要，防止元数据损坏导致文件系统崩溃）。</br>
+-d raid1：将数据（Data）设置为 RAID 1。</br>
+-L mydata：给文件系统设置一个标签（Label）。</br>
+</br>
+# 创建挂载点</br>
+mkdir -p /mnt/btrfs_pool</br>
+</br>
+# 临时挂载</br>
+mount /dev/sdb /mnt/btrfs_pool</br>
+mount UUID=你的文件系统UUID /mnt/btrfs_pool</br>
+#挂载 Btrfs 多盘文件系统时，你只需要写任意一块属于这个 Btrfs 卷的硬盘即可。</br>
+#fstab挂载</br>
+</br>
+vim /etc/fstab</br>
+UUID=你的UUID  /mnt/btrfs_pool  btrfs  defaults,compress=zstd  0  0</br>
+</br>
+# 查看空间使用情况</br>
+btrfs filesystem df /mnt/btrfs_pool</br>
+btrfs filesystem show /mnt/btrfs_pool</br>
+</br>
+#磁盘空间不均时的 Balance（平衡）操作</br>
+btrfs balance start /mnt/btrfs_pool</br>
+</br>
+#定期进行文件系统 scrub（数据校验）</br>
+RAID 1 虽然有双副本，但如果发生静默数据损坏（Bit Rot），系统需要校验才能知道哪个副本是正确的。定期运行校验：</br>
+# 后台启动校验</br>
+btrfs scrub start /mnt/btrfs_pool</br>
+# 查看校验进度和状态</br>
+btrfs scrub status /mnt/btrfs_pool</br>
+</br>
+</br>
+
+    </details></td><td>btrfs raid1</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>mdadm</summary>
+/proc/mdstat #mdadm磁盘简述文件</br>
+/dev/mdadm.conf #raid信息保存和自动加载配置文件</br>
+</br>
+#RAID5 RAID5 三个盘 一个备份盘</br>
+mdadm --create -auto=yes /dev/md0 -level=5 -raid-devices=3 -spare=devices=1 /dev/sdb /dev/sdb6 /dev/sdb7 /dev/sdb8</br>
+#建立raid5 共有5快盘组成，3块活动盘，2块备盘，raid位置是/dev/md01 组成是...</br>
+mdadm --create --level=5 --raid-devices=3 --spare-devices=2 /dev/md01 /dev/sdb1 /dev/sdb2 /dev/sdb3 /dev/sdb4 /dev/sdb5</br>
+</br>
+</br>
+#查看RAID组详细信息</br>
+mdadm --detail /dev/md0</br>
+</br>
+导出目前RAID信息到配置文件</br>
+mdadm --detail /dev/md0</br>
+</br>
+关闭RAID0</br>
+mdadm -stop /dev/md0</br>
+</br>
+按照配置加载RAID到/dev/md0</br>
+mdadm -assemble -scan /dev/md0</br>
+</br>
+设置sdb6为错误状态并进行转移和修复</br>
+mdadm /dev/md0 -fail /dev/sdb6</br>
+</br>
+将sdb6从RAID中移除</br>
+mdadm /dev/md0 -remove /dev/sdb6</br>
+</br>
+将sdb9添加到RAID中</br>
+mdadm /dev/md0 -add /dev/sdb9</br>
+二层帮助文件，其实指导作用并不完善</br>
+mdadm --create --help</br>
+</br>
+</br>
+mdadm --examine /dev/sdc1 /dev/sdc2 /dev/sdc3 /dev/sdc4&#x09;检查磁盘上是否有RAID信息</br>
+#配置raid6</br>
+mdadm --create /dev/md0 --level=6 --raid-devices=4 /dev/sdc1 /dev/sdc2 /dev/sdc3 /dev/sdc4&#x09;配置raid6</br>
+mdadm --add /dev/md0 /dev/sdf1</br>
+mdadm --manage --fail /dev/md0 /dev/sdd1&#x09;</br>
+mdadm /dev/md/mirror --fail /dev/sdc1 --remove /dev/sdc1</br>
+mdadm --grow /dev/md/mirror --raid-devices=2&#x09;移除一个盘</br>
+#可用空间为50%，将生产软连接/dev/md/mdname01，指向真正的md文件</br>
+mdadm --create mdname01 --level=6 --raid-devices=4 /dev/sdc1 /dev/sdc2 /dev/sdc3 /dev/sdc4</br>
+#停用一个raid</br>
+mdadm -S /dev/md0</br>
+mdadm --stop /dev/md0</br>
+</br>
+mdadm --remove /dev/md0</br>
+kpartx -av img01&#x09;loop挂载设备并且识别其中的虚拟分区</br>
+mdadm --assemble --scan --config=/etc/mdadm.conf&#x09;Assemble a pre-existing array</br>
+mdadm: device /dev/mapper/loop0p1 exists but is not an md array.</br>
+--create该参数后面要加补加参数，如--create mdname01&#x09;一个缺少raid名称参数而导致的故障</br>
+mdadm -C -v /dev/md6 -l6 -n4 /dev/sd{b..e} -x2 /dev/sd{f..g}</br>
+#Create md6 as RAID level 6 , use 4 disk , 2 spare&#x09;配置raid6</br>
+mdadm -D /dev/md6 # detail of raid dev md6&#x09;查看raid detail</br>
+mdadm -f /dev/md6 /dev/sdb #make md6 failed disk sdb&#x09;配置单盘为failed状态</br>
+</br>
+</br>
+
+    </details></td><td>mdadm</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

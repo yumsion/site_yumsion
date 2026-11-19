@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--MARK_HEADER_BEGIN-->
+<title>YUMSION 个人站点</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+<!--MARK_HEADER_END-->
+
+<h3>
+关于修改小狼毫输入法（RIME）的候选字符数量，您可以通过编辑其配置文件来实现。
+</h3>
+<p>
+以下是具体步骤：
+</p>
+
+<p>1. 找到配置文件</p>
+<p>用户文件夹：</p>
+<table class="table table-bordered table-hover table-striped">
+	<tr><td>windows系统</td><td>%APPDATA%\RIME 或 C:\Program Files\Rime\weasel-<版本号>\data </td></tr>
+	<tr><td>linux系统</td><td>~/.config/ibus/rime</td></tr>
+</table>
+
+<p>2.编辑配置文件：</p>
+<p>主要修改的文件是 default.yaml</p>
+<p>或</p>
+<p>您使用的方案文件（如 luna_pinyin.schema.yaml）。</p>
+
+<p>3. 修改候选词数量</p>
+<pre>
+<code>menu:
+  page_size: 9
+  </code>
+</pre>
+
+<p>4.保存文件后，右键点击任务栏的小狼毫图标，选择「重新部署」，使修改生效。</p>
+<!--MARK_FOOTER_BEGIN-->
+<p id="badsoup">有人一笑就很好看，你是一看就挺好笑。</p>
+<script>
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', 'https://www.7ed.net/soup/api');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      var data = JSON.parse(xhr.responseText);
+      var badsoup = document.getElementById('badsoup');
+      badsoup.innerText = data.badsoup;
+    }
+  }
+  xhr.send();
+</script>
+<div class="container">
+  <h3>个人站点
+<small>
+THIS IS A PERSIONAL WEBSITE
+</small>
+</h3>
+</div>
+<div class="col-12 justify-content-center">
+<span>
+yumsion@gmail.com
+</span>
+</div>
+
+<!--MARK_FOOTER_END-->
+</body>
+</html>
+

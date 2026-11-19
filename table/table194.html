@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t194</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 194 wol</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary style="white-space:pre-wrap;">linux系统和window系统配置wlo</summary>
+<a href="table196.html" target="_blank">linux系统使用ethtool配置网卡开启wlo功能</a>
+
+Set-NetAdapterPowerManagement -Name &#x22;你的无线网卡名称&#x22; -WakeOnMagicPacket Enabled #管理网卡的唤醒设置
+powercfg /devicequery wake_armed #命令确认 Windows 是否已将该网卡列入可唤醒设备
+powercfg -deviceenablewake &#x22;你的无线网卡名称&#x22; #授予唤醒权限
+命令行不能完全替代图形界面或底层设置，以下环节仍需手动处理：
+注册表修改：部分 WoWLAN 功能依赖注册表中的 EnableWoWLAN 键值，这需要通过 regedit 或 reg add 命令单独完成
+reg add &#x22;HKLM&#x5c;SYSTEM&#x5c;CurrentControlSet&#x5c;Services&#x5c;NativeWifiP&#x5c;Parameters&#x22; /v EnableWoWLAN /t REG_DWORD /d 1 /f
+
+    </details></td><td>wol 配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>wlo命令和参数</summary>
+wol 11:22:33:44:55:66 #使用wol命令进行网卡启动，需要网卡支持和wol选项打开
+# udp port 40000 默认的udp端口号
+# ffff-ffff-ffff 默认帧地址，是广播帧
+
+ip neigh add 172.16.31.15 dev b01vif31 lladdr 24:5e:be:7d:e6:5b
+wol -h 172.16.31.15 24:5e:be:7d:e6:5b #多网口可以使用-h进行引流，因默认MAC会泛洪，无需指定为全ff
+
+wol 默认从默认路由的网口发出,如果需要指定网口,可以使用网口上的IP进行处理,如-h 网卡IP,或者修改指定的路由进行网口匹配
+-h 对端IP,会根据路进行网口匹配发出匹配,携带对应的MAC,注意,仅从出口发出,还是使用最上方的mac地址绑定进行处理,否则mac地址为全ff
+
+<details><summary>多网卡直通网段的设备的wlo参考执行脚本.sh</summary>
+#!/bin/bash
+
+set -x
+function GET_MAC_ADDR(){
+while read fIP _ fMAC _
+do
+echo $fIP
+[[ -z &#x22;${fIP:-}&#x22; ]] &#x26;&#x26; echo &#x27;ignore empty line&#x27; &#x26;&#x26; continue
+if [[ $fIP == $IP ]]
+then
+MAC=&#x22;$fMAC&#x22;
+return 0
+fi
+done &#x3c;&#x3c;&#x3c;&#x22;1.2.3.4 lladdr 24:14:66:77:88:36 STALE 
+1.1.1.1 lladdr 34:22:33:44:55:05 STALE &#x22;
+return 1
+}
+
+
+IP=$1
+[[ -z &#x22;${IP:-}&#x22; ]] &#x26;&#x26; echo &#x22;TARGET IP NEEDED&#x22; &#x26;&#x26; exit 1
+GET_MAC_ADDR 
+[[ -z &#x22;${MAC:-}&#x22; ]] &#x26;&#x26; echo &#x22;TARGET MAC NOT FOUND&#x22; &#x26;&#x26; exit 1
+echo &#x22;mac-add is $MAC&#x22;
+ip neigh del $IP dev vlan1026
+ip neigh add $IP lladdr ff:ff:ff:ff:ff:ff dev vlan1026
+sleep 1
+wol -h $IP $MAC 
+wol -h $IP $MAC 
+sleep 1
+wol -h $IP $MAC 
+sleep 1
+
+ip neigh del $IP dev vlan1026
+
+</details>
+
+    </details></td><td>wlo</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

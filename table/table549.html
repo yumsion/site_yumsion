@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t549</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 549 H3C H3C无线相关</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td style="white-space:pre-wrap;"><details><summary>H3C 无线漫游配置</summary>
+1. 开启 802.11r 快速漫游 (FT)
+802.11r（Fast BSS Transition）在 H3C 上被称为 FT。开启它能让通过 802.1X认证的终端在 AP 间漫游时，跳过重新进行 RADIUS 握手的步骤。
+注意： 配置 ft enable 之前，必须先通过 undo service-template enable 临时禁用该服务模板。
+<AC> system-view
+[AC] wlan service-template employee # 进入你的飞连服务模板
+[AC-wlan-st-employee] undo service-template enable # 临时禁用服务模板以允许修改
+[AC-wlan-st-employee] security-ie rsn # 确保安全协议为 RSN（WPA2/WPA3）
+[AC-wlan-st-employee] ft enable # 开启 802.11r 快速漫游
+[AC-wlan-st-employee] service-template enable # 重新启用服务模板
+
+2. 配置弱信号强制踢下线（客户端主动漫游）
+当终端信号低于阈值（如 RSSI 值为 20，约 −75dBm∼−80dBm）时，让 AP 主动断开该终端，逼迫其快速漫游。
+在 H3C 中，该功能通常在 AP 组的射频视图 或 具体 AP 的射频接口 下配置。
+[AC] wlan ap-group default # 进入 AP 组（或指定 AP 组）
+[AC-wlan-ap-group-default] ap-model WA6320 # 进入对应的 AP 型号视图
+[AC-wlan-ap-group-default-ap-model-WA6320] radio 1 # 进入 5GHz 射频（通常为 Radio 1 或 2）
+# 开启弱信号踢下线功能（低于 RSSI 20 强制踢除，取值范围 1-30，建议 18~22 之间）
+[AC-wlan-ap-group-default-ap-model-WA6320-radio-1] option client-reject enable rssi 20
+# (可选) 开启 AP 忽略弱信号报文功能，减少边缘弱信号垃圾报文对 AP 性能的消耗
+[AC-wlan-ap-group-default-ap-model-WA6320-radio-1] option signal-ignore enable rssi 15
+
+3. 开启 802.11k 和 802.11v（辅助漫游）
+在服务模板中开启 11k 和 11v，帮助终端更聪明地感知周围 AP 的负载和信号强度，提前准备漫游策略。
+[AC] wlan service-template employee
+[AC-wlan-st-employee] undo service-template enable
+
+[AC-wlan-st-employee] 11k enable # 开启 802.11k 邻居报文通告
+#或
+[AC-wlan-st-employee] bss transition-management enable #（开启802.11v）
+
+[AC-wlan-st-employee] 11v bss-transition enable # 开启 802.11v BSS 过渡管理
+#或
+[AC-wlan-st-employee] sacp anti-sticky enable rssi [rssi值] interval [秒数]
+#开启后，AP会收集周边AP的信息，并“建议”终端漫游到更合适的AP，整个过程对用户更平滑,rssi 75 表示当终端信号低于-75dBm左右时触发；
+#interval 10 表示AC每10秒检查一次。如果效果不明显，可以将 rssi 值调高到 30 或 35（数值越高，触发越灵敏）。
+#或
+option client reject enable rssi 25
+#或group视图下
+
+
+[AC-wlan-st-employee] service-template enable
+
+二、有线交换机侧配置：加速终端 MAC 迁移
+当终端从 AP 1 快速切换到 AP 2 时，终端的物理接入端口在交换机上发生了漂移。如果交换机不能在毫秒级感知这个漂移，下行流量依然会发往旧 AP 导致短暂断网。
+在 连接 AP 的接入交换机（以及核心/汇聚交换机） 上配置：
+
+1. 开启 MAC 地址迁移快速更新 ARP
+当交换机发现某个 MAC 地址从端口 A 漂移到了端口 B 时，立刻触发底层硬件的 MAC 表更新并发送 ARP 探测，避免流量黑洞。
+<Switch> system-view
+# 开启 MAC 地址迁移通知
+[Switch] mac-address notification mac-move
+# 开启因 MAC 迁移导致的 ARP 快速更新（极重要！缩短漫游后断流时间）
+[Switch] mac-address mac-move fast-update enable
+2. 优化交换机端口的生成树（Edge Port）
+连接 AP 的交换机端口必须配置为边缘端口。否则，当终端切换 AP 导致物理链路变动时，普通生成树计算会导致端口有 15∼30 秒的收敛等待时间。
+[Switch] interface GigabitEthernet 1/0/1 # 进入连接 AP 的交换机物理端口
+[Switch-GigabitEthernet1/0/1] stp edged-port # 配置为边缘端口，免去生成树收敛时间
+    </details></td><td>H3C 无线漫游配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary>H3C无线信号管理</summary>
+配置信号强度
+
+
+<b>配置信道</b>
+ radio 2</br>
+ channel 149</br>
+[WX2560X_B1F1-wlan-ap-APNAME01-radio-2]type ?</br>
+  dot11a   802.11a #仅支持 5GHz，采用 OFDM 技术，最高速率 54 Mbps。这是最基础的模式，主要用于兼容极老的设备。</br>
+  dot11ac  802.11ac #WIFI 4 引入了 MIMO（多天线）和 40MHz 信道绑定，速率大幅提升，最高可达 600 Mbps（需终端支持）。这是 5GHz 频段上实现高速连接的基础模式。</br>
+  dot11an  802.11n(5GHz) #WIFI 5 仅支持 5GHz，引入更宽的信道（最高160MHz）、更高阶调制（256-QAM）和下行 MU-MIMO，速率可达 Gbps 级别。它专注于 5GHz 频段的性能提升。</br>
+  dot11ax  802.11ax #WIFI 6 同时支持 2.4/5GHz，核心是提升多设备并发效率。引入 OFDMA（正交频分多址）和完整的上下行 MU-MIMO，虽然峰值速率更高（9.6 Gbps），但实际优势在于高密度场景下的稳定性和低延迟。</br>
+</br>
+ radio 3</br>
+  channel 11</br>
+[WX2560X-wlan-ap-APNAME01-radio-3]type ?</br>
+  dot11b    802.11b #WIFI 1 最基础的模式，最高速率仅 11 Mbps。如今已非常老旧，仅用于兼容极早期的设备</br>
+  dot11g    802.11g #WIFI 3 速率提升至 54 Mbps，并向下兼容 802.11b 设备。相比 b 模式，能提供更实用的基础速率。</br>
+  dot11gax  802.11gax #WIFI 4 引入了 MIMO（多天线）技术，速率有质的飞跃，最高可达 600 Mbps（需终端与AP同时支持）。这是过去很长一段时间内 2.4GHz 的主流模式。</br>
+  dot11gn   802.11n(2.4GHz) #WIFI 6 这是 H3C 对 Wi-Fi 6 在 2.4GHz 频段的命名。核心优势不在于单设备峰值速率，而在于通过 OFDMA 等技术，提升多设备并发时的效率和稳定性。</br>
+
+
+
+<b>radio模块-波束成形技术</b>：</br>
+mu-txbf enable #开启多用户发送波束成形（Multi-User Tx Beamforming）功能</br>
+#必须先开 su-txbf：mu-txbf 只有在单用户波束成形已经开启的前提下才会生效。</br>
+</br>
+su-txbf enable #让 AP 将无线信号能量集中“瞄准”单个客户端的技术，目的是提升该客户端接收到的信号质量。</br>
+#它比较适合客户端分布范围广、网络环境质量差、信号衰减严重的场景，用于增强远端或弱信号位置的连接质量。</br>
+#需要留意的兼容性风险</br>
+#部分苹果电脑（特别是较老版本）对 Wi-Fi 6 的兼容性存在问题，对 su-txbf 功能支持得不好，曾出现连接 Wi-Fi 6 AP 时丢包的现象，当时是通过关闭 su-txbf 来解决的。</br>
+
+<b>查看一个客户端的连接信息</b></br>
+<WX2560X_B1F1>display wlan client mac-address 78be-81e5-e3d6 verbose</br>
+<WX2560X_B1F1>display wlan client status mac-address  78be-81e5-e3d6</br>
+</br>
+</br>
+    </details></td><td>H3C 无线信号相关</td></tr>
+    <tr><td style="white-space:pre-warp;"><details><summary>H3C的AP自动接入和固件升级【WEBUI】</summary>
+Wireless Configuration -- AP ManagementAP -- Global Settings
+
+Software upgrade #检查AP和AC的版本，不一致则使用AC上的版本升级AP上的版本
+#wa5600a.ipe，文件不存在，下载到apimge文件夹后，后提示下载失败。
+#下载对应的AC version版本，还是出现这个问题，可能下载的同version版本有发布时间的不同。
+#如果确实需要升级AP的版本，建议先网上下载并升级AC，并上传所有的ipe版本，否则ipe版本可能不匹配。
+
+Auto AP #自动AP发现和注册，不能手动修改AP配置。
+
+Auto AP conversion #自动上线后，自动固化配置，防止重复上线。
+    </details></td><td>H3C AP 新AP的接入</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary>查看所有AP</summary>
+display wlan ap all #查看所有AP 名称/运行状态/ Model / Serial ID
+display wlan ap all verbose #查看所有AP 详细信息，信道radio，等
+display wlan client ap name XXX #查看AP上的用户数量
+    </details></td><td>H3C AP 命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary>AC控制器 许可备份</summary>
+AC冗余方案。H3C主流的做法是双链路备份（即1+1热备）
+备份AC不需要再单独买一套同样数量的授权。H3C支持License共享，一份授权可以在两台互为备份的AC之间同步使用，不需要叠加购买。
+两台AC均支持双链路备份（WX2500H及以上主流型号基本都支持）。
+确认型号支持，H3C 的 License 共享机制并不是让一份授权永久地在两台 AC 上同时生效，它的核心是一个30 天宽限期
+
+在主AC上指定备份AC的IP，配置优先级、备份VLAN等参数。
+
+N+1 双链路备份 + License 共享，在备份AC上做对称配置，并开启License共享。
+<b>AC 1（主，已安装正式 License）配置：</b>
+# 配置 AP 组的备份 AC 地址（指向 AC 2）
+wlan ap-group 你的AP组名(默认default-group)
+ backup-ac ip AC2的IP地址
+ wlan tunnel-preempt enable   # 可选，主AC恢复后允许抢占
+ quit
+
+# 配置 AP License 共享组
+wlan ap-license-group
+ local ip AC1的IP地址
+ member ip AC2的IP地址 backup   # 指定 AC2 为备角色
+ ap-license-synchronization enable
+ quit
+
+<b>AC 2（备，无正式 License）配置：</b>
+# 配置 AP 组的备份 AC 地址（指向 AC 1）
+wlan ap-group 你的AP组名(默认default-group)
+ backup-ac ip AC1的IP地址
+ quit
+
+# 配置 AP License 共享组
+wlan ap-license-group
+ local ip AC2的IP地址 backup   # 声明自身为备角色
+ member ip AC1的IP地址          # 主 AC 为成员
+ ap-license-synchronization enable
+ quit
+
+
+
+AP上线后，会同时与两台AC建立主/备隧道。
+配置完成后，可以用 display wlan ap-license-group 命令查看共享组状态，确认两台 AC 已建立连接且授权信息同步成功
+
+
+    </details></td><td>AC控制器 许可备份</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary>H3C 无线模板</summary>
+#打印机无线</br>
+wlan service-template wprinter</br>
+ ssid WPrinter</br>
+ vlan 100</br>
+ client forwarding-location ap vlan 100</br>
+ akm mode psk</br>
+ preshared-key pass-phrase cipher xxxxxx</br>
+ cipher-suite ccmp</br>
+ cipher-suite tkip</br>
+ security-ie rsn</br>
+ security-ie wpa</br>
+ service-template enable</br>
+</br>
+</br>
+</br>
+</br>
+#MAC认证无线</br>
+wlan service-template iot2</br>
+ ssid iot2</br>
+ client forwarding-location ap vlan 10</br>
+ client forwarding-location ap vlan 101</br>
+ client forwarding-location ap vlan 140</br>
+ akm mode psk</br>
+ preshared-key pass-phrase cipher xxxxxx</br>
+ cipher-suite ccmp</br>
+ cipher-suite tkip</br>
+ security-ie rsn</br>
+ security-ie wpa</br>
+ client-security authentication-mode mac</br>
+ mac-authentication domain feilian</br>
+ service-template enable</br>
+</br>
+wlan service-template st01</br>
+ ssid SSID01</br>
+ vlan 14</br>
+ client forwarding-location ap vlan 14</br>
+ user-isolation enable</br>
+ akm mode dot1x</br>
+ cipher-suite ccmp</br>
+ cipher-suite tkip</br>
+ security-ie rsn</br>
+ security-ie wpa</br>
+ client-security authentication-mode dot1x</br>
+ dot1x domain feilian</br>
+ ft enable</br>
+ service-template enable</br>
+</br>
+
+
+    </details></td><td>H3C 无线模板</td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td style="white-space:pre-warp;"><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-24 17:56:40</div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

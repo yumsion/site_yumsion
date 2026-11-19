@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t196</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 196 bash 硬件相关</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>ethtool</summary>
+ethtool eth0 #查看eth0的各项硬件参数</br>
+ethtool -i eth0 #查看网卡驱动信息</br>
+ethtool -s eth0 wol g #设置eth0的wol参数为g（还可能是p）</br>
+ethtool -s eth0 wol d#关闭eth0的wol功能 </br>
+ethtool -s eth0 speed 1000 duplex full autoneg off #速率和协商配置</br>
+ethtool -K eno1 tso off gso off #禁用 tcp 分段卸载和通用分段卸载</br>
+ethtool -k eno1 #Features for eno1，细节参数,如TSO/GSO软硬件卸载</br>
+ethtool -m enp43s0 #--dump-module-eeprom|--module-info DEVNAME Query/Decode Module EEPROM information and optical diagnostics if available 光模块信息查看</br>
+ethtool -p eth0 #让eth0的网口灯闪烁一下</br>
+    </details></td><td>网卡 ethtool</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>硬盘删除和重新加入</summary>
+# 尝试重置SATA链接</br>
+echo 1 &#x3e; /sys/block/sda/device/delete</br>
+# 然后重新扫描SCSI总线</br>
+echo &#x22;- - -&#x22; &#x3e; /sys/class/scsi_host/host1/scan</br>
+
+    </details></td><td>硬盘</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="pre-wrap"><summary>文件系统 屏幕亮度</summary>
+/sys/class/backlight/*/max_brightness #显示器亮度
+    </details></td><td>显示器相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="pre-wrap"><summary>文件系统 USB相关</summary>
+cat /sys/kernel/debug/usb/devices #USB设备诊断信息位置
+    </details></td><td>USB相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="pre-wrap"><summary>文件系统 电源</summary>
+cat /sys/class/power_supply/BAT0/energy_full #电池满电值
+    </details></td><td>电源相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="pre-wrap"><summary>温度传感器</summary>
+cat /sys/class/hwmon/hwmon0/temp1_input #温度传感器数值
+查看每个目录下的 name 文件获取该传感器使用的内核驱动名称
+for i in /sys/class/hwmon/hwmon*; do echo -n &#x22;$i: &#x22;; cat $i/name; done
+驱动名称 (name)&#x09;&#x09;&#x09;通常对应的硬件&#x09;&#x09;说明
+coretemp&#x09;&#x09;&#x09;Intel CPU&#x09;&#x09;&#x09;这是监控 Intel CPU 核心温度最关键的传感器。
+k10temp 或 zenpower&#x09;&#x09;AMD CPU&#x09;&#x09;&#x09;&#x09;监控 AMD CPU 温度。
+nvme&#x09;&#x09;&#x09;&#x09;NVMe 固态硬盘&#x09;&#x09;&#x09;对应你的 NVMe 硬盘温度。
+drivetemp&#x09;&#x09;&#x09;SATA/SAS 硬盘&#x09;&#x09;&#x09;用于读取 SATA 硬盘温度（需手动加载模块）。
+nct6775 / it87 / w83627ehf&#x09;主板&#x09;&#x09;&#x09;&#x09;通常用于监控主板温度、风扇转速和电压。
+bnxt_en&#x09;&#x09;&#x09;&#x09;Broadcom 网卡
+mlx5&#x09;&#x09;&#x09;&#x09;Mellanox 网卡
+pch_lewisburg&#x09;&#x09;&#x09;Intel PCH（南桥/芯片组）&#x09;主板芯片组温度，可作参考
+
+
+temp*_input 的单位是毫摄氏度（m°C），例如 45000 表示 45°C。
+
+你也可以安装 lm-sensors 软件包，运行 sensors 命令。它会以更友好的格式汇总所有传感器读数，并自动应用配置文件中的标签，让你一眼看出哪个是 CPU 温度、哪个是硬盘温度，方便交叉验证。
+
+
+    </details></td><td>传感器相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="pre-wrap"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="pre-wrap"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t175</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 175 bash screen</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>screen 分屏</summary>
+Ctrl+a |&#x09;左右分屏
+Ctrl+a S&#x09;上下分屏
+Ctrl+a TAB&#x09;切换焦点到其它分屏
+Ctrl+a X&#x09;关闭一个分屏
+Ctrl+a :resize +30&#x09;窗口水平增加30
+Ctrl+a :resize [-h|-v|-b|-l|-p] [[+|-] n[%]|=|max|min|_|0]&#x09;screen分屏大小调节全命令，子参数可全方位调节
+Ctrl+a &#x22;&#x09;没有做caption时可临时用这个显示窗口列表
+:focus top|bottom&#x09;region切换，好像没什么好办法
+:mousetrack on&#x09;可以使用鼠标进行region切换
+Ctrl+a Q#关闭其它分屏&#x09;分屏
+
+
+    </details></td><td>screen 分屏</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>screen vim 显示问题</summary>
+解决 Vim 显示错位问题
+altscreen on
+hardstatus off&#x09;screenrc
+screen标签被更改的故障
+参照table176#bash 更改screen标签
+
+#修改屏幕字体大小
+Ctrl++
+Ctrl+-
+
+
+screen中文文件打开后出现term乱显示的问题处理,修改编码为UTF-8
+defutf8 on
+defencoding utf8
+encoding UTF-8 UTF-8
+#配置screen使用utf-8编码,避免出现显示问题
+#或Ctrl-a + : 并输入 utf8 on
+    </details></td><td>screen 显示问题</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>screen中文文件打开后出现term乱显示的问题处理</summary>
+
+    </details></td><td>screen 显示问题</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>screenrc 初始化</summary>
+#取消快捷键绑定,避免窗口全部被杀死
+#这个快捷键非常危险,需要屏蔽掉,不然哭了
+C-a &#x5c;              (quit)            Kill all windows and terminate screen
+# 完全禁用 C-a &#x5c; （将其绑定为一个空操作）
+bind &#x5c;&#x5c; 
+
+shelltitle &#x22;${USER}&#x22;
+caption always &#x22;%{.bW}%-w%{.kW}%n %t%{-}%+w %=%H %Y/%m/%d &#x22;&#x09;.screenrc #Screen 旧版本可用
+caption always &#x22;%{+b w k} %-w%{+u B w}%n:%t%{-}%+w %= %{+b w k}%Y-%m-%d %H:%M:%S %{-}&#x22; # Screen 5.0.1+ 推荐配置底部标签&#x09;screenrc caption
+
+vim /etc/shells #有的默认shell是sh，通过这里修改&#x09;screen init
+
+#鼠标相关
+mouse off #gnu screen中选取屏幕内容的时候,屏幕中的内容会不见了的问题处理,或在screen中窗口执行screen -X mouse off&#x09;screenrc
+#避免鼠标滚轮被设置成上一条和下一条命令的切换
+termcapinfo xterm* ti@:te@
+
+
+    </details></td><td>screenrc</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>screen 自动命令示例</summary>
+screen -s /bin/bash -dmS root #指定使用bash启动screen，否则默认shell可能是sh&#x09;screen init
+
+#自动窗口创建和执行指令
+RC_NAME=speedtest
+cmd=&#x22;/bin/bash /root/screenjob/001_speedtest.sh&#x22;
+SCREEN=/usr/bin/screen
+$SCREEN -dmS $RC_NAME
+$SCREEN -x -S $RC_NAME -p 0 -X stuff &#x22;$cmd&#x22;
+$SCREEN -x -S $RC_NAME -p 0 -X stuff &#x22;&#x5c;n&#x22;
+
+#创建一个窗口并直接运行程序命令
+screen -S screen01 -X screen -t title01 ping 223.5.5.5
+#-X screen 创建一个新的窗口执行命令，命令执行后自动退出
+#-t title01 ， 用到-X stuff之后，否则无效
+#命令那里没有引号
+
+
+
+
+    </details></td><td>screen 自动命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>screen log</summary>
+Ctrl+a Shift+h #开启保存功能，滞后的输入会保存到一个文件中。
+screenrc中定义的保存位置和文件名
+deflog on
+logfile /tmp/screen-%S-%n.log
+screen开启log文件记录
+
+
+
+
+Ctrl+a &#x22;&#x09;窗口选择列表
+Ctrl+a Esc / Ctrl+a [
+hjkl等，屏幕位置点
+空格
+空格
+Ctrl+a [&#x09;进入屏幕块状copy mode操作，任何非位置按键将取消mode
+起始位置选择
+first mark set
+end mark set
+输出到光标处
+
+
+#内容拷贝
+screen -S root -p iptraf -X hardcopy -h /dev/shm/hardcopy01 #执行hardcopy命令，参数无需引号处理，否则报错&#x09;hardcopy 注意
+或
+:hardcopy -h a #-h 参数是关键，它表示同时转储回滚缓冲区（scrollback buffer）的内容，而不仅仅是当前屏幕上可见的部分。
+【注意：】
+GNU Screen 的 hardcopy 功能在处理非 ASCII 字符（如汉字）时存在缺陷。即使你的终端和 Screen 都处于 UTF-8 模式，它导出的文件也不是正确的 UTF-8 编码，因此用 UTF-8 打开自然会乱码。
+这个 Bug 在较新的版本中已被修复。根据开发邮件列表的记录，GNU Screen 5.0 系列（如 5.0.1）已经修正了 hardcopy 的编码逻辑，能够输出正确的 UTF-8 字节，包括对日文等非 ASCII 文本的支持。
+
+
+    </details></td><td>screen log</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>screen 窗口相关</summary>
+Ctrl+a  &#x27;12回车&#x09;跳到12号窗口
+Ctrl+a k&#x09;强制kill一个窗口
+Ctrl+a:defscrollback 100 #设置默认scrollback翻行数量。
+Ctrl+a:scrollback 100 #设置本窗口翻行数量
+Ctrl+a:scrollback info #查询当前窗口翻行数量
+Ctrl+a a&#x09;透传Ctrl+a命令
+Ctrl+a A/W&#x09;更改当前screen的名称
+Ctrl+a w&#x09;显示所有screen的名称
+Ctrl+a c&#x09;新建screen
+Ctrl+a n/p&#x09;切换到上一个/下一个screen
+Ctrl+a c&#x09;新添分屏后需要执行一次，否则无法输入
+Ctrl+a N&#x09;显示目前窗口编号和名称
+    </details></td><td>screen 窗口相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

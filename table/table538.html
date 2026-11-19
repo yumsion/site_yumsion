@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t538</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 538 H3C SNMP</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>光模块 OID</summary>
+【.1.3.6.1.4.1.25506.2.70.1.1.1】
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverHardwareType.28 = STRING: "SM"
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverType.28 = STRING: "10G_BASE_LR_SFP"
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverWaveLength.28 = INTEGER: 1310
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverVendorName.28 = STRING: "H3C"
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverSerialNumber.28 = STRING: "21023XXXXXXXXXX"
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverFiberDiameterType.28 = INTEGER: fiber9(1)
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverTransferDistance.28 = INTEGER: 10000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverDiagnostic.28 = INTEGER: true(1)
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverCurTXPower.28 = INTEGER: -126 #目前光功率TX
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverMaxTXPower.28 = INTEGER: 50
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverMinTXPower.28 = INTEGER: -820
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverCurRXPower.28 = INTEGER: -411 #目前光功率RX
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverMaxRXPower.28 = INTEGER: 50
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverMinRXPower.28 = INTEGER: -1030
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverTemperature.28 = INTEGER: 53
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverVoltage.28 = INTEGER: 333
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverBiasCurrent.28 = INTEGER: 4018
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverTempHiAlarm.28 = INTEGER: 73000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverTempLoAlarm.28 = INTEGER: -8000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverTempHiWarn.28 = INTEGER: 70000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverTempLoWarn.28 = INTEGER: -5000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverVccHiAlarm.28 = INTEGER: 37950
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverVccLoAlarm.28 = INTEGER: 28050
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverVccHiWarn.28 = INTEGER: 34700
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverVccLoWarn.28 = INTEGER: 31300
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverBiasHiAlarm.28 = INTEGER: 99000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverBiasLoAlarm.28 = INTEGER: 1000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverBiasHiWarn.28 = INTEGER: 90000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverBiasLoWarn.28 = INTEGER: 1000
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverPwrOutHiAlarm.28 = INTEGER: 17782
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverPwrOutLoAlarm.28 = INTEGER: 758
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverPwrOutHiWarn.28 = INTEGER: 11220
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverPwrOutLoWarn.28 = INTEGER: 1513
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverRcvPwrHiAlarm.28 = INTEGER: 17782
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverRcvPwrLoAlarm.28 = INTEGER: 229
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverRcvPwrHiWarn.28 = INTEGER: 11220
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverRcvPwrLoWarn.28 = INTEGER: 363
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverErrors.28 = BITS: 00 00 00 
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverVendorOUI.28 = Hex-STRING: 00 1F 22 
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverRevisionNumber.28 = STRING: "A0"
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverFrequency.28 = INTEGER: 2147483647
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverActiveITUChannel.28 = Gauge32: 4294967295
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverCurWaveErr.28 = INTEGER: 2147483647
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverWaveErrHiAlarm.28 = INTEGER: 2147483647
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverWaveErrLoAlarm.28 = INTEGER: 2147483647
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverCurFreqErr.28 = INTEGER: 2147483647
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverFreqErrHiAlarm.28 = INTEGER: 2147483647
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverFreqErrLoAlarm.28 = INTEGER: 2147483647
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverPartNumber.28 = STRING: "SPP10ELRCDFF-H3C"
+HH3C-TRANSCEIVER-INFO-MIB::hh3cTransceiverProductCode.28 = STRING: "SFP-XG-LX-SM1310-D"
+
+    </details></td><td>OID 光模块</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

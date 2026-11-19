@@ -1,0 +1,26 @@
+<p id="badsoup">有人一笑就很好看，你是一看就挺好笑。</p>
+<script>
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', 'https://www.7ed.net/soup/api');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      var data = JSON.parse(xhr.responseText);
+      var badsoup = document.getElementById('badsoup');
+      badsoup.innerText = data.badsoup;
+    }
+  }
+  xhr.send();
+</script>
+<div class="container">
+  <h3>个人站点
+<small>
+THIS IS A PERSIONAL WEBSITE
+</small>
+</h3>
+</div>
+<div class="col-12 justify-content-center">
+<span>
+yumsion@gmail.com
+</span>
+</div>
+

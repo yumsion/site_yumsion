@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t588</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 588 产品 大华产品</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+    <tr><td><details><summary>开发 rtsp/curl</summary>
+<b>RTSP 流地址</b></br>
+&#x27;rtsp://&#x3c;USERNAME&#x3e;:&#x3c;PASSWD&#x3e;@&#x3c;SERVER_IP&#x3e;:554/cam/realmonitor?channel=6&#x26;subtype=1&#x27;</br>
+<b>使用curl通过cgi获取截图，避免rtsp截图糊的问题。</b></br>
+curl --digest -u &#x22;username:password&#x22; &#x22;http://&#x3c;camera_ip&#x3e;/cgi-bin/snapshot.cgi?channel=1&#x26;subtype=0&#x22; -o snapshot.jpg</br>
+</details></td><td>开发 rtsp/curl</td></tr>
+        <!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary>使用curl工具进行RPC2方式登陆并获取NVS信息的代码</summary>
+#!/usr/bin/env bash
+set -uo pipefail
+
+HOST=&#x22;${1:-1.1.1.1}&#x22;; USER=&#x22;${2:-admin}&#x22;; PASS=&#x22;${3:-}&#x22;
+BASE=&#x22;http://${HOST}&#x22;
+UA=&#x22;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36&#x22;
+HDR=(-H &#x22;Accept: application/json, text/plain, */*&#x22; -H &#x22;Content-Type: application/json&#x22; &#x5c;
+     -H &#x22;Origin: ${BASE}&#x22; -H &#x22;Referer: ${BASE}/&#x22; -H &#x22;User-Agent: ${UA}&#x22; -H &#x22;DNT: 1&#x22;)
+
+md5_upper() { printf &#x27;%s&#x27; &#x22;$1&#x22; | md5sum | awk &#x27;{print toupper($1)}&#x27;; }
+
+# ========== 登录 ==========
+CH=$(curl -sS -X POST &#x22;${BASE}/RPC2_Login&#x22; &#x22;${HDR[@]}&#x22; &#x5c;
+  --data &#x22;$(jq -cn --arg u &#x22;$USER&#x22; &#x27;{method:&#x22;global.login&#x22;,params:{userName:$u,password:&#x22;&#x22;,clientType:&#x22;Web3.0&#x22;},id:5,session:null}&#x27;)&#x22;)
+
+REALM=$(jq -r &#x27;.params.realm&#x27;      &#x3c;&#x3c;&#x3c;&#x22;$CH&#x22;)
+RAND_STR=$(jq -r &#x27;.params.random&#x27;  &#x3c;&#x3c;&#x3c;&#x22;$CH&#x22;)
+SESSION1=$(jq -r &#x27;.session&#x27;        &#x3c;&#x3c;&#x3c;&#x22;$CH&#x22;)
+AUTH=$(jq -r &#x27;.params.authorityType[0]&#x27; &#x3c;&#x3c;&#x3c;&#x22;$CH&#x22;)
+
+STEP1=$(md5_upper &#x22;${USER}:${REALM}:${PASS}&#x22;)
+STEP2=$(md5_upper &#x22;${USER}:${RAND_STR}:${STEP1}&#x22;)
+
+LOGIN=$(curl -sS -X POST &#x22;${BASE}/RPC2_Login&#x22; &#x22;${HDR[@]}&#x22; &#x5c;
+  --data &#x22;$(jq -cn --arg u &#x22;$USER&#x22; --arg p &#x22;$STEP2&#x22; --arg at &#x22;$AUTH&#x22; &#x5c;
+             --arg r &#x22;$REALM&#x22; --arg rnd &#x22;$RAND_STR&#x22; --arg s &#x22;$SESSION1&#x22; &#x5c;
+    &#x27;{method:&#x22;global.login&#x22;,params:{userName:$u,password:$p,clientType:&#x22;Web3.0&#x22;,authorityType:$at,passwordType:&#x22;Default&#x22;,realm:$r,random:$rnd},id:6,session:$s}&#x27;)&#x22;)
+
+[[ &#x22;$(jq -r &#x27;.result // false&#x27; &#x3c;&#x3c;&#x3c;&#x22;$LOGIN&#x22;)&#x22; == &#x22;true&#x22; ]] || {
+  echo &#x22;登录失败: $(jq -r &#x27;.error.message&#x27; &#x3c;&#x3c;&#x3c;&#x22;$LOGIN&#x22;)&#x22; &#x3e;&#x26;2; exit 1; }
+SESSION2=$(jq -r &#x27;.session&#x27; &#x3c;&#x3c;&#x3c;&#x22;$LOGIN&#x22;)
+KEEPALIVE=$(jq -r &#x27;.params.keepAliveInterval&#x27; &#x3c;&#x3c;&#x3c;&#x22;$LOGIN&#x22;)
+echo &#x22;登录成功 session=$SESSION2 keepAlive=${KEEPALIVE}s&#x22;
+
+# ========== 通用 RPC 封装 ==========
+RPC_ID=100
+function rpc() {  # rpc &#x3c;method&#x3e; &#x3c;params-json&#x3e;
+  ((RPC_ID++))
+  echo RPC_ID $RPC_ID &#x3e;&#x26;2
+  curl -sS -X POST &#x22;${BASE}/RPC2&#x22; &#x22;${HDR[@]}&#x22; &#x5c;
+    --data &#x22;$(jq -cn --arg m &#x22;$1&#x22; --argjson p &#x22;$2&#x22; --argjson i &#x22;$RPC_ID&#x22; --arg s &#x22;$SESSION2&#x22; &#x5c;
+             &#x27;{method:$m,params:$p,id:$i,session:$s}&#x27;)&#x22;
+}
+function KEEPALIVE_INTERVAL (){
+  ((RPC_ID++))
+    curl -sS -X POST &#x22;${BASE}/RPC2&#x22; &#x22;${HDR[@]}&#x22; &#x5c;
+      --data &#x22;$(jq -cn --argjson i &#x22;$RPC_ID&#x22; --arg s &#x22;$SESSION2&#x22; &#x5c;
+               &#x27;{method:&#x22;global.getCurrentTime&#x22;,params:null,id:$i,session:$s}&#x27;)&#x22; &#x5c;
+      &#x3e;/dev/null || break
+}
+
+
+echo; echo &#x22;===== 首页信息 =====&#x22;
+
+echo &#x22;--- 设备时间 ---&#x22;
+rpc &#x22;global.getCurrentTime&#x22; &#x27;null&#x27; | jq .
+
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;time&#x22;: &#x22;2026-11-12 16:34:31&#x22;,
+#    &#x22;utc&#x22;: 1794472471
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;....&#x22;
+#}
+
+echo &#x22;--- 设备名称 ---&#x22;
+rpc &#x22;magicBox.getMachineName&#x22; &#x27;{}&#x27; | jq .
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;name&#x22;: &#x22;123456789abcdef&#x22;
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 软件版本 ---&#x22;
+rpc &#x22;magicBox.getSoftwareVersion&#x22; &#x27;{}&#x27; | jq .
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;version&#x22;: {
+#      &#x22;BuildDate&#x22;: &#x22;2026-05-28 16:39:05&#x22;,
+#      &#x22;SecurityBaseLineVersion&#x22;: &#x22;V2.4&#x22;,
+#      &#x22;Version&#x22;: &#x22;5.002.0000001.2.R&#x22;,
+#      &#x22;WebVersion&#x22;: &#x22;V5&#x22;
+#    }
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 硬件信息 ---&#x22;
+rpc &#x22;magicBox.getHardwareVersion&#x22; &#x27;{}&#x27; | jq .
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;version&#x22;: &#x22;0.00&#x22;
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 序列号 ---&#x22;
+rpc &#x22;magicBox.getSerialNo&#x22; &#x27;{}&#x27; | jq .
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;sn&#x22;: &#x22;123456789abcdef&#x22;
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 设备类型 ---&#x22;
+rpc &#x22;magicBox.getDeviceType&#x22; &#x27;{}&#x27; | jq .
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;type&#x22;: &#x22;DH-EVS.....&#x22;
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 视频输入通道 ---&#x22;
+rpc &#x22;devVideoInput.getCaps&#x22; &#x27;{}&#x27; | jq .
+#{
+#  &#x22;error&#x22;: {
+#    &#x22;code&#x22;: -267976701,
+#    &#x22;message&#x22;: &#x22;&#x22;
+#  },
+#  &#x22;id&#x22;: 101,
+#  &#x22;result&#x22;: false,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 通道列表 (前3个) ---&#x22;
+rpc &#x22;LogicDeviceManager.getVideoInputChannels&#x22; &#x27;null&#x27; | jq .
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;channelCountInfo&#x22;: {
+#      &#x22;CurCascade&#x22;: 0,
+#      &#x22;CurComposite&#x22;: 0,
+#      &#x22;CurLocal&#x22;: 0,
+#      &#x22;CurLocalInfo&#x22;: 0,
+#      &#x22;CurRemote&#x22;: 312,
+#      &#x22;CurTotal&#x22;: 312,
+#      &#x22;HDMIVideo&#x22;: 0,
+#      &#x22;MaxCascade&#x22;: 0,
+#      &#x22;MaxComposite&#x22;: 0,
+#      &#x22;MaxLocal&#x22;: 0,
+#      &#x22;MaxRemote&#x22;: 512,
+#      &#x22;MaxTotal&#x22;: 512,
+#      &#x22;TVVideo&#x22;: 0,
+#      &#x22;VGAVideo&#x22;: 0
+#    }
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 存储容量 (TotalCapacity) ---&#x22;
+rpc &#x22;intelli.getCaps&#x22; &#x27;{&#x22;capsName&#x22;:&#x22;TotalCapacity&#x22;}&#x27; | jq .
+#{
+#  &#x22;error&#x22;: {
+#    &#x22;code&#x22;: -267976703,
+#    &#x22;message&#x22;: &#x22;&#x22;
+#  },
+#  &#x22;id&#x22;: 101,
+#  &#x22;result&#x22;: false,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo &#x22;--- 区域设置 / 语言 ---&#x22;
+rpc &#x22;configManager.getConfig&#x22; &#x27;{&#x22;name&#x22;:&#x22;Locales&#x22;,&#x22;onlyLocal&#x22;:false}&#x27; | jq .
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;table&#x22;: {
+#      &#x22;DSTEnable&#x22;: false,
+#      &#x22;DSTEnd&#x22;: {
+#        &#x22;Day&#x22;: 2,
+#        &#x22;Hour&#x22;: 0,
+#        &#x22;Minute&#x22;: 0,
+#        &#x22;Month&#x22;: 1,
+#        &#x22;Week&#x22;: 0,
+#        &#x22;Year&#x22;: 2020
+#      },
+#      &#x22;DSTStart&#x22;: {
+#        &#x22;Day&#x22;: 1,
+#        &#x22;Hour&#x22;: 0,
+#        &#x22;Minute&#x22;: 0,
+#        &#x22;Month&#x22;: 1,
+#        &#x22;Week&#x22;: 0,
+#        &#x22;Year&#x22;: 2020
+#      },
+#      &#x22;Hour&#x22;: 1,
+#      &#x22;Time&#x22;: &#x22;yyyy-MM-dd&#x22;,
+#      &#x22;TimeFormat&#x22;: &#x22;yyyy-MM-dd HH:mm:ss&#x22;,
+#      &#x22;moment&#x22;: &#x22;YYYY-MM-DD HH:mm:ss&#x22;
+#    }
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+
+echo
+echo &#x22;===== 完成 (session 可复用: $SESSION2) =====&#x22;
+
+
+
+for ((i01=0;i01&#x3c;10;i01++))
+do
+rpc &#x22;ChannelManager.getChannelsInfo&#x22; &#x27;{&#x22;Type&#x22;:2}&#x27; | jq &#x27;.params.Info[] | if .Online==0 then .Name else empty end&#x27;
+#{
+#  &#x22;id&#x22;: 101,
+#  &#x22;params&#x22;: {
+#    &#x22;Info&#x22;: [
+#      {
+#        &#x22;AlarmInChannels&#x22;: 0,
+#        &#x22;AlarmOutChannels&#x22;: 0,
+#        &#x22;AudioInChannels&#x22;: 1,
+#        &#x22;AudioOutChannels&#x22;: 1,
+#        &#x22;Detail&#x22;: null,
+#        &#x22;DeviceClass&#x22;: &#x22;IPC&#x22;,
+#        &#x22;DeviceType&#x22;: &#x22;DH-IPC-HFW5443M1-PV&#x22;,
+#        &#x22;IP&#x22;: &#x22;.....&#x22;,
+#        &#x22;LogicChannel&#x22;: 0,
+#        &#x22;Mac&#x22;: &#x22;12:34:56:78:9a:bc&#x22;,
+#        &#x22;MaxExtraStream&#x22;: 1,
+#        &#x22;Name&#x22;: &#x22;IPC010&#x22;,
+#        &#x22;Online&#x22;: 1,
+#        &#x22;RemoteChannel&#x22;: 0,
+#        &#x22;SN&#x22;: &#x22;....&#x22;,
+#        &#x22;SoftwareVersion&#x22;: &#x22;3.000.0000000.2.R 2023-5-24&#x22;,
+#        &#x22;Used&#x22;: 1,
+#        &#x22;VideoInChannels&#x22;: 1,
+#        &#x22;VideoOutChannels&#x22;: 0,
+#        &#x22;alarmInChannels&#x22;: 0,
+#        &#x22;alarmOutChannels&#x22;: 0,
+#        &#x22;audioInChannels&#x22;: 1,
+#        &#x22;audioOutChannels&#x22;: 1,
+#        &#x22;detail&#x22;: null,
+#        &#x22;deviceClass&#x22;: &#x22;IPC&#x22;,
+#        &#x22;deviceType&#x22;: &#x22;DH-IPC-HFW5443M1-PV&#x22;,
+#        &#x22;ip&#x22;: &#x22;.....&#x22;,
+#        &#x22;logicChannel&#x22;: 0,
+#        &#x22;Mac&#x22;: &#x22;12:34:56:78:9a:bc&#x22;,
+#        &#x22;maxExtraStream&#x22;: 1,
+#        &#x22;name&#x22;: &#x22;IPC010&#x22;,
+#        &#x22;online&#x22;: 1,
+#        &#x22;remoteChannel&#x22;: 0,
+#        &#x22;sn&#x22;: &#x22;.....&#x22;,
+#        &#x22;softwareVersion&#x22;: &#x22;3.000.0000000.2.R 2023-5-24&#x22;,
+#        &#x22;used&#x22;: 1,
+#        &#x22;videoInChannels&#x22;: 1,
+#        &#x22;videoOutChannels&#x22;: 0
+#      },
+#      {
+#        &#x22;AlarmInChannels&#x22;: null,
+#        &#x22;AlarmOutChannels&#x22;: null,
+#        &#x22;AudioInChannels&#x22;: null,
+#        &#x22;AudioOutChannels&#x22;: null,
+#        &#x22;Detail&#x22;: null,
+#        &#x22;DeviceClass&#x22;: null,
+#        &#x22;DeviceType&#x22;: null,
+#        &#x22;IP&#x22;: null,
+#        &#x22;LogicChannel&#x22;: 511,
+#        &#x22;Mac&#x22;: null,
+#        &#x22;MaxExtraStream&#x22;: 2,
+#        &#x22;Name&#x22;: &#x22;通道512&#x22;,
+#        &#x22;Online&#x22;: null,
+#        &#x22;RemoteChannel&#x22;: null,
+#        &#x22;SN&#x22;: null,
+#        &#x22;SoftwareVersion&#x22;: null,
+#        &#x22;Used&#x22;: 0,
+#        &#x22;VideoInChannels&#x22;: null,
+#        &#x22;VideoOutChannels&#x22;: null,
+#        &#x22;alarmInChannels&#x22;: null,
+#        &#x22;alarmOutChannels&#x22;: null,
+#        &#x22;audioInChannels&#x22;: null,
+#        &#x22;audioOutChannels&#x22;: null,
+#        &#x22;detail&#x22;: null,
+#        &#x22;deviceClass&#x22;: null,
+#        &#x22;deviceType&#x22;: null,
+#        &#x22;ip&#x22;: null,
+#        &#x22;logicChannel&#x22;: 511,
+#        &#x22;mac&#x22;: null,
+#        &#x22;maxExtraStream&#x22;: 2,
+#        &#x22;name&#x22;: &#x22;通道512&#x22;,
+#        &#x22;online&#x22;: null,
+#        &#x22;remoteChannel&#x22;: null,
+#        &#x22;sn&#x22;: null,
+#        &#x22;softwareVersion&#x22;: null,
+#        &#x22;used&#x22;: 0,
+#        &#x22;videoInChannels&#x22;: null,
+#        &#x22;videoOutChannels&#x22;: null
+#      }
+#    ]
+#  },
+#  &#x22;result&#x22;: true,
+#  &#x22;session&#x22;: &#x22;.....&#x22;
+#}
+#sleep 2
+#recordManager.getStateAll 会返回好多没有用的字符
+#rpc &#x22;recordManager.getStateAll&#x22; &#x27;null&#x27; | jq
+sleep 30
+KEEPALIVE_INTERVAL
+done
+
+
+
+	</details></td><td>大华 web自动化</td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+	<tr><td><details style="white-space:pre-wrap;"><summary></summary>
+	</details></td><td></td></tr>
+	<!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-24 17:56:40</div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

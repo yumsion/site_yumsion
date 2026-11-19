@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t536</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 536 H3C 端口相关</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>路由器端口配置</summary>
+interface GigabitEthernet2/0/0</br>
+ port link-mode route </br>
+ description Multiple_Line1</br>
+ combo enable copper</br>
+ ip address 1.1.8.29 255.255.255.192</br>
+ dns server 1.1.1.1</br>
+ dns server 223.5.5.5</br>
+ ip last-hop hold #解决“来回路径不一致”问题</br>
+ packet-filter name GigabitEthernet2/0/0 inbound  </br>
+ qos reserved-bandwidth pct 100</br>
+ nat outbound #执行简单地址转换</br>
+ nat server protocol tcp global current-interface 873 inside 172.16.1.1 873 description description01  #NAT</br>
+</br>
+
+    </details></td><td>路由器端口配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>端口配置</summary>
+display transceiver diagnosis interface [ interface-type interface-number ] 查看光模块信息
+display counters rate outbound interface #查看端口速率
+
+
+[interface GigibitEthernet1/0/5]flow-interval 20 #设置速率统计间隔
+[GE1/0/7]combo enable fiber #光电复用端口启用光口
+<h3c>reset counter interface GigabitEthernet 1/0/1 #重置计数器
+
+ip source binding ip-address 1.2.3.4 #源地址检测，不支持子网掩码，多条复用
+
+<details><summary>IP Source Guard</summary>
+interface GigabitEthernet1/0/13
+port link-type trunk
+port trunk permit vlan 1 31 187 327 500
+flow-interval 10
+ip verify source ip-address
+ip source binding ip-address 172.16.31.99 vlan 31
+ip source binding ip-address 192.168.187.4 vlan 31
+ip source binding ip-address 192.168.187.4 vlan 187 #本行逻辑AND，多行任意一行符合条目就放行。
+
+display ip verify source excluded
+
+</details>
+
+<details><summary>通过probe获取接口号</summary>
+probe
+[S7006X_B2F1-probe]display system internal ifmgr list
+</details>
+
+    </details></td><td>端口配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td>端口配置</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

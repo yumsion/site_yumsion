@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t199</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 199 bash vnc相关</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>tigervnc install</summary>
+pacman -S tigervnc</br>
+https://github.com/TigerVNC/tigervnc    #项目主页下载和程序介绍 </br>
+</br>
+</br>
+安装xorg和xfce4，否则没有Xvnc的必要条件</br>
+vncpasswd #会一个密码，密码文件自动存储到了.vnc/passwd中</br>
+vim .vnc/xstartup</br>
+xsetroot -solid gray</br>
+startxfce4 &#x26;</br>
+vncserver :1 #启动vncserver，监听5901端口</br>
+</br>
+</br>
+
+    </details></td><td>tigervnc install</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>tigervnc x0vncserver 共享目前的屏幕</summary>
+<b>#测试可用的一个配置20260824</b></br>
+#切换普通用户</br>
+#运行 vncpasswd 后，按提示输入并确认密码。密码文件默认保存在 ~/.vnc/passwd 或 ~/.config/tigervnc/passwd</br>
+vncpasswd</br>
+#启动 x0vncserver 共享当前屏幕</br>
+x0vncserver -rfbauth ~/.vnc/passwd -display :0</br>
+#参数说明：</br>
+#-rfbauth ~/.vnc/passwd：指定刚刚创建的密码文件。</br>
+#-display :0：指定要共享的显示器编号，通常是</br>
+
+</br>
+<b>#测试可用的一个配置以前</b></br>
+x0vncserver -SecurityTypes=VncAuth -PasswordFile /home/yum/.vnc/passwd</br>
+-SecurityTypes参数列表：</br>
+None - 无认证 (不安全)</br>
+VncAuth - 传统的 VNC 密码认证</br>
+Plain - 明文密码 (不安全)</br>
+TLSNone - TLS 加密但无认证</br>
+TLSVnc - TLS 加密 + VNC 认证</br>
+TLSPlain - TLS 加密 + 明文密码</br>
+X509None - X509 证书加密但无认证</br>
+X509Vnc - X509 证书加密 + VNC 认证</br>
+X509Plain - X509 证书加密 + 明文密码</br>
+
+
+
+    </details></td><td>tigervnc x0vncserver</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>tigervnc 故障集合</summary>
+<details><summary>故障-鼠标键盘无反应</summary>linux修改配置文件后重启就好了</br>修改了~/.vnc文件夹下的3个文件就好了，也不知道哪个的原因，哪个条目</br></details>
+    </details></td><td>tigervnc 故障集合</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>Xvnc创建多屏并运行程序</summary>
+#直接调用 Xvnc（VNC 服务器的核心程序），生成一个副屏</br>
+#注意，登陆后只有鼠标，没有任何界面</br>
+Xvnc :1 -geometry 1920x1080 -rfbauth ~/.vnc/passwd -auth ~/.Xauthority -once</br>
+#参数&#x09;作用</br>
+#:1&#x09;指定显示编号，对应端口 5901</br>
+#-geometry 1920x1080&#x09;设置分辨率</br>
+#-rfbauth ~/.vnc/passwd&#x09;指定密码文件</br>
+#-auth ~/.Xauthority&#x09;X11 认证文件</br>
+#-once&#x09;只接受一次连接，断开后自动退出（调试时推荐）</br>
+</br>
+DISPLAY=:1 firefox --new-instance</br>
+#在DISPLAY=:1上运行firefox,有些单例执行程序， 默认单实例模式，如果 :0 上已经有一个 Firefox 在运行，新启动的 Firefox 会把窗口“移交”给已有的实例，所以会跑到 :0 上</br>
+</br>
+#没有最大化按钮，也没有窗口的问题</br>
+pacman -S openbox</br>
+DISPLAY=:1 openbox &#x26;</br>
+或
+# twm 通常在 xorg-twm 包中，Arch 默认可能没装</br>
+sudo pacman -S xorg-twm</br>
+# 启动 twm</br>
+DISPLAY=:1 twm &#x26;</br>
+
+sleep 2</br>
+DISPLAY=:1 firefox --new-instance </br>
+</br>
+#使用xdotool进行窗口大小调整是失败的</br>
+#DISPLAY=:1 xdotool search --name . getwindowname</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+#Xvnc 本身只提供显示服务，不会自动启动桌面环境。 你需要另外在一个终端里，告诉系统要在 :1 这个屏幕上显示东西</br>
+#注意，测试失败，因为xfce4的session manager不能同时运行</br>
+#!/bin/bash</br>
+DISPLAY_NUM=1</br>
+PASSWD_FILE=~/.vnc/passwd</br>
+GEOMETRY=1920x1080</br>
+</br>
+# 启动 Xvnc</br>
+Xvnc :$DISPLAY_NUM -geometry $GEOMETRY -rfbauth $PASSWD_FILE -auth ~/.Xauthority -once &#x26;</br>
+</br>
+# 等待服务启动</br>
+sleep 2</br>
+</br>
+# 启动桌面环境</br>
+DISPLAY=:$DISPLAY_NUM startxfce4 &#x26;</br>
+</br>
+echo &#x22;VNC 服务已启动，请连接 localhost:$((5900 + DISPLAY_NUM))&#x22;</br>
+</br>
+
+    </details></td><td>Xvnc 多屏</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>Xvnc创建多屏并运行程序【gemini版】</summary>
+来自谷歌gemini的可用共享方案</br>
+要启动一个基于 XFCE4 的独立 VNC 桌面会话并绑定到 :1 显示端口（对应 TCP 端口 5901），可以通过配置 ~/.vnc/xstartup 并使用 vncserver / Xvnc 启动。</br>
+1. 配置 VNC 启动脚本</br>
+mkdir -p ~/.vnc</br>
+</br>
+cat &#x3c;&#x3c; &#x27;EOF&#x27; &#x3e; ~/.vnc/xstartup</br>
+#!/bin/sh</br>
+unset SESSION_MANAGER</br>
+unset DBUS_SESSION_BUS_ADDRESS</br>
+</br>
+# 加载基础资源与键位映射（若存在）</br>
+[ -r $HOME/.Xresources ] &#x26;&#x26; xrdb $HOME/.Xresources</br>
+[ -r $HOME/.xmodmap ] &#x26;&#x26; xmodmap $HOME/.xmodmap</br>
+</br>
+# 启动 D-Bus 会话与 XFCE4</br>
+if which dbus-launch &#x3e;/dev/null 2&#x3e;&#x26;1; then</br>
+  exec dbus-launch --exit-with-session startxfce4</br>
+else</br>
+  exec startxfce4</br>
+fi</br>
+EOF</br>
+</br>
+chmod +x ~/.vnc/xstartup</br>
+2. 初始化 VNC 密码（首次使用）</br>
+vncpasswd</br>
+3. 启动 :1 会话</br>
+方式 A：使用 vncserver 包装脚本（推荐，TigerVNC / TightVNC 通用）</br>
+# 启动 :1 桌面，分辨率 1920x1080，24位色彩深度</br>
+vncserver :1 -geometry 1920x1080 -depth 24</br>
+方式 B：直接调用底层的 Xvnc 命令</br>
+# 1. 启动底层 Xvnc 服务</br>
+Xvnc :1 -geometry 1920x1080 -depth 24 -rfbauth ~/.vnc/passwd -rfbport 5901 &#x26;</br>
+</br>
+# 2. 为该 DISPLAY 启动 XFCE4 会话</br>
+DISPLAY=:1 ~/.vnc/xstartup &#x26;</br>
+</br>
+或手动启动</br>
+</br>
+# 1. 启动 Xvnc X-Server（如未设置过密码请先执行 vncpasswd）</br>
+Xvnc :1 -geometry 1920x1080 -depth 24 -rfbauth ~/.vnc/passwd -rfbport 5901 &#x26;</br>
+#步骤 2：在新环境中清理变量并启动 XFCE</br>
+#在同一终端或新建会话中，显式指定 DISPLAY=:1 并清理会话变量：</br>
+env -i HOME=&#x22;$HOME&#x22; USER=&#x22;$USER&#x22; PATH=&#x22;$PATH&#x22; DISPLAY=:1 dbus-launch --exit-with-session xfce4-session &#x26;</br>
+#参数说明：</br>
+#env -i：清空当前终端继承的 :0 环境变量。</br>
+#DISPLAY=:1：指定桌面渲染到刚才启动的 VNC 实例。</br>
+#xfce4-session：直接调用 XFCE 会话管理器（比 startxfce4 脚本更干净，避免其内部检测 :0 的逻辑干扰）。</br>
+
+    </details></td><td>Xvnc 多屏</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

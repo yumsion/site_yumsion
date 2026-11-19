@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t282</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 282 bash expect</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>expect log_file 命令 或 重定向日志</summary>
+#使用日志文件，既可以屏幕显示，又可以录入日志</br>
+#【注意：】 默认情况下它会保存所有终端交互内容，包括控制字符。</br>
+expect的日志或重定向都会产生控制字符</br>
+# col -b &#x3c; log_file_save.txt 删除&#x5c;r等控制字符</br>
+# set env(TERM) dumb 禁用控制字符</br>
+# ansifilter使用src编译，但是有问题，不能正确处理utf-8中的中文等，导致内容丢失。
+<details><summary style="white-space:pre-wrap;">
+#define _XOPEN_SOURCE 700</br>#define _GNU_SOURCE</br></br>#include &#x3c;stdio.h&#x3e;</br>#include &#x3c;stdlib.h&#x3e;</br>#include &#x3c;string.h&#x3e;</br>#include &#x3c;locale.h&#x3e;</br></br>#define MAX_LINE 8192</br></br>// 获取 UTF-8 字符字节长度</br>int utf8_byte_len(unsigned char ch) {</br>    if ((ch &#x26; 0x80) == 0) return 1;       // ASCII</br>    if ((ch &#x26; 0xE0) == 0xC0) return 2;  // 2字节 UTF-8</br>    if ((ch &#x26; 0xF0) == 0xE0) return 3;  // 3字节 UTF-8</br>    if ((ch &#x26; 0xF8) == 0xF0) return 4;  // 4字节 UTF-8</br>    return 1;</br>}</br></br>// 跳过 ANSI 序列辅助函数（不修改外部指针）</br>int get_ansi_len(const char *str, int idx) {</br>    int start = idx;</br>    if (str[idx] == &#x27;&#x5c;033&#x27; || str[idx] == &#x27;&#x5c;x1B&#x27;) {</br>        idx++;</br>        if (str[idx] == &#x27;[&#x27;) {</br>            idx++;</br>            while (str[idx] != &#x27;&#x5c;0&#x27; &#x26;&#x26; !((str[idx] &#x3e;= &#x27;A&#x27; &#x26;&#x26; str[idx] &#x3c;= &#x27;Z&#x27;) || </br>                                       (str[idx] &#x3e;= &#x27;a&#x27; &#x26;&#x26; str[idx] &#x3c;= &#x27;z&#x27;) || </br>                                       str[idx] == &#x27;~&#x27;)) {</br>                idx++;</br>            }</br>            if (str[idx] != &#x27;&#x5c;0&#x27;) idx++;</br>            return idx - start;</br>        }</br>    }</br>    return 0;</br>}</br></br>void process_line(const char *src, char *dest) {</br>    char buffer[MAX_LINE];</br>    int cursor = 0;   // 字节游标</br>    int max_len = 0;  // 记录到达过的最大长度</br></br>    memset(buffer, 0, sizeof(buffer));</br></br>    int i = 0;</br>    while (src[i] != &#x27;&#x5c;0&#x27;) {</br>        // 1. 过滤 ANSI 逃逸序列 (&#x5c;033[...m, &#x5c;033[?2004h 等)</br>        int ansi_len = get_ansi_len(src, i);</br>        if (ansi_len &#x3e; 0) {</br>            i += ansi_len;</br>            continue;</br>        }</br></br>        // 2. 处理退格 &#x5c;b</br>        if (src[i] == &#x27;&#x5c;b&#x27;) {</br>            if (cursor &#x3e; 0) cursor--;</br>            i++;</br>            continue;</br>        }</br></br>        // 3. 处理回车 &#x5c;r (关键修复：先探查 &#x5c;r 之后跳过 ANSI 后的实际字符)</br>        if (src[i] == &#x27;&#x5c;r&#x27;) {</br>            int next_idx = i + 1;</br>            // 探查跳过后续可能紧跟的 ANSI 序列</br>            while (1) {</br>                int a_len = get_ansi_len(src, next_idx);</br>                if (a_len &#x3e; 0) {</br>                    next_idx += a_len;</br>                } else {</br>                    break;</br>                }</br>            }</br></br>            // 如果 &#x5c;r 后面（包含 ANSI 码之后）直接遇到了 &#x5c;n 或字符串结尾，说明这只是普通的 DOS 换行，忽略 &#x5c;r</br>            if (src[next_idx] == &#x27;&#x5c;n&#x27; || src[next_idx] == &#x27;&#x5c;0&#x27;) {</br>                i++;</br>                continue;</br>            }</br></br>            // 真正的终端重叠覆盖：光标复位回行首，并清空旧缓冲区，防止旧提示符残留</br>            cursor = 0;</br>            memset(buffer, &#x27; &#x27;, max_len);</br>            max_len = 0;</br>            i++;</br>            continue;</br>        }</br></br>        // 4. 处理换行 &#x5c;n</br>        if (src[i] == &#x27;&#x5c;n&#x27;) {</br>            break;</br>        }</br></br>        // 5. 按字节/多字节字符逐个写入</br>        int len = utf8_byte_len((unsigned char)src[i]);</br>        for (int k = 0; k &#x3c; len &#x26;&#x26; src[i] != &#x27;&#x5c;0&#x27;; k++) {</br>            buffer[cursor++] = src[i++];</br>        }</br></br>        if (cursor &#x3e; max_len) {</br>            max_len = cursor;</br>        }</br>    }</br></br>    // 清除行末尾无用的空格</br>    int end_pos = max_len;</br>    while (end_pos &#x3e; 0 &#x26;&#x26; buffer[end_pos - 1] == &#x27; &#x27;) {</br>        end_pos--;</br>    }</br></br>    buffer[end_pos] = &#x27;&#x5c;0&#x27;;</br>    strcpy(dest, buffer);</br>}</br></br>int main(int argc, char *argv[]) {</br>    setlocale(LC_ALL, &#x22;&#x22;);</br></br>    if (argc &#x3e;= 3 &#x26;&#x26; strcmp(argv[1], argv[2]) == 0) {</br>        fprintf(stderr, &#x22;错误：输入文件和输出文件不能是同一个文件！&#x5c;n&#x22;);</br>        return 1;</br>    }</br></br>    FILE *in = (argc &#x3e; 1) ? fopen(argv[1], &#x22;r&#x22;) : stdin;</br>    if (!in) {</br>        perror(&#x22;无法打开输入文件&#x22;);</br>        return 1;</br>    }</br></br>    FILE *out = (argc &#x3e; 2) ? fopen(argv[2], &#x22;w&#x22;) : stdout;</br>    if (!out) {</br>        perror(&#x22;无法打开输出文件&#x22;);</br>        if (in != stdin) fclose(in);</br>        return 1;</br>    }</br></br>    char line_in[MAX_LINE];</br>    char line_out[MAX_LINE];</br></br>    while (fgets(line_in, sizeof(line_in), in)) {</br>        process_line(line_in, line_out);</br>        fprintf(out, &#x22;%s&#x5c;n&#x22;, line_out);</br>    }</br></br>    if (in != stdin) fclose(in);</br>    if (out != stdout &#x26;&#x26; out != stdin) fclose(out);</br></br>    return 0;</br>}
+</details>
+
+</br>
+</br>
+# 设置终端类型为 dumb，禁用控制字符，避免出现&#x5c;b等，导致col也无法运算出现错误显示</br>
+set env(TERM) dumb</br>
+</br>
+log_file /dev/shm/tmp_ap_sw_mac.txt</br>
+# 或者</br>
+log_file -a /dev/shm/tmp_ap_sw_mac.txt  # -a 表示追加模式</br>
+</br>
+spawn ssh admin@172.31.0.101</br>
+# ... 所有交互内容都会自动记录到文件</br>
+</br>
+
+    </details></td><td>expect 日志相关</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

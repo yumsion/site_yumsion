@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t260</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 260</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details><summary>rsync ***</summary>
+dir01/ #/ 表示仅匹配目录，不会匹配普通文件。它只作用于 dir01这个目录节点，不涉及目录内部的具体文件。</br>
+dir01/* 只匹配 dir01 目录下的直接子项（一层），不递归进入子目录内部。* 匹配零个或多个非斜杠字符，所以它不会跨过 / 去匹配更深层的文件。</br>
+dir01/** 目录下的所有内容，包括直接子项和任意深度的子目录中的文件。** 可以匹配斜杠，因此能穿透目录层级。</br>
+dir01/*** 一个简写，等价于同时写了 dir/ 和 dir/**。</br>
+    </details></td><td>rsync ***</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary>rsync exclude/include</summary>
+rsync -av --dry-run &#x5c;</br>
+  --include=&#x27;home/&#x27; &#x5c;</br>
+  --include=&#x27;home/dir01/&#x27; &#x5c;</br>
+  --include=&#x27;home/dir01/**&#x27; &#x5c;</br>
+  --exclude=&#x27;*&#x27; &#x5c;</br>
+  / &#x3c;user&#x3e;@&#x3c;IP&#x3e;:/</br>
+</br>
+include和exclude同时使用，且exclude=&#x27;*&#x27;</br>
+需要显式地包含路径上的所有父目录，最后再排除其他所有内容。</br>
+包含 home 目录，否则一级目录就会被排除，导致无法完成二级目录的匹配。注意，这个是目录根节点，不含内部文件。</br>
+包含 home/dir01 目录。</br>
+（可选）包含 home/dir01下的所有内容。</br>
+排除其他所有内容。</br>
+
+    </details></td><td></td>rsync exclude/include</tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

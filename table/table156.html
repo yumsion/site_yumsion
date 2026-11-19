@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t156</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 156 bash curl</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>curl ftp</summary>
+用 curl 模拟 FTP 上传
+curl -T 本地文件路径 ftp://用户名:密码@服务器地址/远程路径
+
+指定远程文件名上传
+curl -T localfile.txt ftp://user:pass@ftp.example.com/dir/remote-name.txt
+沿用本地文件名上传
+curl -T localfile.txt ftp://user:pass@ftp.example.com/dir/path/
+
+追加内容而非覆盖
+curl -T localfile.txt --append ftp://user:pass@ftp.example.com/dir/existing-file.txt
+
+批量上传
+curl -T &#x27;*.jpg&#x27; ftp://user:pass@ftp.example.com/upload/
+
+
+被动模式：如果连接后卡住或报错，可以加上 --ftp-pasv 强制使用被动模式，这在很多网络环境下是必要的。
+
+安全提醒：直接在命令行 URL 中写明文密码（user:pass）会被记录在 shell 历史中。更安全的做法是使用 -u user:pass 参数，或者交互式输入密码。
+
+协议区分：上述命令针对的是传统 FTP 协议。如果你连接的是 SFTP（基于 SSH），URL 需改为 sftp:// 开头，用法类似。
+
+    </details></td><td>curl ftp</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>url 其他参数</summary>
+curl -k https://192.168.1.1/tls.html
+# -k 忽略CA检测，--insecure
+
+curl -v --ipv4
+# -4 , --ipv4 使用IPv4地址进行网页连接，防止IPv6的干扰
+
+curl --cacert my-cabundle.crt https://abc.com
+# 使用自定义证CA进行验证，crt是pem的text输出格式
+
+curl -L httsp://www.bilibili.com
+# -L参数表示自动重定向
+
+
+    </details></td><td>curl 其他参数</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>curl 数据发送</summary>
+curl --get --data-urlencode &#x27;param1=value with spaces&#x27; http://example.com/path
+# curl GET 提交特殊字符
+
+curl -v --data &#x22;id=0&#x26;mode=3&#x22; --request POST http:/httpbin.org/post
+# 测试POST请求
+
+curl http://localhost:3000/api/json --request POST --data @file.json --header &#x22;Content-Type: application/json&#x22;
+# JSON文件直接POST
+
+curl -d @- 的意思是：让 curl 从标准输入（stdin）读取数据，并作为 HTTP POST 请求的 body 发送出去。
+echo &#x22;name=test&#x26;value=123&#x22; | curl -d @- http://example.com/api
+或
+curl -v http://example.com/api -d @- &#x3c;&#x3c;_EOF
+abc
+def
+_EOF
+
+    </details></td><td>curl 数据发送</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>curl 网页网速检测</summary>
+curl使用-w参数进行网页打开质量验证,含数据下载数量
+curl -w &#x22;&#x5c;
+&#x5c;n--- 详细时间分析 ---
+DNS查询 : %{time_namelookup} 秒
+TCP连接 : %{time_connect} 秒
+TLS握手 : %{time_appconnect} 秒
+重定向时间 : %{time_redirect} 秒
+首字节时间 : %{time_starttransfer} 秒
+总时间 : %{time_total} 秒
+&#x5c;n--- 连接信息 ---
+本地IP : %{local_ip}:%{local_port}
+远程IP : %{remote_ip}:%{remote_port}
+HTTP状态码 : %{http_code}
+大小 : %{size_download} 字节
+下载速度 : %{speed_download} B/秒
+&#x5c;n&#x22; &#x5c;
+-o /dev/null -s -L &#x22;https://example.com&#x22;
+    </details></td><td>curl 网页网速检测</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>curl HEADER控制</summary>
+# HEADER
+# --header 中的()需要跳脱
+curl -v --header &#x22;application/ &#x22; --cookie &#x22;a=b&#x22;
+# 配置header和cookie
+
+curl -c cookies.txt http://example.com
+#保存cookie
+curl -b cookies.txt http://example.com
+#调用cookie
+curl -X POST -H &#x22;Authorization:Basic ....&#x22; -d &#x22;page=ntp&#x26;h_month=07&#x26;h_day=27&#x26;h_year=2021&#x26;h_hour=14&#x26;h_min=26&#x22; http://192.168.1.224/cgi-bin/adm.cgi
+# 认证header
+
+curl -H &#x22;X-Forwarded-For: 192.168.0.1&#x22; http://example.com
+# X-Forwarded-For
+
+
+# 先用 dig 获取 IP
+dig +short www.google.com
+# 假设获取到 142.250.185.4，直接使用 IP 访问
+curl -v -H &#x22;Host: www.google.com&#x22; https://142.250.185.4
+    </details></td><td>curl HEADER控制</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>curl 批量下载</summary>
+批量下载的三个示例
+curl -o &#x27;video#1.mp4&#x27; &#x27;http://xxx.com/video[1-4].mp4&#x27;
+#下载并重命名
+curl -O http://xxx.com/test[00-99].mp3
+#自动下载并使用原名称，注意是大O
+curl -O http://xxx.com/test[00-99:2].mp3
+#数字递增步长为2
+
+    </details></td><td>curl 批量下载</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>使用curl进行exmail的认证和邮件发送</summary>
+使用curl进行exmail的认证和邮件发送 table40#
+    </details></td><td>curl exmail</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>
