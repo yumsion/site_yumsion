@@ -426,8 +426,24 @@ z 位（Zero），在标准中必须置 0，通常不会在 dig 的常规输出�
 
     </details></td><td>dig</td></tr>
         <!-- 分割线 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details style="white-space:pre-wrap;"><summary>resolv_domain2A.sh 解析域名到IP地址</summary>
+function resolv_domain2A(){
+local domain=$1
+local dns_server=&#x22;${2:-172.16.31.46}&#x22;
+[[ -z ${domain:-} ]] &#x26;&#x26; echo &#x27;[ERROR] domain missing...&#x27; &#x3e;&#x26;2  &#x26;&#x26; return 1
+r=$(dig $domain @$dns_server)
+[[ $? -ne 0  ]] &#x26;&#x26; echo &#x27;[ERROR] domain resolve error...&#x27; &#x3e;&#x26;2  &#x26;&#x26; return 2
+echo &#x22;$r&#x22; &#x3e;&#x26;2
+local -a ip_address
+ip_address=( $(grep -Po &#x27;IN&#x5c;s+A&#x5c;s+&#x5c;K.*&#x27; &#x3c;&#x3c;&#x3c; &#x22;$r&#x22;) )
+[[ -z ${ip_address[0]:-} ]] &#x26;&#x26; echo &#x27;[ERROR] ip address resolve error...&#x27; &#x3e;&#x26;2  &#x26;&#x26; return 3
+echo ${ip_address[0]}
+
+}
+
+resolv_domain2A www.baidu.com
+
+    </details></td><td>shell</td></tr>
         <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>

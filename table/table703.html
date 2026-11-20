@@ -59,45 +59,51 @@
       </thead>
       <tbody>
         <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
-    <tr><td><details><summary>Perl 兼容正则表达式（Perl Compatible Regular Expressions，简称 PCRE）</summary>
-字符类</br>
-&#x5c;d 数字</br>
-&#x5c;D 非数字</br>
-&#x5c;w 单词字符(字母/数字/下划线) </br>
-&#x5c;W 非单词字符</br>
-&#x5c;s 空白字符</br>
-&#x5c;S 非空白字符</br>
-</br>
-重复</br>
-{3,5} 重复，最少3次，最多5次</br>
-+ 重复，至少1次</br>
-* 重复，0次或以上</br>
-? 重复，0次或1次</br>
-.* 贪婪匹配（默认）</br>
-.*? 懒惰匹配（Lazy）</br>
-.*+ 占有匹配（Possessive）尽可能多地匹配且绝对不回溯</br>
-</br>
-</br>
-边界匹配，占位符</br>
-^ 行开头</br>
-$ 行尾巴</br>
-&#x5c;b 单词边界</br>
-&#x5c;B 非单词边界</br>
-</br>
-</br>
-称预查/零宽断言</br>
-(?= pattern) 正向先行断言，后面是pattern</br>
-(?! pattern) 负向先行断言，后面不跟pattern</br>
-(?&#x3c;= pattern) 正向后行断言，前面必须是 pattern</br>
-(?&#x3c;! pattern) 负向后行断言，前面不能是 pattern</br>
-</br>
-</br>
-捕获组与非捕获组</br>
-(pattern) 捕获组 保存匹配的文本，后续可用 &#x5c;1, &#x5c;2 引用或在代码中提取。</br>
-(?:pattern) 非捕获组,仅作逻辑分组（如组合数量词），不保存文本，提升匹配性能。</br>
-(?&#x3c;name&#x3e;pattern) 命名捕获组,为捕获组命名，通过名字提取，如 (?&#x3c;year&#x3e;&#x5c;d{4})-(?&#x3c;month&#x3e;&#x5c;d{2})</br>
-(?&#x3e;pattern) 原子组,匹配成功后抛弃该组内的回溯点，功能类似于占有匹配。</br>
-</br>
+    <tr><td><details style="white-space:pre-wrap;"><summary>Perl 兼容正则表达式（Perl Compatible Regular Expressions，简称 PCRE）</summary>
+字符类
+&#x5c;d 数字
+&#x5c;D 非数字
+&#x5c;w 单词字符(字母/数字/下划线) 
+&#x5c;W 非单词字符
+&#x5c;s 空白字符
+&#x5c;S 非空白字符
+
+重复
+{3,5} 重复，最少3次，最多5次
++ 重复，至少1次
+* 重复，0次或以上
+? 重复，0次或1次
+.* 贪婪匹配（默认）
+.*? 懒惰匹配（Lazy）
+.*+ 占有匹配（Possessive）尽可能多地匹配且绝对不回溯
+
+
+边界匹配，占位符
+^ 行开头
+$ 行尾巴
+&#x5c;b 单词边界
+&#x5c;B 非单词边界
+
+#剪裁
+&#x5c;K 表示&#x22;设置匹配起点，把前面已匹配的内容从结果中丢弃&#x22; grep -Po &#x27;IN&#x5c;s+A&#x5c;s+&#x5c;K.*&#x27; 
+
+
+称预查/零宽断言
+(?= pattern) 正向先行断言，后面是pattern
+(?! pattern) 负向先行断言，后面不跟pattern
+(?&#x3c;= pattern) 正向后行断言，前面必须是 pattern
+# 【注意：】后行断言 (?&#x3c;=...) 要求长度固定，grep -Po &#x27;(?&#x3c;=IN&#x5c;s+A&#x5c;s+).*&#x27;中s+（可变长度），PCRE 无法确定断言要往回看多少个字符，所以报错grep: length of lookbehind assertion is not limited
+# 在 PCRE 里 + 是量词，不要转义；转义成 &#x5c;+ 就变成普通加号了
+# PCRE 的 lookbehind 必须定长，变长匹配请用 &#x5c;K
+(?&#x3c;! pattern) 负向后行断言，前面不能是 pattern
+
+
+捕获组与非捕获组
+(pattern) 捕获组 保存匹配的文本，后续可用 &#x5c;1, &#x5c;2 引用或在代码中提取。
+(?:pattern) 非捕获组,仅作逻辑分组（如组合数量词），不保存文本，提升匹配性能。
+(?&#x3c;name&#x3e;pattern) 命名捕获组,为捕获组命名，通过名字提取，如 (?&#x3c;year&#x3e;&#x5c;d{4})-(?&#x3c;month&#x3e;&#x5c;d{2})
+(?&#x3e;pattern) 原子组,匹配成功后抛弃该组内的回溯点，功能类似于占有匹配。
+
 
     </details></td><td>PCRE</td></tr>
         <!-- 分割线 -->

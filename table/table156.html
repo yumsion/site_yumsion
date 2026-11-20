@@ -96,6 +96,8 @@ curl --cacert my-cabundle.crt https://abc.com
 curl -L httsp://www.bilibili.com
 # -L参数表示自动重定向
 
+curl -I --http2 https://www.example.com
+# --http2 参数，它表示"尝试使用 HTTP/2"，但最终能否用上取决于服务器是否支持。服务器不支持时会自动回退到 HTTP/1.1，不会报错。
 
     </details></td><td>curl 其他参数</td></tr>
         <!-- 分割线 -->
@@ -155,11 +157,19 @@ curl -X POST -H &#x22;Authorization:Basic ....&#x22; -d &#x22;page=ntp&#x26;h_mo
 curl -H &#x22;X-Forwarded-For: 192.168.0.1&#x22; http://example.com
 # X-Forwarded-For
 
-
+#使用HEADER方式，直接使用IP地址访问域名网站
 # 先用 dig 获取 IP
 dig +short www.google.com
 # 假设获取到 142.250.185.4，直接使用 IP 访问
-curl -v -H &#x22;Host: www.google.com&#x22; https://142.250.185.4
+curl -v --insecure -H &#x22;Host: www.google.com&#x22; https://142.250.185.4
+# 【注意：】TLS 握手发生在 HTTP 请求发送之前。--header "Host: www.baidu.com" 是 HTTP 层的指令，只有在 TLS 连接建立成功之后才会被发送出去。
+#  -k 或 --insecure 参数的作用是跳过对服务器证书的验证，包括证书链信任和主机名匹配。否则报错
+
+#或直接指定域名和IP地址
+curl -v --resolve www.baidu.com:443:39.156.70.239 https://www.baidu.com
+#【注意：】--resolve 里的 443 不是给 URL 用的，而是告诉 curl "这个主机名在这个端口上，应该解析到哪个 IP"。它是 --resolve 语法的一部分，不能省略。
+
+
     </details></td><td>curl HEADER控制</td></tr>
         <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary>curl 批量下载</summary>

@@ -177,27 +177,6 @@ git rebase --continue
 # 5. 若有冲突，还要手动解决
 现在，只用一行命令，直接搞定：git history reword &#x3c;commit-id&#x3e;
 
-配置化 Git Hook，告别 .git/hooks 束缚这是团队协作党最爱的更新！以前 Git Hook 只能放在每个仓库的 .git/hooks 目录下，无法同步、无法共享，堪称“团队协作的绊脚石”。比如想给所有仓库统一配置 pre-commit 钩子（代码校验、密钥扫描），只能手动复制脚本到每个仓库，繁琐又容易出错；就算用软链接，也无法灵活开关、无法配置多个钩子。Git 2.54 彻底解决这个痛点，支持在配置文件中定义 Git Hook，不用再局限于 .git/hooks 目录，灵活度直接拉满！
-# 1. 全局配置（所有仓库生效，写在 ~/.gitconfig）
-[hook &#x22;linter&#x22;]
-   event = pre-commit  # 触发事件（pre-commit、pre-push等）
-   command = ~/bin/lint-check  # 要执行的命令
-
-# 2. 仓库局部配置（仅当前仓库生效，写在 .git/config）
-[hook &#x22;secret-scan&#x22;]
-   event = pre-commit
-   command = ~/bin/secret-detector
-
-# 3. 系统级配置（所有用户生效，写在 /etc/gitconfig）
-[hook &#x22;code-format&#x22;]
-   event = pre-commit
-   command = ~/bin/code-format
-3个炸裂优势，彻底解放双手多钩子共存：同一个事件（比如 pre-commit）可以配置多个钩子，按配置顺序执行，比如先跑代码校验，再跑密钥扫描，不用手动整合脚本；灵活开关：不想用某个钩子，不用删除配置，只需添加 hook.linter.enabled=false，临时关闭，后续可随时开启；
-轻松查看：用 git hook list &#x3c;event&#x3e; 就能查看某个事件的所有钩子，以及它们的配置层级，一目了然：$ git hook list pre-commit
-global    linter  ~/bin/lint-check
-local    secret-scan    ~/bin/secret-detector
-重点：传统 .git/hooks 目录的脚本依然兼容，旧项目零成本迁移，不用担心升级后钩子失效。
-
 
 
 
@@ -327,11 +306,66 @@ git push -u origin master
 
     </details></td><td>git github</td></tr>
         <!-- 分割线 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details style="white-space:pre-wrap;"><summary>git hook</summary>
+配置化 Git Hook，告别 .git/hooks 束缚这是团队协作党最爱的更新！以前 Git Hook 只能放在每个仓库的 .git/hooks 目录下，无法同步、无法共享，堪称“团队协作的绊脚石”。比如想给所有仓库统一配置 pre-commit 钩子（代码校验、密钥扫描），只能手动复制脚本到每个仓库，繁琐又容易出错；就算用软链接，也无法灵活开关、无法配置多个钩子。Git 2.54 彻底解决这个痛点，支持在配置文件中定义 Git Hook，不用再局限于 .git/hooks 目录，灵活度直接拉满！
+# 1. 全局配置（所有仓库生效，写在 ~/.gitconfig）
+[hook &#x22;linter&#x22;]
+   event = pre-commit  # 触发事件（pre-commit、pre-push等）
+   command = ~/bin/lint-check  # 要执行的命令
+
+# 2. 仓库局部配置（仅当前仓库生效，写在 .git/config）
+[hook &#x22;secret-scan&#x22;]
+   event = pre-commit
+   command = ~/bin/secret-detector
+
+# 3. 系统级配置（所有用户生效，写在 /etc/gitconfig）
+[hook &#x22;code-format&#x22;]
+   event = pre-commit
+   command = ~/bin/code-format
+3个炸裂优势，彻底解放双手多钩子共存：同一个事件（比如 pre-commit）可以配置多个钩子，按配置顺序执行，比如先跑代码校验，再跑密钥扫描，不用手动整合脚本；灵活开关：不想用某个钩子，不用删除配置，只需添加 hook.linter.enabled=false，临时关闭，后续可随时开启；
+轻松查看：用 git hook list &#x3c;event&#x3e; 就能查看某个事件的所有钩子，以及它们的配置层级，一目了然：$ git hook list pre-commit
+global    linter  ~/bin/lint-check
+local    secret-scan    ~/bin/secret-detector
+重点：传统 .git/hooks 目录的脚本依然兼容，旧项目零成本迁移，不用担心升级后钩子失效。
+
+    </details></td><td>git hook</td></tr>
         <!-- 分割线 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details style="white-space:pre-wrap;"><summary>git 让旧提交彻底不可追溯——既不在 git log 里出现，也不能通过 reflog 或 SHA 找回。</summary>
+1. 先压缩历史
+# 0. 先备份一个分支，万一操作失误还能救（可选但强烈建议）
+git branch backup-before-clean
+git add ..........
+
+# 1. 把历史压缩成只剩最近一次提交（方案一：commit-tree，最干净）
+git add file01 #该不准非必须
+tree=$(git write-tree)
+new_commit=$(git commit-tree $tree -m "初始提交：保留最近快照")
+git reset --hard $new_commit
+
+推送到远程
+git push --force-with-lease origin main
+
+# 2. 清空所有 reflog，让旧提交失去“追溯入口”
+git reflog expire --expire=now --all
+
+# 3. 立即执行 gc，物理删除不可达对象
+git gc --prune=now --aggressive
+# --prune=now 立即清理不可达对象（不等默认 2 周保留期）
+# --aggressive 更彻底地重新打包压缩，可选，但配合删除更干净
+注意：
+gc --prune=now 是不可逆的。一旦执行，旧提交、旧 blob 全部物理消失。
+如果还有任何其他分支、标签、stash、worktree 引用着旧提交，那些对象不会被删——所以操作前用 git branch -a、git tag、git stash list 确认没有其他引用。
+
+
+删除备份分支并整理
+git branch -D backup-before-clean
+# 清空 stash（删除 refs/stash 引用）
+git stash list
+git stash clear
+git reflog expire --expire=now --all
+git gc --prune=now --aggressive
+
+    </details></td><td>git 示例</td></tr>
         <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>

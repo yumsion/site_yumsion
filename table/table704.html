@@ -295,7 +295,7 @@ End If
 
     </details></td><td>autoit 文件相关</td></tr>
         <!-- 分割线 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary>_FileListToArray() #遍历参数说明：
+    <tr><td><details style="white-space:pre-wrap;"><summary>_FileListToArray() #遍历参数说明：</summary>
 #include &#x3c;File.au3&#x3e;
 #include &#x3c;Array.au3&#x3e; ; 用于 _ArrayDisplay 展示结果
 
@@ -401,8 +401,34 @@ Local $sAllText = WinGetText(&#x22;窗口标题&#x22;) ; 获取窗口内所有�
 
     </details></td><td>autoit 控件</td></tr>
         <!-- 分割线 -->
-    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
-    </details></td><td></td></tr>
+    <tr><td><details style="white-space:pre-wrap;"><summary>autoit function相关</summary>
+; 无参数函数
+Func SayHello()
+    MsgBox(0, &#x22;提示&#x22;, &#x22;Hello World&#x22;)
+EndFunc
+
+; 带参数函数
+Func Add($a, $b)
+    Return $a + $b
+EndFunc
+
+; 调用
+SayHello()
+Local $result = Add(3, 5)
+MsgBox(0, &#x22;结果&#x22;, $result)  ; 显示 8
+
+
+按引用传参（ByRef）
+默认参数是按值传递，若要在函数内修改外部变量，需加 ByRef：
+Func Increment(ByRef $num)
+    $num += 1
+EndFunc
+
+Local $x = 10
+Increment($x)
+MsgBox(0, &#x22;&#x22;, $x)  ; 显示 11
+
+    </details></td><td>autoit function相关</td></tr>
         <!-- 分割线 -->
     <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
