@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>t51</title>
+  <!-- 独立样式文件：table_css.css -->
+  <link rel="stylesheet" href="../css/table_css.css">
+</head>
+<body>
+  <!-- ===== 导航栏 ===== -->
+  <nav id="topNav" class="top-nav">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <a href="../index.html" class="nav-logo">🏠 主页</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="切换导航菜单">
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="../index.html" class="nav-link">软件 software</a></li>
+        <li><a href="index.html" class="nav-link active">表格</a></li>
+        <li><a href="#about" class="nav-link">关于</a></li>
+        <li><a href="#contact" class="nav-link">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 主内容区域 ===== -->
+  <div class="table-container" id="table">
+    <!-- 顶部区域：SVG 图标位 + 标题并排 -->
+    <div class="header-row">
+      <!-- SVG 占位，通过 <object> 引入公用 SVG，变动同步 -->
+      <div class="svg-placeholder">
+        <object type="image/svg+xml" data="table.svg" class="header-svg" aria-label="公用 SVG 图标">
+          您的浏览器不支持 SVG
+        </object>
+      </div>
+      <h1>table 51 bash systemd/systemctl/journalctl</h1>
+    </div>
+
+    <!-- 筛选区域：输入框 + 重置按钮 -->
+    <div class="filter-area">
+      <div class="filter-wrapper">
+        <input type="text" id="filterInput" placeholder="输入关键字筛选内容或分类…" aria-label="筛选表格">
+        <button id="resetFilterBtn" class="reset-btn" type="button" aria-label="清空筛选">重置</button>
+      </div>
+    </div>
+
+    <!-- 表格：内容与分类均为静态填写 -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>分类</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 静态数据行，完全在HTML中填充，不通过JS生成 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>journal_ssh.sh</summary>
+#!/bin/bash
+#配置本地IP,避免一行有2个IP,导致添加先略失败
+LOCAL_IP=1.2.3.4
+
+#Cap case ingore
+shopt -s nocasematch
+
+stdbuf -o0 journalctl -f -u ssh | while true
+do
+read -t 10 l
+[[ -z &#x22;${l:-}&#x22; ]] &#x26;&#x26; continue
+echo $l
+if [[ &#x22;$l&#x22; =~ (preauth)|(Invalid)|(Timeout before authentication)|(Connection closed by) ]]
+then
+&#x09;IP=$(echo $l | grep -Po &#x27;[0-9]+(&#x5c;.[0-9]+){3}&#x27;)
+&#x09;IP=${IP//$LOCAL_IP/}
+&#x09;echo $IP will be blocked
+&#x09;[[ &#x22;$IP&#x22; =~ ^192.168.31&#x5c;. ]] &#x26;&#x26; echo &#x22;ignore&#x22; &#x26;&#x26; continue
+&#x09;nft add element ip table_ip set01 { $IP }
+fi
+done
+
+
+    </details></td><td>journal sh</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemd-run 程序运行限额</summary>
+使用systemd-run进行cpu和磁盘限额
+systemd-run --unit=test002 --pipe --property=CPUQuota=20% -p User=yum -p Group=yum /bin/bash /dev/shm/tmpdir/a.sh
+--pipe 日志显示在tty中
+CPUQuota=20% cpu限额
+--property=IOReadBandwidthMax=&#x22;/dev/sda 30M&#x22; 30MBps
+--property=IOWriteBandwidthMax=&#x22;/dev/sda 30M&#x22; 30MBps
+systemd-run --unit=test002 --pipe --property=CPUQuota=20% -p User=yum -p Group=yum --property=IOReadBandwidthMax=&#x22;/dev/sda 30M&#x22; --property=IOWriteBandwidthMax=&#x22;/dev/sda 30M&#x22; /bin/bash /dev/shm/tmpdir/a.sh
+
+    </details></td><td>systemd-run</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemd-logind 禁止笔记本合盖后自动suspend</summary>
+禁止笔记本合盖后自动suspend
+vim /etc/systemd/logind.conf
+HandleLidSwitch=ignore
+HandleLidSwitchExternalPower=ignore
+HandleLidSwitchDocked=ignore
+
+systemctl restart systemd-logind
+
+    </details></td><td>systemd-logind</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemd-analyze</summary>
+systemd-analyze #查看系统启动耗时
+systemd-analyze blame #查看系统启动耗时明细，可以查看启动中调用的serivce文件
+    </details></td><td>systemd-analyze</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemd-network 配置静态IP地址</summary>
+systemd-network配置文件配置静态IP地址
+/etc/systemd/network/enp6s18.network
+[Match]
+Name=enp6s18
+
+[Network]
+Address=172.16.31.11/24
+Gateway=172.16.31.1
+DNS=223.5.5.5
+
+    </details></td><td>systemd-network</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemd-network 配置虚拟网卡</summary>
+vim /etc/systemd/network/90-vport2.netdev #ADD A TAP PORT
+[NetDev]
+Name=vport2
+Kind=tap
+    </details></td><td>systemd-network</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemctl 重启</summary>
+systemctl reboot --firmware-setup #开机进入uefi管理器
+    </details></td><td>systemctl</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemd service</summary>
+ExecStartPre=/bin/sleep 10 #延时启动
+After=rc-local.service #启动次序设置，在一个服务之后才能启动
+ExecStartPost=... #执行权限和用户组为User和Group设定的，而非root
+ExecStartPost=bin_file
+Nice=15 #优先级为15
+RootDirectory=/home/openvpn
+WorkingDirectory=
+Restart=on-failure
+RestartSec=1200
+ExecStart=bin_file
+ExecStart下，重定向(&#x22;&#x3c;&#x22;, &#x22;&#x3c;&#x3c;&#x22;, &#x22;&#x3e;&#x22;, &#x22;&#x3e;&#x3e;&#x22;)、 管道(&#x22;|&#x22;)、 后台运行(&#x22;&#x26;&#x22;)， 以及其他下文未明确提及的符号都不被支持。
+
+    </details></td><td>systemd service</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>timedatectl 时间和时区</summary>
+timedatectl status #查看目前的时间和ntp的同步情况
+    </details></td><td>timedatectl</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>systemd timer</summary>
+OnUnitActiveSec=1m #每隔1分钟
+OnCalendar=Sat *-*-* 12:00:00 #这里没有引号
+
+
+systemd-analyze calendar "Mon,Wed,Fri,Sat *-*-* 11:00:00" #分析timer中的calendar时间
+    </details></td><td>systemd timer</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>sysemctl 列举所有配置文件</summary>
+systemctl list-unit-files --state enabled
+    </details></td><td>systemctl</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>journalctl日志</summary>
+journalctl --since=2026-01-01 --until=2026-01-02 #查看日期段的日志
+journalctl -r -u sshd #逆时间查看sshd service的日志
+journalctl --output=short-full #使用精确时间显示日志，也通过顺时间查看日志开始记录的时间
+
+    </details></td><td>journalctl</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
+    </details></td><td></td></tr>
+        <!-- 分割线 -->
+      </tbody>
+    </table>
+    <div class="table-footer">yumsion 2026-07-05 11:51:18 </div>
+  </div>
+  <!-- 独立脚本文件：table_js.js -->
+  <script src="../js/table_js.js"></script>
+</body>
+</html>

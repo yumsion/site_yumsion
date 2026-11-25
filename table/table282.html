@@ -66,12 +66,13 @@ expect的日志或重定向都会产生控制字符</br>
 # col -b &#x3c; log_file_save.txt 删除&#x5c;r等控制字符</br>
 # set env(TERM) dumb 禁用控制字符</br>
 # ansifilter使用src编译，但是有问题，不能正确处理utf-8中的中文等，导致内容丢失。
-<details><summary style="white-space:pre-wrap;">
+<details><summary style="white-space:pre-wrap;">具体代码.c</summary>
 #define _XOPEN_SOURCE 700</br>#define _GNU_SOURCE</br></br>#include &#x3c;stdio.h&#x3e;</br>#include &#x3c;stdlib.h&#x3e;</br>#include &#x3c;string.h&#x3e;</br>#include &#x3c;locale.h&#x3e;</br></br>#define MAX_LINE 8192</br></br>// 获取 UTF-8 字符字节长度</br>int utf8_byte_len(unsigned char ch) {</br>    if ((ch &#x26; 0x80) == 0) return 1;       // ASCII</br>    if ((ch &#x26; 0xE0) == 0xC0) return 2;  // 2字节 UTF-8</br>    if ((ch &#x26; 0xF0) == 0xE0) return 3;  // 3字节 UTF-8</br>    if ((ch &#x26; 0xF8) == 0xF0) return 4;  // 4字节 UTF-8</br>    return 1;</br>}</br></br>// 跳过 ANSI 序列辅助函数（不修改外部指针）</br>int get_ansi_len(const char *str, int idx) {</br>    int start = idx;</br>    if (str[idx] == &#x27;&#x5c;033&#x27; || str[idx] == &#x27;&#x5c;x1B&#x27;) {</br>        idx++;</br>        if (str[idx] == &#x27;[&#x27;) {</br>            idx++;</br>            while (str[idx] != &#x27;&#x5c;0&#x27; &#x26;&#x26; !((str[idx] &#x3e;= &#x27;A&#x27; &#x26;&#x26; str[idx] &#x3c;= &#x27;Z&#x27;) || </br>                                       (str[idx] &#x3e;= &#x27;a&#x27; &#x26;&#x26; str[idx] &#x3c;= &#x27;z&#x27;) || </br>                                       str[idx] == &#x27;~&#x27;)) {</br>                idx++;</br>            }</br>            if (str[idx] != &#x27;&#x5c;0&#x27;) idx++;</br>            return idx - start;</br>        }</br>    }</br>    return 0;</br>}</br></br>void process_line(const char *src, char *dest) {</br>    char buffer[MAX_LINE];</br>    int cursor = 0;   // 字节游标</br>    int max_len = 0;  // 记录到达过的最大长度</br></br>    memset(buffer, 0, sizeof(buffer));</br></br>    int i = 0;</br>    while (src[i] != &#x27;&#x5c;0&#x27;) {</br>        // 1. 过滤 ANSI 逃逸序列 (&#x5c;033[...m, &#x5c;033[?2004h 等)</br>        int ansi_len = get_ansi_len(src, i);</br>        if (ansi_len &#x3e; 0) {</br>            i += ansi_len;</br>            continue;</br>        }</br></br>        // 2. 处理退格 &#x5c;b</br>        if (src[i] == &#x27;&#x5c;b&#x27;) {</br>            if (cursor &#x3e; 0) cursor--;</br>            i++;</br>            continue;</br>        }</br></br>        // 3. 处理回车 &#x5c;r (关键修复：先探查 &#x5c;r 之后跳过 ANSI 后的实际字符)</br>        if (src[i] == &#x27;&#x5c;r&#x27;) {</br>            int next_idx = i + 1;</br>            // 探查跳过后续可能紧跟的 ANSI 序列</br>            while (1) {</br>                int a_len = get_ansi_len(src, next_idx);</br>                if (a_len &#x3e; 0) {</br>                    next_idx += a_len;</br>                } else {</br>                    break;</br>                }</br>            }</br></br>            // 如果 &#x5c;r 后面（包含 ANSI 码之后）直接遇到了 &#x5c;n 或字符串结尾，说明这只是普通的 DOS 换行，忽略 &#x5c;r</br>            if (src[next_idx] == &#x27;&#x5c;n&#x27; || src[next_idx] == &#x27;&#x5c;0&#x27;) {</br>                i++;</br>                continue;</br>            }</br></br>            // 真正的终端重叠覆盖：光标复位回行首，并清空旧缓冲区，防止旧提示符残留</br>            cursor = 0;</br>            memset(buffer, &#x27; &#x27;, max_len);</br>            max_len = 0;</br>            i++;</br>            continue;</br>        }</br></br>        // 4. 处理换行 &#x5c;n</br>        if (src[i] == &#x27;&#x5c;n&#x27;) {</br>            break;</br>        }</br></br>        // 5. 按字节/多字节字符逐个写入</br>        int len = utf8_byte_len((unsigned char)src[i]);</br>        for (int k = 0; k &#x3c; len &#x26;&#x26; src[i] != &#x27;&#x5c;0&#x27;; k++) {</br>            buffer[cursor++] = src[i++];</br>        }</br></br>        if (cursor &#x3e; max_len) {</br>            max_len = cursor;</br>        }</br>    }</br></br>    // 清除行末尾无用的空格</br>    int end_pos = max_len;</br>    while (end_pos &#x3e; 0 &#x26;&#x26; buffer[end_pos - 1] == &#x27; &#x27;) {</br>        end_pos--;</br>    }</br></br>    buffer[end_pos] = &#x27;&#x5c;0&#x27;;</br>    strcpy(dest, buffer);</br>}</br></br>int main(int argc, char *argv[]) {</br>    setlocale(LC_ALL, &#x22;&#x22;);</br></br>    if (argc &#x3e;= 3 &#x26;&#x26; strcmp(argv[1], argv[2]) == 0) {</br>        fprintf(stderr, &#x22;错误：输入文件和输出文件不能是同一个文件！&#x5c;n&#x22;);</br>        return 1;</br>    }</br></br>    FILE *in = (argc &#x3e; 1) ? fopen(argv[1], &#x22;r&#x22;) : stdin;</br>    if (!in) {</br>        perror(&#x22;无法打开输入文件&#x22;);</br>        return 1;</br>    }</br></br>    FILE *out = (argc &#x3e; 2) ? fopen(argv[2], &#x22;w&#x22;) : stdout;</br>    if (!out) {</br>        perror(&#x22;无法打开输出文件&#x22;);</br>        if (in != stdin) fclose(in);</br>        return 1;</br>    }</br></br>    char line_in[MAX_LINE];</br>    char line_out[MAX_LINE];</br></br>    while (fgets(line_in, sizeof(line_in), in)) {</br>        process_line(line_in, line_out);</br>        fprintf(out, &#x22;%s&#x5c;n&#x22;, line_out);</br>    }</br></br>    if (in != stdin) fclose(in);</br>    if (out != stdout &#x26;&#x26; out != stdin) fclose(out);</br></br>    return 0;</br>}
 </details>
 
 </br>
 </br>
+# 编辑.expect文件
 # 设置终端类型为 dumb，禁用控制字符，避免出现&#x5c;b等，导致col也无法运算出现错误显示</br>
 set env(TERM) dumb</br>
 </br>
@@ -85,16 +86,248 @@ spawn ssh admin@172.31.0.101</br>
 
     </details></td><td>expect 日志相关</td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary>autoexpect自动生成执行脚本</summary>
+autoexpect -f tmp.expect cmd01
+    </details></td><td>autoexpect</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>expect 变量/参数引用</summary>
+方法1：----------------
+#expect文件使用参数方式引入变量
+vim a.expect
+set nb1 [lindex $argv 0] #执行的第一个参数
+set nb2 [lindex $argv 1] # 执行第二个参数
+set nb8 [lindex $argv end] # 执行最后一个参数
+puts &#x22;$argc&#x22; # 参数数量
+puts &#x22;$argv0&#x22; # 程序名字
+puts &#x22;$nb1&#x22;
+puts &#x22;$nb2&#x22;
+
+expect -f a.expect a b c
+
+方法2：----------------
+#expect文件引用shell的export变量
+# 在Shell脚本中设置环境变量
+export HOST_ADDRESS=&#x22;192.168.1.1&#x22;
+
+# 调用Expect脚本
+vim script.exp
+#!/usr/bin/expect
+
+# 从环境变量中获取值
+set host $env(HOST_ADDRESS)
+
+# 使用获取的变量
+spawn ssh user@$host
+...
+
+方法3：----------------
+# 直接使用shell输送expect文件内容
+# 定义Shell变量
+HOST=&#x22;192.168.1.1&#x22;
+
+# 使用Expect脚本进行自动化交互
+expect &#x3c;&#x3c; _EOF
+spawn ssh user01@$HOST
+....
+_EOF
+
+
+    </details></td><td>expect 参数引用</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>stdbuf与管道缓冲</summary>
+stdbuf -o0 -i0 -e0 cmd1 | cmd2 #pipe行缓冲的另一种处理方法
+    </details></td><td>stdbuf</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>expect 超时 while</summary>
+#expect 变量和逻辑控制
+vim a.expect
+set timeout 5
+set counter01 0
+set job_done 0
+
+while { $counter01 &#x3c; 30 } {
+&#x09;incr counter01
+&#x09;sleep 15
+&#x09;send -- &#x22; display wlan ap name $AP_NAME&#x5c;r&#x22;
+&#x09;expect {
+&#x09;&#x09;&#x22;R/M&#x22; {
+
+&#x09;&#x09;&#x09;puts &#x22;Found R/M pattern&#x22;
+&#x09;&#x09;&#x09;set job_done 1
+
+&#x09;&#x09;&#x09;break
+&#x09;&#x09;}
+&#x09;&#x09;timeout {
+&#x09;&#x09;&#x09;puts &#x22;Timeout waiting for R/M, retry $counter01/30&#x22;
+
+&#x09;&#x09;&#x09;continue
+&#x09;&#x09;}
+&#x09;}
+}
+
+if { $job_done == 0 } {
+&#x09;puts &#x22;Failed to get R/M after 30 attempts&#x22;
+}
+sleep 1
+set timeout -1
+send -- &#x22; quit&#x5c;r&#x22;
+expect &#x22;Connection to 192.168.187.1 closed&#x22;
+sleep 2
+send -- &#x22;exit&#x5c;r&#x22;
+if { $job_done == 1 } {
+exit 0
+} else {
+exit 1
+}
+
+    </details></td><td>expect 逻辑控制</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>expect内部命令</summary>
+expect 内部命令
+expect eof #等待一个spawn返回结束值
+exp_continue #在处理多步骤交互（如先有 "yes/no" 后有 "password:"）时加上,可以让脚本在匹配后继续等待，否则脚本会直接向下执行
+spawn #执行一个程序
+send #向spawn发送数据
+send_user #向用户终端发送数据
+log_file output.log #配置用户记录文件为output.log
+expect ... #等待匹配指定表达式
+set ... #这个命令东西较多,需要单独展示
+    </details></td><td>expect 内部命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>expect将log写入文件</summary>
+expect 脚本中，有多种方法可以将上次收到的数据写入文件
+方法一：使用 log_file 命令（最简单）
+#!/usr/bin/expect
+
+# 开启日志记录，将所有交互内容写入文件
+log_file output.log
+
+spawn ssh user@server
+expect &#x22;password:&#x22;
+send &#x22;mypassword&#x5c;r&#x22;
+
+# 执行某个命令
+expect &#x22;$ &#x22;
+send &#x22;ls -la&#x5c;r&#x22;
+
+# 所有输出都会自动写入 output.log
+expect &#x22;$ &#x22;
+
+方法二：手动捕获并写入文件
+#!/usr/bin/expect
+
+spawn ssh user@server
+expect &#x22;password:&#x22;
+send &#x22;mypassword&#x5c;r&#x22;
+
+# 等待命令执行并捕获输出
+expect &#x22;$ &#x22;
+send &#x22;show version&#x5c;r&#x22;
+
+# 捕获命令的输出内容（直到下一个提示符）
+expect -re &#x22;(.*)&#x5c;$ &#x22;
+
+# 将捕获的内容写入文件
+set f [open &#x22;command_output.txt&#x22; w]
+puts $f $expect_out(0,string) # 写入整个匹配的内容
+# puts $f $expect_out(1,string) # 如果用了括号捕获，用这个
+close $f
+
+send_user &#x22;Output saved to file&#x5c;n&#x22;
+
+方法三：精细化捕获特定内容
+#!/usr/bin/expect
+
+spawn your-command
+
+# 捕获完整的交互过程
+expect {
+&#x22;success&#x22; {
+# 捕获包含 &#x22;success&#x22; 之前的整个缓冲区
+set output $expect_out(buffer)
+
+set f [open &#x22;success.log&#x22; w]
+puts $f $output
+close $f
+
+send_user &#x22;Success captured&#x5c;n&#x22;
+}
+&#x22;failed&#x22; {
+set output $expect_out(buffer)
+
+set f [open &#x22;error.log&#x22; w]
+puts $f $output
+close $f
+
+send_user &#x22;Error captured&#x5c;n&#x22;
+exit 1
+}
+timeout {
+send_user &#x22;Timeout occurred&#x5c;n&#x22;
+exit 1
+}
+}
+
+重要注意事项
+$expect_out(buffer)：保存最近一次 expect 匹配的所有内容（包括匹配行之前的内容）
+$expect_out(0,string)：整个匹配的字符串（等同于 buffer）
+$expect_out(1,string)：第一个括号 () 捕获的内容
+log_file 的选项：
+log_file -noappend file.log # 覆盖模式
+log_file file.log # 追加模式
+log_file -a file.log # 显式追加模式
+expect_out(buffer)：这是你之前问过的“捕获输出”变量。它保存了 expect 命令匹配到的所有内容，通常用于保存日志或做进一步判断。
+expect_out(0,string)：匹配到的整个模式。如果你用了正则表达式的括号捕获，(1,string) 就是第一个括号捕获的内容。
+expect_out(spawn_id)：当前 spawn 进程的 ID，在同时管理多个进程时用于区分通信对象。
+
+    </details></td><td>expect 日志</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>expect 正则表达式</summary>
+expect的正则表达式
+正则类型:Expect/Tcl ARE
+捕获括号 () 支持
+量词 * + ? {m,n}
+非贪婪匹配 *? +? ??
+字符类 &#x5c;d &#x5c;w &#x5c;s
+反向引用 &#x5c;1 &#x5c;2
+锚点 ^ $ &#x5c;y单词边界 &#x5c;m单词开头 &#x5c;M单词结尾
+(注意,与Perl/PCRE ^ $ &#x5c;b &#x5c;A &#x5c;z 有差异)
+前瞻/后顾 ❌ 不支持
+修饰符 (?i)不区分大小写 (?m)多行模式 (?s)单行模式 (?n)换行敏感
+
+expect -re &#x22;(?s)START(.*?)END&#x22; # 匹配从 START 到第一个 END 之间的所有内容（跨多行匹配）
+
+    </details></td><td>expect 正则表达式</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary>在expect执行中,使用grep等处理收到的字符串</summary>
+如何在expect执行中,使用grep等处理收到的字符串
+#!/usr/bin/expect
+
+spawn ssh user@server
+expect &#x22;password:&#x22;
+send &#x22;mypassword&#x5c;r&#x22;
+
+# 执行命令获取完整输出
+expect &#x22;$ &#x22;
+send &#x22;show version&#x5c;r&#x22;
+expect &#x22;$ &#x22;
+#变量赋值
+set output $expect_out(buffer)
+
+# 使用 exec 调用 grep 处理（注意转义）
+set filtered [exec echo $output | grep -i &#x22;version&#x22;]
+send_user &#x22;版本信息: $filtered&#x5c;n&#x22;
+
+
+    </details></td><td>expect 引用外部命令</td></tr>
+        <!-- 分割线 -->
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
-    <tr><td><details><summary></summary>
-    </details></td><td></td></tr>
-        <!-- 分割线 -->
-    <tr><td><details><summary></summary>
+    <tr><td><details style="white-space:pre-wrap;"><summary></summary>
     </details></td><td></td></tr>
         <!-- 分割线 -->
       </tbody>
